@@ -1,0 +1,46 @@
+﻿Property,Stand_name,Stand_code,City,County,State,Owner,Ownership_cat,Harvest_status,Dates_sampled,num_plots
+Hill Roberts property,Hill Roberts property,HR,Starksboro,Addison,VT,Vermont Land Trust,private,to be cut,"6/3/20, 6/4/20",10
+Mud Pond property,Mud Pond 2019,MP19,Greensboro,Orleans,VT,Vermont Land Trust,private,cut,"6/8/20, 6/9/20, 6/15/20",7
+Mud Pond property,Mud Pond 2013-14,MP1314,Greensboro,Orleans,VT,Vermont Land Trust,private,cut,"6/9/20, 6/10/20, 6/15/20",6
+Mud Pond property,Mud Pond unharvested,MP,Greensboro,Orleans,VT,Vermont Land Trust,private,not cut,"6/10/20, 6/15/20",4
+Camel's Hump State Park,Camel's Hump SP stand 1-3-8,CH138,Duxbury,Washington,VT,VT FPR,public_state,cut,"6/16/20, 6/17/20",7
+Camel's Hump State Park,Camel's Hump SP stand 1-4-5,CH145,Duxbury,Washington,VT,VT FPR,public_state,not cut,"6/17/20, 6/18/20",4
+Camel's Hump State Park,Camel's Hump SP stand 2-2-14,CH2214,Bolton,Chittenden,VT,VT FPR,public_state,not cut,"6/18/20, 6/22/20",4
+Camel's Hump State Park,Camel's Hump SP stand 2-2-4,CH224,Bolton,Chittenden,VT,VT FPR,public_state,cut,"6/22/20, 6/23/20",6
+Camel's Hump State Park,Camel's Hump SP stand 2-3-1,CH231,Bolton,Chittenden,VT,VT FPR,public_state,not cut,6/23/2020,4
+Clement Woodlot,Clements Woodlot East,CWE,Corinth,Orange,VT,Dartmouth College,private,not cut,6/24/2020,4
+Joe Nelson property,Joe Nelson property,JNP,Waterford,Caledonia,VT,Joe Nelson,private,not cut,6/25/2020,4
+Jason Mills property,Jason Mills property stand 7,JMP7,Peacham,Caledonia,VT,Jason Mills,private,cut,7/2/2020,4
+Jason Mills property,Jason Mills property stand 3,JMP3,Peacham,Caledonia,VT,Jason Mills,private,not cut,7/2/2020,4
+Green Mountain National Forest,Sunnyside stand 63-49,GMSS,Peru,Bennington,VT,USFS,public_national,cut,7/6/2020,6
+Green Mountain National Forest,Cook Brook stand 62-6,GMCB,Peru,Bennington,VT,USFS,public_national,cut,"7/6/20, 7/7/20",6
+Green Mountain National Forest,Alpaca stand 66-30,GMA,Winhall,Bennington,VT,USFS,public_national,cut,7/7/2020,4
+Green Mountain National Forest,Roaring Brook stand 125-5,GMRB5,Stamford,Bennington,VT,USFS,public_national,to be cut,7/8/2020,4
+Green Mountain National Forest,Roaring Brook stand 125-6,GMRB6,Stamford,Bennington,VT,USFS,public_national,to be cut,7/8/2020,4
+Green Mountain National Forest,Mad Tom stand 58-14,GMMT,Peru,Bennington,VT,USFS,public_national,cut,7/9/2020,6
+Jason Mills property,Jason Mills property stand 1,JMP1,Peacham,Caledonia,VT,Jason Mills,private,cut,7/13/2020,4
+Groton State Forest,Groton State Forest stand 3-9-6,GSF396,Groton,Caledonia,VT,VT FPR,public_state,cut,"7/13/20, 7/15/20",7
+Holbrook State Park,Holbrook State Park stand 1-1-8,HSP118,Sheffield,Caledonia,VT,VT FPR,public_state,not cut,7/16/2020,4
+Mathewson State Forest,Mathewson State Forest stand 3-1-11,MSF3111,Wheelock,Caledonia,VT,VT FPR,public_state,not cut,7/16/2020,4
+Long Pond property,Long Pond harvested,TNCLP,Greensboro,Orleans,VT,The Nature Conservancy,private,cut,7/28/2020,6
+Long Pond property,Long Pond unharvested,TNCLP,Greensboro,Orleans,VT,The Nature Conservancy,private,not cut,7/29/2020,4
+Stoner Woodlot,Stoner Woodlot,SW,Greensboro,Orleans,VT,Stoner family,private,not cut,7/29/2020,4
+October Mountain State Forest,Heaphy Richardson Lot,OMSFHR,Becket,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,8/10/2020,6
+October Mountain State Forest,"Schoolhouse Lot, BB stand",OMSFSCH,Washington,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,8/11/2020,6
+October Mountain State Forest,County Rd ash salvage,OMSFCR,Washington,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,"8/11/20, 8/12/20",6
+Otis State Forest,Clam Dam unit 1,OSFCD1,Sandisfield,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,8/12/2020,6
+Otis State Forest,Clam Dam unit 3,OSFCD3,Sandisfield,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,not cut,8/12/2020,4
+Pittsfield State Forest,Potter Mtn Rd. Hancock Unit,PSFPMH,Hancock,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,8/13/2020,6
+Balance Rock State Park,Balance Rock State Park,BRSP,Lanesborough,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,not cut,8/13/2020,4
+Dennis Hill State Park,Dennis Hill State Park stand 1,DHSP,Norfolk,Litchfield,CT,Connecticut Department of Energy and Environmental Protection,public_state,cut,8/17/2020,6
+Haystack Mountain State Park,Haystack Mountain State Park,HMSP,Norfolk,Litchfield,CT,Connecticut Department of Energy and Environmental Protection,public_state,to be cut,8/17/2020,4
+Housatonic State Forest,Housatonic State Forest stand 16-1,HSF161,West Cornwall,Litchfield,CT,Connecticut Department of Energy and Environmental Protection,public_state,cut,8/18/2020,6
+Algonquin State Forest,Algonquin State Forest stand 1-14,ASF114,Colebrook,Litchfield,CT,Connecticut Department of Energy and Environmental Protection,public_state,not cut,8/18/2020,4
+Sandisfield State Forest,York Lake stand 2,SSFYL2,Sandisfield,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,8/19/2020,6
+Tunxis State Forest,Tunxis State Forest stand 49,TSF49,Hartland,Litchfield,CT,Connecticut Department of Energy and Environmental Protection,public_state,to be cut,8/19/2020,4
+October Mountain State Forest,Sherlock Lot 2014,OMSFSH14,Washington,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,"8/19/20, 8/20/20",6
+October Mountain State Forest,Sherlock Lot 2017,OMSFSH17,Washington,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,8/20/2020,6
+Kearsarge Mountain State Forest,"Kearsarge Mountain State Forest comp 4, stand 26",KMSF,Wilmot,Merrimack,NH,New Hampshire Department of Natural and Cultural Resources,public_state,not cut,9/15/2020,4
+Shaker State Forest,Shaker State Forest,SSF1,Canterbury,Merrimack,NH,New Hampshire Department of Natural and Cultural Resources,public_state,cut,"9/15/20, 9/16/20",7
+Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 1, stand 1",CMSF11,Orange,Grafton,NH,New Hampshire Department of Natural and Cultural Resources,public_state,not cut,9/16/2020,4
+Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 6, stand 2",CMSF62,Orange,Grafton,NH,New Hampshire Department of Natural and Cultural Resources,public_state,not cut,9/17/2020,4

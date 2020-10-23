@@ -1,0 +1,231 @@
+﻿plot_ID,harvest_status,gap_status,date,site_name,measured_by,tallied_by,entered_by,notes,Property,Stand_name
+HRgap1,NO,YES,6/3/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+HRgap2,NO,YES,6/3/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+HRgmat1,NO,NO,6/3/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+HRgap3,NO,YES,6/3/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+HRunh1,NO,NO,6/4/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+HRunh2,NO,NO,6/4/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+CH145unh2,NO,NO,6/18/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-4-5
+HRunh3,NO,NO,6/4/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+CH145unh3,NO,NO,6/18/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-4-5
+HRunh4,NO,NO,6/4/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+HRmat2,NO,NO,6/4/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+HRmat3,NO,NO,6/4/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+CH145unh4,NO,NO,6/18/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-4-5
+CH2214unh1,NO,NO,6/18/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-2-14
+CH2214unh2,NO,NO,6/18/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-2-14
+MP19gap1,YES,YES,6/8/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2019
+CH2214unh3,NO,NO,6/18/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-2-14
+CH138mat1,YES,NO,6/16/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
+MP19mat1,YES,NO,6/8/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2019
+CH138gap1,YES,YES,6/16/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
+CH138gap2,YES,YES,6/16/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
+MP19gap2,YES,YES,6/8/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2019
+MP19mat2,YES,NO,6/8/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2019
+MP19gap3,YES,YES,6/8/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2019
+MP19mat3,YES,NO,6/9/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2019
+MP1314gap1,YES,YES,6/9/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2013-14
+MP1314mat1,YES,NO,6/9/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2013-14
+MP1314gap2,YES,YES,6/9/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2013-14
+MP1314gap3,YES,YES,6/10/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud Pond 2013-14
+CH138mat2,YES,NO,6/17/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
+CH138gap3,YES,YES,6/17/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
+CH138mat3,YES,NO,6/17/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
+CH138mat4,YES,NO,6/17/2020,CHSP,"CS, ED",HH,HT,More open than most matrix plots we've been in but still not a gap,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
+CH145unh1,NO,NO,6/17/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-4-5
+CH2214unh4,NO,NO,6/22/2020,Camel's Hump SP,"ED, HT",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-2-14
+CH224gap1,YES,YES,6/22/2020,Camel's Hump SP,"ED, HT",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-2-4
+MP19gap4 ,YES,YES,6/15/2020,Mud Pond ,"CS, ED",HH,ED,,Mud Pond property,Mud Pond 2019
+GMCBmat2,YES,NO,7/7/2020,Green Mtn NF,"HT, ED, MW",HH,MW,,Green Mountain National Forest,Cook Brook stand 62-6
+GMCBgap3,YES,YES,7/7/2020,Green Mtn NF,"HT, ED, MW",HH,MW,,Green Mountain National Forest,Cook Brook stand 62-6
+GMCBmat3,YES,NO,7/7/2020,Green Mtn NF,"HT, ED, MW",HH,MW,,Green Mountain National Forest,Cook Brook stand 62-6
+GMAmat1,YES,NO,7/7/2020,Green Mtn NF,"HT, ED, MW",HH,MW,,Green Mountain National Forest,Alpaca stand 66-30
+GMAgap1,YES,YES,7/7/2020,Green Mtn NF,"ED, HT, MW",HH,MW,,Green Mountain National Forest,Alpaca stand 66-30
+GMAmat2,YES,NO,7/7/2020,Green Mtn NF,"HT, ED, MW",HH,MW,,Green Mountain National Forest,Alpaca stand 66-30
+GMAgap2,YES,YES,7/7/2020,Green Mtn NF,"HT, ED, MW",HH,MW,,Green Mountain National Forest,Alpaca stand 66-30
+GMRB5unh1,NO,NO,7/8/2020,Green Mtn NF,"HT, ED, MW",HH,MW, * = marked to be cut,Green Mountain National Forest,Roaring Brook stand 125-5
+GMRB5unh2,NO,NO,7/8/2020,Green Mtn NF,"HT, ED, MW",HH,MW, * = marked to be cut,Green Mountain National Forest,Roaring Brook stand 125-5
+GMRB5unh3,NO,NO,7/8/2020,Green Mtn NF,"ED, HT, MW",HH,MW, * = marked to be cut,Green Mountain National Forest,Roaring Brook stand 125-5
+GMRB5unh4,NO,NO,7/8/2020,Green Mtn NF,"HT, MW, ED",HH,MW, * = marked to be cut,Green Mountain National Forest,Roaring Brook stand 125-5
+GMRB6unh1,NO,NO,7/8/2020,Green Mtn NF,"HT, MW, ED",HH,MW, * = marked to be cut,Green Mountain National Forest,Roaring Brook stand 125-6
+GMRB6unh2,NO,NO,7/8/2020,Green Mtn NF,"ED, HT, MW",HH,MW,"will be harvested soon, * marked to be cut",Green Mountain National Forest,Roaring Brook stand 125-6
+GMRB6unh3,NO,NO,7/8/2020,Green Mtn NF,"HT, ED, MW",HH,MW, * = marked to be cut,Green Mountain National Forest,Roaring Brook stand 125-6
+GMRB6unh4,NO,NO,7/8/2020,Green Mtn NF,"HT, ED, MW",HH,MW, * = marked to be cut,Green Mountain National Forest,Roaring Brook stand 125-6
+GMMTmat1,YES,NO,7/9/2020,Green Mtn NF,"HT, ED, MW",HH,MW,,Green Mountain National Forest,Mad Tom stand 58-14
+GMMTgap1,YES,YES,7/9/2020,Green Mtn NF,"HT, ED, MW",HH,MW,,Green Mountain National Forest,Mad Tom stand 58-14
+GMMTmat2,YES,NO,7/9/2020,Green Mtn NF,"HT, ED, MW",HH,MW,,Green Mountain National Forest,Mad Tom stand 58-14
+GMMTgap2,YES,YES,7/9/2020,Green Mtn NF,"HT, MW",HH,MW,,Green Mountain National Forest,Mad Tom stand 58-14
+GMMTgap3,YES,YES,7/9/2020,Green Mtn NF,"HT, MW",HH,MW,,Green Mountain National Forest,Mad Tom stand 58-14
+GMMTmat3,YES,NO,7/9/2020,Green Mtn NF,"HT, MW",HH,MW,rubus can be pinnate or palmate,Green Mountain National Forest,Mad Tom stand 58-14
+CH224mat2,YES,NO,6/22/2020,Camel's Hump SP,"ED, HT",HH,HT,*Cottomwood = aspen,Camel's Hump State Park,Camel's Hump SP stand 2-2-4
+CH224gap2,YES,YES,6/22/2020,Camel's Hump SP,"ED, HT",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-2-4
+CH224mat3,YES,NO,6/22/2020,Camel's Hump SP,"ED, HT",HH,HT,Lots of wood nettle in this stand!,Camel's Hump State Park,Camel's Hump SP stand 2-2-4
+CCH224gap3,YES,YES,6/23/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-2-4
+CH231unh1,NO,NO,6/23/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-3-1
+GSF396mat2,YES,NO,7/15/2020,Groton State forest,"HT, ED",HH,MW,"? question mark over ""harvesterd or not"", harvested is circled",Groton State Forest,Groton State Forest stand 3-9-6
+JMP1mat1,YES,NO,7/13/2020,Jason Mills Property,"HT,ED",HH,OL,,Jason Mills property,Jason Mills property stand 1
+JMP1mat2,YES,NO,7/13/2020,Jason Mills Property,"HT,ED",HH,OL,,Jason Mills property,Jason Mills property stand 1
+JMP1mat3,YES,NO,7/13/2020,Jason Mills Property,"HT,ED",HH,OL,"stand 1, ACSP2=Acer spicatum (mountain maple) ",Jason Mills property,Jason Mills property stand 1
+JMP1mat4,YES,NO,7/13/2020,Jason Mills Property,"ED,HT",HH,OL,,Jason Mills property,Jason Mills property stand 1
+GSF396mat1,YES,NO,7/13/2020,Groton State forest,"HT,ED",HH,OL,,Groton State Forest,Groton State Forest stand 3-9-6
+GSF396gap2,YES,YES,7/15/2020,GrotonSF,"HT, ED",HH,MW,,Groton State Forest,Groton State Forest stand 3-9-6
+GSF396mat3,YES,NO,7/15/2020,Groton State forest,"HT, ED",HH,MW,"? question mark over ""harvesterd or not"", harvested is circled",Groton State Forest,Groton State Forest stand 3-9-6
+GSF396mat4,YES,NO,7/15/2020,Groton State Forest,"HT, ED",HH,MW,,Groton State Forest,Groton State Forest stand 3-9-6
+GSF396mat5,YES,NO,7/15/2020,Groton State Forest,"HT, ED",HH,MW,,Groton State Forest,Groton State Forest stand 3-9-6
+GSF396gap1,YES,YES,7/15/2020,Groton State Forest,"HT, ED",HH,MW,,Groton State Forest,Groton State Forest stand 3-9-6
+MPunh1,NO,NO,6/10/2020,Mud Pond,"CS, ED",HH,MW,,Mud Pond property,Mud Pond unharvested
+MPunh2,NO,NO,6/10/2020,Mud Pond,"CS, ED",HH,MW,,Mud Pond property,Mud Pond unharvested
+MPunh3,NO,NO,6/10/2020,Mud Pond,"CS, ED",HH,MW,,Mud Pond property,Mud Pond unharvested
+MP1314mat2,YES,NO,6/15/2020,Mud Pond ,"CS, ED",HH,MW,* pic @ 10:43 AM,Mud Pond property,Mud Pond 2013-14
+MP1314mat3,YES,NO,6/15/2020,Mud Pond,"CS, ED",HH,MW,,Mud Pond property,Mud Pond 2013-14
+MPunh4,NO,NO,6/15/2020,Mud Pond,"CS, ED",HH,MW,,Mud Pond property,Mud Pond unharvested
+CH224mat1,YES,NO,6/22/2020,Camel's Hump SP,"ED, HT",HH,MW,pretty thinned,Camel's Hump State Park,Camel's Hump SP stand 2-2-4
+CH231unh2,NO,NO,6/23/2020,Camel's Hump SP,"CS, ED",HH,MW,,Camel's Hump State Park,Camel's Hump SP stand 2-3-1
+CH231unh3,NO,NO,6/23/2020,Camel's Hump SP,"CS, ED",HH,MW,,Camel's Hump State Park,Camel's Hump SP stand 2-3-1
+CH231unh4,NO,NO,6/23/2020,Camel's Hump SP,"CS, ED",HH,MW,,Camel's Hump State Park,Camel's Hump SP stand 2-3-1
+CWEunh1,NO,NO,6/24/2020,Clements Woodlot,"CS, ED",HH,MW,near Corinth team permanent plot,Clement Woodlot,Clements Woodlot East
+CWEunh2,NO,NO,6/24/2020,Clements Woodlot,"CS, ED",HH,MW,,Clement Woodlot,Clements Woodlot East
+CWEunh3,NO,NO,6/24/2020,Clements Woodlot,"CS, ED",HH,MW,,Clement Woodlot,Clements Woodlot East
+CWEunh4,NO,NO,6/24/2020,Clements Woods,"CS, ED",HH,MW,,Clement Woodlot,Clements Woodlot East
+JNPunh1,NO,NO,6/25/2020,Joe Nelson Property,"CS, ED",HH,MW,,Joe Nelson property,Joe Nelson property
+JNPunh2,NO,NO,6/25/2020,Joe Nelson Property,"CS, ED",HH,MW,,Joe Nelson property,Joe Nelson property
+JNPunh3,NO,NO,6/25/2020,Joe Nelson Property,"CS, ED",HH,MW,,Joe Nelson property,Joe Nelson property
+JNPunh4,NO,NO,6/25/2020,Joe Nelson Property,"CS, ED",HH,MW,,Joe Nelson property,Joe Nelson property
+JMP7mat1,YES,NO,7/2/2020,Jason Mills Property ,"CS,ED",HH,ED,,Jason Mills property,Jason Mills property stand 7
+JMP7mat2,YES,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,ED,,Jason Mills property,Jason Mills property stand 7
+JMP7mat3,YES,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,ED,,Jason Mills property,Jason Mills property stand 7
+JMP3unh1,NO,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,ED,,Jason Mills property,Jason Mills property stand 3
+HSP118unh1,NO,NO,7/16/2020,Holbrook State Park,"HT, ED",HH,MW,,Holbrook State Park,Holbrook State Park stand 1-1-8
+HSP118unh2,NO,NO,7/16/2020,Holbrook State Park,"ED, HT",HH,MW,green ash understory!,Holbrook State Park,Holbrook State Park stand 1-1-8
+HSP118unh3,NO,NO,7/16/2020,Holbrook State Park,"ED, HT",HH,MW,,Holbrook State Park,Holbrook State Park stand 1-1-8
+HSP118unh4,NO,NO,7/16/2020,Holbrook State Park,"ED, HT",HH,MW,,Holbrook State Park,Holbrook State Park stand 1-1-8
+MSF3111unh1,NO,NO,7/16/2020,Mathewson State Forest,"ED, HT",HH,MW,,Mathewson State Forest,Mathewson State Forest stand 3-1-11
+MSF3111unh2,NO,NO,7/16/2020,Mathewson State Forest,"ED, HT",HH,MW,,Mathewson State Forest,Mathewson State Forest stand 3-1-11
+MSF3111unh3,NO,NO,7/16/2020,Mathewson State Forest,"ED, HT",HH,MW,,Mathewson State Forest,Mathewson State Forest stand 3-1-11
+MSF3111unh4,NO,NO,7/16/2020,Mathewson State Forest,"ED, HT",HH,MW,,Mathewson State Forest,Mathewson State Forest stand 3-1-11
+TNCLPmat1,YES,NO,7/28/2020,The Nature Conservancy Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond harvested
+TNCLPgap1,YES,YES,7/28/2020,The Nature Conservancy Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond harvested
+TNCLPmat2,YES,NO,7/28/2020,The Nature Conservancy Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond harvested
+TNCLPgap2,YES,YES,7/28/2020,The Nature Conservancy Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond harvested
+TNCLPmat3,YES,NO,7/28/2020,The Nature Conservancy Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond harvested
+TNCLPgap3,YES,YES,7/28/2020,The Nature Conservancy Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond harvested
+TNCLPunh1,NO,NO,7/29/2020,TNC Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond unharvested
+TNCLPunh2,NO,NO,7/29/2020,TNC Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond unharvested
+TNCLPunh3,NO,NO,7/29/2020,TNC Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond unharvested
+TNCLPunh4,NO,NO,7/29/2020,TNC Long Pond,"CS, ED",HH,MW,,Long Pond property,Long Pond unharvested
+SWunh1,NO,NO,7/29/2020,Stoner Woodlot,"CS, ED",HH,MW,,Stoner Woodlot,Stoner Woodlot
+SWunh2,NO,NO,7/29/2020,Stoner Woodlot,"CS, ED",HH,MW,,Stoner Woodlot,Stoner Woodlot
+SWunh3,NO,NO,7/29/2020,Stoner Woodlot,"CS, ED",HH,MW,,Stoner Woodlot,Stoner Woodlot
+SWunh4,NO,NO,7/29/2020,Stoner Woodlot,"CS, ED",HH,MW,,Stoner Woodlot,Stoner Woodlot
+OMSFHRmat1,YES,NO,8/10/2020,October Mtn SF - Heapy Richardson Lot,"HT, MW",HH,MW,,October Mountain State Forest,Heaphy Richardson Lot
+OMSFHRgap1,YES,YES,8/10/2020,October Mtn SF - Heapy Richardson Lot,"HT, MW",HH,MW,,October Mountain State Forest,Heaphy Richardson Lot
+OMSFHRgap2,YES,YES,8/10/2020,October Mtn SF - Heapy Richardson Lot,"HT, MW",HH,MW,,October Mountain State Forest,Heaphy Richardson Lot
+OMSFHRmat2,YES,NO,8/10/2020,October Mtn SF - Heapy Richardson Lot,"HT, MW",HH,MW,,October Mountain State Forest,Heaphy Richardson Lot
+OMSFHRgap3,YES,YES,8/10/2020,October Mtn SF,"HT, MW",HH,MW,,October Mountain State Forest,Heaphy Richardson Lot
+OMSFHRmat3,YES,NO,8/10/2020,October Mtn SF - Heapy Richardson Lot,"HT, MW",HH,MW,,October Mountain State Forest,Heaphy Richardson Lot
+OMSFSCHmat1,YES,NO,8/11/2020,October Mtn SF Schoolhouse Lot,"HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
+OMSFSCHgap1,YES,YES,8/11/2020,October Mtn SF Schoolhouse Lot,"HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
+OMSFSCHgap2,YES,YES,8/11/2020,October Mtn SF Schoolhouse Lot,"HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
+OMSFSCHmat2,YES,NO,8/11/2020,"October Mtn SF Schoolhouse Lot, BB stand","HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
+OMSFSCHmat3,YES,NO,8/11/2020,October Mtn SF,"HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
+OMSFSCHgap3,YES,YES,8/11/2020,"October Mtn SF Schoolhouse Lot, BB stand","HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
+OMSFCRmat1,YES,NO,8/11/2020,October Mtn SF County Rd ash salvage,"HT, MW",HH,MW,,October Mountain State Forest,County Rd ash salvage
+OMSFCRgap1,YES,NO,8/11/2020,October Mtn SF County Rd ash salvage,"HT, MW",HH,MW,,October Mountain State Forest,County Rd ash salvage
+OSFCD1gap1,YES,YES,8/12/2020,Otis SF - Clam Dam stand 1,"HT, MW, JW",HH,MW,,Otis State Forest,Clam Dam unit 1
+OSFCD1mat1,YES,NO,8/12/2020,Otis SF - Clam Dam stand 2,"HT, MW, JW",HH,MW,,Otis State Forest,Clam Dam unit 1
+OSFCD1gap2,YES,YES,8/12/2020,Otis SF - Clam Dam unit 1,"HT, MW, JW",HH,MW,,Otis State Forest,Clam Dam unit 1
+OSFCD1mat2,YES,NO,8/12/2020,Otis SF - Clam Dam unit 2,"HT, MW, JW",HH,MW,,Otis State Forest,Clam Dam unit 1
+OSFCD1gap3,YES,YES,8/12/2020,Otis SF - Clam Dam unit 1,"HT, MW, JW",HH,MW,,Otis State Forest,Clam Dam unit 1
+OSFCD1mat3,YES,NO,8/12/2020,Otis SF - Clam Dam unit 2,"HT, MW, JW",HH,MW,,Otis State Forest,Clam Dam unit 1
+OSFCD3unh1,NO,NO,8/12/2020,Otis SF - Clam Dam Unit 3,"HT, MW",HH,MW,,Otis State Forest,Clam Dam unit 3
+OSFCD3unh2,NO,NO,8/12/2020,Otis SF - Clam Dam Unit 3,"HT, MW",HH,MW,,Otis State Forest,Clam Dam unit 3
+OSFCD3unh3,NO,NO,8/12/2020,Otis SF - Clam Dam Unit 3,"HT, MW",HH,MW,,Otis State Forest,Clam Dam unit 3
+OSFCD3unh4,NO,NO,8/12/2020,Otis SF - Clam Dam Unit 3,"HT, MW",HH,MW,,Otis State Forest,Clam Dam unit 3
+OMSFCRgap2,YES,YES,8/12/2020,October Mtn SF - County Rd ash salvage,"HT, MW",HH,MW,,October Mountain State Forest,County Rd ash salvage
+OMSFCRmat2,YES,NO,8/12/2020,October Mtn SF - County Rd ash salvage,"HT, MW",HH,MW,,October Mountain State Forest,County Rd ash salvage
+OMSFCRgap3,YES,YES,8/12/2020,October Mtn SF - County Rd,"HT, MW",HH,MW,,October Mountain State Forest,County Rd ash salvage
+OMSFCRmat3,YES,NO,8/12/2020,October Mtn SF - County Rd,"HT, MW",HH,MW,,October Mountain State Forest,County Rd ash salvage
+PSFPMHgap1,YES,YES,8/13/2020,Pittsfield State Forest Potter Mtn Rd - Hancock Unit,"HT, MW",HH,MW,,Pittsfield State Forest,Potter Mtn Rd. Hancock Unit
+PSFPMHmat1,YES,NO,8/13/2020,Pittsfield State Forest Potter Mtn Rd - Hancock Unit,"HT, MW",HH,MW,,Pittsfield State Forest,Potter Mtn Rd. Hancock Unit
+PSFPMHgap2,YES,YES,8/13/2020,Pittsfield State Forest Potter Mtn Rd - Hancock Unit,"HT, MW",HH,MW,,Pittsfield State Forest,Potter Mtn Rd. Hancock Unit
+PSFPMHmat2,YES,NO,8/13/2020,Pittsfield State Forest Potter Mtn Rd - Hancock Unit,"HT, MW",HH,MW,,Pittsfield State Forest,Potter Mtn Rd. Hancock Unit
+PSFPMHgap3,YES,YES,8/13/2020,"Pittsfield SF - Potter Mtn Rd, Hancock Unit","HT, MW",HH,MW,,Pittsfield State Forest,Potter Mtn Rd. Hancock Unit
+PSFPMHmat3,YES,NO,8/13/2020,Pittsfield State Forest Potter Mtn Rd - Hancock Unit,"HT, MW",HH,MW,,Pittsfield State Forest,Potter Mtn Rd. Hancock Unit
+BRSPunh1,NO,NO,8/13/2020,Balance Rock State Park,"HT, MW",HH,MW,,Balance Rock State Park,Balance Rock State Park
+BRSPunh2,NO,NO,8/13/2020,Balance Rock State Park,"HT, MW",HH,MW,,Balance Rock State Park,Balance Rock State Park
+BRSPunh3,NO,NO,8/13/2020,Balance Rock State Park,"HT, MW",HH,MW,,Balance Rock State Park,Balance Rock State Park
+BRSPunh4,NO,NO,8/13/2020,Balance Rock State Park,"HT, MW",HH,MW,,Balance Rock State Park,Balance Rock State Park
+GMSSmat1,YES,NO,7/6/2020,Green Mtn National Forest,"ED, HT, MW",HH,MW,,Green Mountain National Forest,Sunnyside stand 63-49
+GMSSmat2,YES,NO,7/6/2020,Green Mtn National Forest,"ED, HT, MW",HH,MW,,Green Mountain National Forest,Sunnyside stand 63-49
+GMSSgap1,YES,YES,7/6/2020,Green Mtn National Forest,"ED, HT, MW",HH,MW,,Green Mountain National Forest,Sunnyside stand 63-49
+GMSSgap2,YES,YES,7/6/2020,Green Mtn National Forest,"ED, HT, MW",HH,MW,,Green Mountain National Forest,Sunnyside stand 63-49
+GMSSmat3,YES,NO,7/6/2020,Green Mtn National Forest,"ED, HT, MW",HH,MW,,Green Mountain National Forest,Sunnyside stand 63-49
+GMSSgap3,YES,YES,7/6/2020,Green Mtn National Forest,"ED, HT, MW",HH,MW,,Green Mountain National Forest,Sunnyside stand 63-49
+GMCBmat1,YES,NO,7/6/2020,Green Mtn National Forest,"ED, HT, MW",HH,MW,,Green Mountain National Forest,Cook Brook stand 62-6
+GMCBgap1,YES,YES,7/6/2020,Green Mtn National Forest,"ED, HT, MW",HH,MW,,Green Mountain National Forest,Cook Brook stand 62-6
+GMCBgap2,YES,YES,7/6/2020,Green Mtn National Forest,"ED, HT, MW",HH,MW,*H. found matric plot SW of Plot one for next time,Green Mountain National Forest,Cook Brook stand 62-6
+DHSPmat1,YES,NO,8/17/2020,Dennis Hill SP,"MW, MR",HH,MW,,Dennis Hill State Park,Dennis Hill State Park stand 1
+DHSPgap1,YES,YES,8/17/2020,Dennis Hill SP,"MW, MR",HH,MW,,Dennis Hill State Park,Dennis Hill State Park stand 1
+DHSPgap2,YES,YES,8/17/2020,Dennis Hill SP,"MW, MR",HH,MW,,Dennis Hill State Park,Dennis Hill State Park stand 1
+DHSPgap3,YES,YES,8/17/2020,Dennis Hill SP,"MW, MR",HH,MW,,Dennis Hill State Park,Dennis Hill State Park stand 1
+DHSPmat2,YES,NO,8/17/2020,Dennis Hill SP,"MW, MR",HH,MW,,Dennis Hill State Park,Dennis Hill State Park stand 1
+DHSPmat3,YES,NO,8/17/2020,Dennis Hill SP,"MW, MR",HH,MW,,Dennis Hill State Park,Dennis Hill State Park stand 1
+HMSPunh1,NO,NO,8/17/2020,Haystack Mountain State Park,"MW, MR",HH,MW,,Haystack Mountain State Park,Haystack Mountain State Park
+HMSPunh2,NO,NO,8/17/2020,Haystack Mountain State Park,"MW, MR",HH,MW,,Haystack Mountain State Park,Haystack Mountain State Park
+HMSPunh3,NO,NO,8/17/2020,Haystack Mountain State Park,"MW, MR",HH,MW,,Haystack Mountain State Park,Haystack Mountain State Park
+HMSPunh4,NO,NO,8/17/2020,Haystack Mountain State Park,"MW, MR",HH,MW,,Haystack Mountain State Park,Haystack Mountain State Park
+HSF161gap1,YES,YES,8/18/2020,Housatonic State Forest,"MW, MR",HH,MW,,Housatonic State Forest,Housatonic State Forest stand 16-1
+HSF161mat1,YES,NO,8/18/2020,Housatonic State Forest,"MW, MR",HH,MW,,Housatonic State Forest,Housatonic State Forest stand 16-1
+HSF161gap2,YES,YES,8/18/2020,Housatonic State Forest,"MW, MR",HH,MW,,Housatonic State Forest,Housatonic State Forest stand 16-1
+HSF161mat2,YES,NO,8/18/2020,Housatonic State Forest,"MW, MR",HH,MW,,Housatonic State Forest,Housatonic State Forest stand 16-1
+HSF161mat3,YES,NO,8/18/2020,Housatonic State Forest,"MW, MR",HH,MW,,Housatonic State Forest,Housatonic State Forest stand 16-1
+HSF161gap3,YES,YES,8/18/2020,Housatonic State Forest,"MW, MR",HH,MW,,Housatonic State Forest,Housatonic State Forest stand 16-1
+ASF114unh1,NO,NO,8/18/2020,Algonquin State Forest - Stand 1-14,"MW, MR",HH,MW,,Algonquin State Forest,Algonquin State Forest stand 1-14
+ASF114unh2,NO,NO,8/18/2020,Algonquin State Forest - Stand 1-14,"MW, MR",HH,MW,,Algonquin State Forest,Algonquin State Forest stand 1-14
+ASF114unh3,NO,NO,8/18/2020,Algonquin State Forest - Stand 1-14,"MW, MR",HH,MW,,Algonquin State Forest,Algonquin State Forest stand 1-14
+ASF114unh4,NO,NO,8/18/2020,Algonquin State Forest - Stand 1-14,"MW, MR",HH,MW,,Algonquin State Forest,Algonquin State Forest stand 1-14
+SSFYL2mat1,YES,NO,8/19/2020,"Sandisfield State Forest, York Lake, Stand 2","MW, MR",HH,MW,,Sandisfield State Forest,York Lake stand 2
+SSFYL2gap1,YES,YES,8/19/2020,"Sandisfield State Forest, York Lake, Stand 2","MW, MR",HH,MW,,Sandisfield State Forest,York Lake stand 2
+SSFYL2mat2,YES,NO,8/19/2020,"Sandisfield State Forest, York Lake, Stand 2","MW, MR",HH,MW,,Sandisfield State Forest,York Lake stand 2
+SSFYL2mat3,YES,NO,8/19/2020,"Sandisfield State Forest, York Lake, Stand 2","MW, MR",HH,MW,,Sandisfield State Forest,York Lake stand 2
+SSFYL2gap2,YES,YES,8/19/2020,"Sandisfield State Forest, York Lake, Stand 2","MW, MR",HH,MW,,Sandisfield State Forest,York Lake stand 2
+SSFYL2gap3,YES,YES,8/19/2020,"Sandisfield State Forest, York Lake, Stand 2","MW, MR",HH,MW,,Sandisfield State Forest,York Lake stand 2
+TSF49unh1,NO,NO,8/19/2020,"Tunxis SF, Stand 49","MW, MR",HH,MW,,Tunxis State Forest,Tunxis State Forest stand 49
+TSF49unh2,NO,NO,8/19/2020,"Tunxis SF, Stand 49","MW, MR",HH,MW,,Tunxis State Forest,Tunxis State Forest stand 49
+TSF49unh3,NO,NO,8/19/2020,"Tunxis SF, Stand 49","MW, MR",HH,MW,,Tunxis State Forest,Tunxis State Forest stand 49
+TSF49unh4,NO,NO,8/19/2020,"Tunxis SF, Stand 49","MW, MR",HH,MW,,Tunxis State Forest,Tunxis State Forest stand 49
+OMSFSH14gap1,YES,YES,8/19/2020,"October Mountain State Forest, Sherlock Lot - Cut 2014","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2014
+OMSFSH14mat1,YES,NO,8/19/2020,"October Mountain State Forest, Sherlock Lot - Cut 2014","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2014
+OMSFSH14gap2,YES,YES,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2014","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2014
+OMSFSH14mat2,YES,NO,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2014","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2014
+OMSFSH14mat3,YES,NO,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2014","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2014
+OMSFSH14gap3,YES,YES,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2014","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2014
+OMSFSH17gap1,YES,YES,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2017","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2017
+OMSFSH17mat1,YES,NO,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2017","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2017
+OMSFSH17gap2,YES,YES,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2017","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2017
+OMSFSH17mat2,YES,NO,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2017","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2017
+OMSFSH17gap3,YES,YES,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2017","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2017
+OMSFSH17mat3,YES,NO,8/20/2020,"October Mountain State Forest, Sherlock Lot - Cut 2017","MW, MR",HH,MW,,October Mountain State Forest,Sherlock Lot 2017
+JMP3unh2,NO,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,MW,,Jason Mills property,Jason Mills property stand 3
+JMP3unh3,NO,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,MW,,Jason Mills property,Jason Mills property stand 3
+JMP7mat4,YES,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,MW,,Jason Mills property,Jason Mills property stand 7
+JMP3unh4,NO,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,MW,,Jason Mills property,Jason Mills property stand 3
+KMSFunh1,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ",HH,MW,,Kearsarge Mountain State Forest,"Kearsarge Mountain State Forest comp 4, stand 26"
+KMSFunh2,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ","HH, TM",MW,,Kearsarge Mountain State Forest,"Kearsarge Mountain State Forest comp 4, stand 26"
+KMSFunh3,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ","HH, TM",MW,,Kearsarge Mountain State Forest,"Kearsarge Mountain State Forest comp 4, stand 26"
+KMSFunh4,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ","HH, TM",MW,,Kearsarge Mountain State Forest,"Kearsarge Mountain State Forest comp 4, stand 26"
+SSF1gap1,YES,YES,9/15/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
+SSF1gap2,YES,YES,9/15/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
+SSF1gap3,YES,YES,9/15/2020,Shaker State Forest,"MW, EJ, TM",HH,MW,,Shaker State Forest,Shaker State Forest
+SSF1mat1,NO,NO,9/16/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,"""*"" over the circled ""not""",Shaker State Forest,Shaker State Forest
+SSF1mat2,NO,NO,9/16/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
+SSF1mat3,NO,NO,9/16/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
+SSF1mat4,NO,NO,9/16/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
+CMSF11unh1,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 1, stand 1"
+CMSF11unh2,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 1, stand 1"
+CMSF11unh3,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 1, stand 1"
+CMSF11unh4,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 1, stand 1"
+CMSF62unh1,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 6, stand 2"
+CMSF62unh2,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 6, stand 2"
+CMSF62unh3,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 6, stand 2"
+CMSF62unh4,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 6, stand 2"

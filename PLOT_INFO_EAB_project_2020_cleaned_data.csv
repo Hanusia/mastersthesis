@@ -1,7 +1,7 @@
 ﻿plot_ID,harvest_status,gap_status,date,site_name,measured_by,tallied_by,entered_by,notes,Property,Stand_name
 HRgap1,NO,YES,6/3/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
 HRgap2,NO,YES,6/3/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
-HRgmat1,NO,NO,6/3/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
+HRmat1,NO,NO,6/3/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
 HRgap3,NO,YES,6/3/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
 HRunh1,NO,NO,6/4/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property
 HRunh2,NO,NO,6/4/2020,Hill Roberts ,"CS,BB,ED",HH,ED,,Hill Roberts property,Hill Roberts property

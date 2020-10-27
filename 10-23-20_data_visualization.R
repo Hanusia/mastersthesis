@@ -31,6 +31,7 @@ glimpse(overstory_plus)
 plot_names <- unique(overstory_plus$plot_ID)
 length(plot_names)
 head(plot_names)
+stand_info$num_plots[stand_info$Stand_code=="GSF396"]
 
 #then, setting up a dataframe to hold info about each plot 
 #w/ its basic stats, info abt ash removed, etc.

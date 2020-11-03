@@ -7,6 +7,8 @@ plot_info <- read.csv("PLOT_INFO_EAB_project_2020_cleaned_data.csv")
 overstory_data <- read.csv("TREES_EAB_project_2020_cleaned_data.csv")
 
 library(tibble)
+library(ggplot2)
+
 glimpse(overstory_data)
 glimpse(plot_info)
 glimpse(stand_info)
@@ -38,17 +40,26 @@ overstory_plus <- merge(x=overstory_data,y=plot_info,by="plot_ID")
 #IN THE BELOW MODEL, I'm gonna convert things to use METRIC, not imperial, units!
 
 overstory_plus$ASH_stump_DBH <- rep(NA)
+overstory_plus$BA_sqm <- rep(NA)
+
+#calculating BA for live trees & stumps using standard conversion from DBH to BA
+#overstory_plus$BA_sqft <- overstory_plus$DBH_cm*overstory_plus$DBH_cm*0.005454
+
+#BUT SINCE WE WANNA DO IT USING METRIC UNITS:
+#RIGHT NOW THIS IS ONLY DOING IT CORRECTLY FOR LIVE TREES, NOT USING THE CORRECT DATA FOR STUMPS!!
+overstory_plus$BA_sqm <- overstory_plus$DBH_cm*overstory_plus$DBH_cm*pi/40000
+
 #only calculating the stump DBH w/ these constants for ash
 for(i in nrow(overstory_plus)){
   if(overstory_plus$species[i]=="FRAM"){
   overstory_plus$ASH_stump_DBH[i] <- 
     (overstory_plus$DBH_cm[i]*((1.3716/overstory_plus$height_m[i])^-0.1074) +
     0.0685*(1.3716-overstory_plus$height_m[i]) + 0)
+  # and then converting that to BA, for ASH stumps only
+  overstory_plus$BA_sqm[i] <- 
+    overstory_plus$ASH_stump_DBH[i]*overstory_plus$ASH_stump_DBH[i]*pi/40000 
 }
 }
-#calculating BA for live trees & stumps using standard conversion from DBH to BA
-overstory_plus$BA_sqm <- overstory_plus$DBH_cm*overstory_plus$DBH_cm*0.005454
-
 
 glimpse(overstory_plus)
 
@@ -91,14 +102,12 @@ for (i in 1:nrow(overstory_plus)){ #iterating thru each tree/stump/snag in all p
     if(overstory_plus$status[i]=="live"){
       ash_cut$live_ash_sum[ash_cut$plot_ID==overstory_plus$plot_ID[i]] <- 
         ash_cut$live_ash_sum[ash_cut$plot_ID==overstory_plus$plot_ID[i]] +
-        overstory_plus$DBH_cm[i]
-      #FOR NOW, treating cut stump diam as DBH - can correct later by
-      #adding a column to overstory_plus that calculates BA or similar
-      #w/ a formula for diam x height & using that # instead of stump "DBH"
+        overstory_plus$BA_sqm[i]
+      #using BA calculated from DBH calculated w/ the formula I used above!
     } else if(overstory_plus$status[i]=="stump") {
       ash_cut$cut_ash_sum[ash_cut$plot_ID==overstory_plus$plot_ID[i]] <- 
         ash_cut$cut_ash_sum[ash_cut$plot_ID==overstory_plus$plot_ID[i]] +
-        overstory_plus$DBH_cm[i]
+        overstory_plus$BA_sqm[i]
     }
   }
   
@@ -107,3 +116,32 @@ for (i in 1:nrow(overstory_plus)){ #iterating thru each tree/stump/snag in all p
 #checking to see if it worked!!
 glimpse(ash_cut)
 glimpse(ash_cut[ash_cut$harvest_status=="YES",])
+#I think it worked!!
+
+#now to create some basic boxplots comparing standing and cut ash BA
+# in harvested and non-harvested sites
+
+#quickly getting max and min values for cut ash BA
+max(ash_cut$cut_ash_sum)
+min(ash_cut$cut_ash_sum)
+
+#this one maps BA (in sq m) of standing ash against harvest status 
+#across all plots
+boxplot(formula=live_ash_sum~harvest_status, data=ash_cut)
+
+#ditto this one, except comparing only "matrix" plots against unharvested
+boxplot(formula=live_ash_sum~harvest_status, 
+        data=ash_cut[ash_cut$gap_status=="NO",])
+
+#now just looking @ the spread of CUT ash in harvested sites
+boxplot(formula=cut_ash_sum~gap_status,
+        data=ash_cut[ash_cut$harvest_status=="YES",])
+
+live_ash_BA_all <- aov(formula=live_ash_sum~harvest_status, data=ash_cut)
+print(live_ash_BA_all)
+print(summary(live_ash_BA_all))
+
+live_ash_BA_mat <- aov(formula=live_ash_sum~harvest_status, 
+                       data=ash_cut[ash_cut$gap_status=="NO",])
+print(live_ash_BA_mat)
+print(summary(live_ash_BA_mat))

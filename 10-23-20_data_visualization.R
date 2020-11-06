@@ -23,6 +23,8 @@ names(plot_info)[1] <- "plot_ID"
 names(stand_info)[1]<- "Property"
 # names(stand_info) #works out!
 
+##############################################
+
 #merging the overstory df w/ the plot_info df on the basis of the plot_ID column
 overstory_plus <- merge(x=overstory_data,y=plot_info,by="plot_ID")
 
@@ -145,3 +147,118 @@ live_ash_BA_mat <- aov(formula=live_ash_sum~harvest_status,
                        data=ash_cut[ash_cut$gap_status=="NO",])
 print(live_ash_BA_mat)
 print(summary(live_ash_BA_mat))
+
+# Matrix of overstory parameters for stump to BA -------------------------------
+#numbers/parameters from Westfall 2010
+
+stump_to_DBH <- data.frame(
+                "species" = unique(overstory_plus$species),
+                "sp_group" = rep(NA),
+                "B0" = rep(NA),
+                "B1" = rep(NA),
+                "estimates" = rep(FALSE)
+)
+stump_to_DBH$species
+
+#assigning the values for each species
+stump_to_DBH[stump_to_DBH$species=="ACSA",2] <- 7
+stump_to_DBH[stump_to_DBH$species=="FRAM",2] <- 9
+stump_to_DBH[stump_to_DBH$species=="OSVI",2] <- 11
+stump_to_DBH[stump_to_DBH$species=="UNK",2] <- 0
+stump_to_DBH[stump_to_DBH$species=="QURU",2] <- 14
+stump_to_DBH[stump_to_DBH$species=="CAOV",2] <- 16
+stump_to_DBH[stump_to_DBH$species=="FAGR",2] <- 12
+stump_to_DBH[stump_to_DBH$species=="BEAL",2] <- 11
+stump_to_DBH[stump_to_DBH$species=="ACRU",2] <- 18
+stump_to_DBH[stump_to_DBH$species=="BENI",2] <- 11
+stump_to_DBH[stump_to_DBH$species=="PRSE",2] <- 10
+stump_to_DBH[stump_to_DBH$species=="TSCA",2] <- 4
+stump_to_DBH[stump_to_DBH$species=="ACPE",2] <- 18
+stump_to_DBH[stump_to_DBH$species=="TIAM",2] <- 13
+stump_to_DBH[stump_to_DBH$species=="FRNI",2] <- 9
+stump_to_DBH[stump_to_DBH$species=="BEPA",2] <- 11
+stump_to_DBH[stump_to_DBH$species=="PRPE",2] <- 10
+stump_to_DBH[stump_to_DBH$species=="POGR",2] <- 9
+stump_to_DBH[stump_to_DBH$species=="ROPS",2] <- 17
+stump_to_DBH[stump_to_DBH$species=="PODE",2] <- 9
+stump_to_DBH[stump_to_DBH$species=="ACSP",2] <- 18
+stump_to_DBH[stump_to_DBH$species=="ABBA",2] <- 3
+stump_to_DBH[stump_to_DBH$species=="PIRU",2] <- 2
+stump_to_DBH[stump_to_DBH$species=="POTR",2] <- 9
+stump_to_DBH[stump_to_DBH$species=="PIST",2] <- 1
+stump_to_DBH[stump_to_DBH$species=="BESP",2] <- 11
+stump_to_DBH[stump_to_DBH$species=="BEPO",2] <- 11
+stump_to_DBH[stump_to_DBH$species=="ULAM",2] <- 17
+stump_to_DBH[stump_to_DBH$species=="CACO",2] <- 16
+stump_to_DBH[stump_to_DBH$species=="HAVI",2] <- 0
+stump_to_DBH[stump_to_DBH$species=="POSP",2] <- 9
+stump_to_DBH[stump_to_DBH$species=="PISP",2] <- 2
+stump_to_DBH[stump_to_DBH$species=="ACER",2] <- 18
+stump_to_DBH[stump_to_DBH$species=="THOC",2] <- 6
+stump_to_DBH[stump_to_DBH$species=="CACA",2] <- 16
+stump_to_DBH[stump_to_DBH$species=="ULSP",2] <- 17
+stump_to_DBH[stump_to_DBH$species=="BELE",2] <- 11
+stump_to_DBH[stump_to_DBH$species=="ACSP2",2] <- 18
+stump_to_DBH[stump_to_DBH$species=="ULRU",2] <- 17
+
+unique(stump_to_DBH$sp_group)
+stump_to_DBH
+
+
+###THIS ISN'T WORKING...I WILL NEED TO DEBUG IT LATER!!!!!!!!!!
+for(i in nrow(stump_to_DBH)){
+  if(is.na(stump_to_DBH$sp_group[i])==FALSE){
+  if(stump_to_DBH$sp_group[i]==7){
+    stump_to_DBH$B0[i] <- -0.1323
+    stump_to_DBH$B1[i] <- .2442
+  } else if(stump_to_DBH$sp_group[i]==9){
+    stump_to_DBH$B0[i] <- -0.1074
+    stump_to_DBH$B1[i] <- .0685
+  } else if(stump_to_DBH$sp_group[i]==11){
+    stump_to_DBH$B0[i] <- -.1743
+      stump_to_DBH$B1[i] <- .1376
+  }else if(stump_to_DBH$sp_group[i]==14){
+    stump_to_DBH$B0[i] <- -0.1651
+      stump_to_DBH$B1[i] <- median(stump_to_DBH$B1)
+      stump_to_DBH$estimates[i] <- TRUE
+  }else if(stump_to_DBH$sp_group[i]==16){
+    stump_to_DBH$B0[i] <- -.1578
+      stump_to_DBH$B1[i] <- .0615
+  }else if(stump_to_DBH$sp_group[i]==12){
+    stump_to_DBH$B0[i] <- -.1171
+      stump_to_DBH$B1[i] <- .0714
+  }else if(stump_to_DBH$sp_group[i]==18){
+    stump_to_DBH$B0[i] <- -.1382
+      stump_to_DBH$B1[i] <- .1010
+  }else if(stump_to_DBH$sp_group[i]==10){
+    stump_to_DBH$B0[i] <- -.0720
+      stump_to_DBH$B1[i] <- median(stump_to_DBH$B1) 
+      stump_to_DBH$estimates[i] <- TRUE
+  }else if(stump_to_DBH$sp_group[i]==4){
+    stump_to_DBH$B0[i] <- -.1162
+      stump_to_DBH$B1[i] <- .0686
+  }else if(stump_to_DBH$sp_group[i]==13){
+    stump_to_DBH$B0[i] <- -.1193
+      stump_to_DBH$B1[i] <- .1009
+  }else if(stump_to_DBH$sp_group[i]==17){
+    stump_to_DBH$B0[i] <- -.1662
+      stump_to_DBH$B1[i] <- .1258
+  }else if(stump_to_DBH$sp_group[i]==3){
+    stump_to_DBH$B0[i] <- -.1353
+      stump_to_DBH$B1[i] <- .1451
+  }else if(stump_to_DBH$sp_group[i]==2){
+    stump_to_DBH$B0[i] <- -.1334
+      stump_to_DBH$B1[i] <- .0740
+  }else if(stump_to_DBH$sp_group[i]==1){
+    stump_to_DBH$B0[i] <- -.1096
+      stump_to_DBH$B1[i] <- .0588
+  }else if(stump_to_DBH$sp_group[i]==6){
+    stump_to_DBH$B0[i] <- -.1631
+      stump_to_DBH$B1[i] <- .1517
+  }else if(stump_to_DBH$sp_group[i]==0){
+    stump_to_DBH$B0[i] <- median(stump_to_DBH$B0)
+      stump_to_DBH$B1[i] <- median(stump_to_DBH$B1)
+  }
+  }
+}
+stump_to_DBH$sp_group[1]==7

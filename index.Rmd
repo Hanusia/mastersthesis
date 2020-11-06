@@ -1,0 +1,12 @@
+---
+title: "Hello, world (grad school edition)"
+author: "Hanusia Higgins"
+date: "11/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### [PRELIM figures for grad symposium](https://hanusia.github.io/mastersthesis/11-06-20_prelim_symposium_figs.html)

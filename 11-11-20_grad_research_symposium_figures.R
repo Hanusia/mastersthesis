@@ -252,6 +252,16 @@ print(p4)
 #this one w/ all seedling species together DOESN'T really work b/c ACSA has so many
 #more than any other species!
 
+#adding a FORMULA/FUNCTION for linear regression!( thanks Google!)
+
+lm_eqn <- function(speci){
+  m <- lm(seedlings_per_sqm ~ prop_ash_BA_cut, 
+          data=sdlg_stand_most[sdlg_stand_most$species==speci & sdlg_stand_most$harvest_status==TRUE,]);
+  eq <- substitute(italic(r)^2~"="~r2, 
+                   list(r2 = format(summary(m)$r.squared, digits = 3)))
+  as.character(as.expression(eq));
+}
+
 #so instead, let's do it separately by species....
 #and for these scatterplots, look ONLY @ harvested sites (can incorporate unharv ones in a boxplot instead)
 p5 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="FRAM" & 
@@ -259,14 +269,17 @@ p5 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="FRAM" &
              aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
       geom_point() + theme_classic() +
   labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
-        y= "Number of white ash \n seedlings per square meter")
+        y= "Number of white ash \n seedlings per square meter") +
+  geom_smooth (method=lm) +
+  geom_text(x=.5, y=2, label=lm_eqn("FRAM"), parse=TRUE)
+  
 print(p5)
 
 #out of curiosity, let's look at everything BUT sugar maple...
-p6 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species!="ACSA",], 
-             aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
-  geom_point(aes(col=species))
-print(p6)
+#p6 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species!="ACSA",], 
+#             aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
+#  geom_point(aes(col=species))
+#print(p6)
 
 #OK, now onto the other species!
 p7 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="ACSA" & 
@@ -274,7 +287,9 @@ p7 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="ACSA" &
              aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
   geom_point() + theme_classic() + 
   labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
-        y= "Number of sugar maple \n seedlings per square meter")
+        y= "Number of sugar maple \n seedlings per square meter")+
+  geom_smooth (method=lm)+
+  geom_text(x=.5, y=25, label=lm_eqn("ACSA"), parse=TRUE)
 print(p7)
 
 p8 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="ACRU" & 
@@ -282,7 +297,9 @@ p8 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="ACRU" &
              aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
   geom_point() + theme_classic() + 
   labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
-        y= "Number of red maple \n seedlings per square meter")
+        y= "Number of red maple \n seedlings per square meter")+
+  geom_smooth (method=lm)+
+  geom_text(x=.5, y=2, label=lm_eqn("ACRU"), parse=TRUE)
 print(p8)
 
 p9 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="BEAL" & 
@@ -290,7 +307,9 @@ p9 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="BEAL" &
              aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
   geom_point() + theme_classic() + 
   labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
-        y= "Number of yellow birch \n seedlings per square meter")
+        y= "Number of yellow birch \n seedlings per square meter")+
+  geom_smooth (method=lm)+
+  geom_text(x=.5, y=.5, label=lm_eqn("BEAL"), parse=TRUE)
 print(p9)
 
 p10 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="FAGR" & 
@@ -298,7 +317,9 @@ p10 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="FAGR" &
              aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
   geom_point() + theme_classic() + 
   labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
-        y= "Number of American beech \n seedlings per square meter")
+        y= "Number of American beech \n seedlings per square meter")+
+  geom_smooth (method=lm)+
+  geom_text(x=.5, y=.5, label=lm_eqn("FAGR"), parse=TRUE)
 print(p10)
 
 p11 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="PRSE" & 
@@ -306,12 +327,36 @@ p11 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$species=="PRSE" &
              aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
   geom_point() + theme_classic() + 
   labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
-        y= "Number of black cherry \n seedlings per square meter")
+        y= "Number of black cherry \n seedlings per square meter")+
+  geom_smooth (method=lm) +
+  geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
 print(p11)
 
 #patchwork it all together!!
 (p5 | p7 | p8) / (p9 | p10 | p11)
-#NEED TO FIX THE LABELS
+
+## LET'S TRY A DIF VERSION OF THIS USING FACET_WRAP
+
+#this looks good!! just wanna change the label names to common names.
+new_labels <- c(ACRU = "red maple, R^2=0.0917", 
+                ACSA = "sugar maple, R^2=0.273", 
+                BEAL = "yellow birch, R^2=0.00492",
+                FAGR = "American beech, R^2=0.126", 
+                FRAM = "white ash, R^2=0.0158", 
+                PRSE = "black cherry, R^2=0.0144")
+
+p12 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$harvest_status==TRUE,], 
+              aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
+  geom_point() + theme_classic() + 
+  labs (x="Proportion of ash basal area (sq. m) harvested per stand",
+        y= "Number of seedlings \n per square meter")+
+  geom_smooth (method=lm) +
+  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y", 
+             labeller=labeller(species=new_labels))
+print(p12)
+
+
 
 ### DENSITY PLOTS ###
 
@@ -332,3 +377,6 @@ print(p100)
 #glimpse(stand_info)
 #I'm going back up into the code to build this into the dataframe!
 #UPDATE: I did it. :/
+
+#okay, before I COMPLETELY go to bed...let's look at boxplots?!
+#JK- I'm actually going to bed now! It's 4 a.m.!!!

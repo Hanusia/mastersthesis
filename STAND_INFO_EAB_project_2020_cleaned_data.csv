@@ -23,7 +23,7 @@ Groton State Forest,Groton State Forest stand 3-9-6,GSF396,Groton,Caledonia,VT,V
 Holbrook State Park,Holbrook State Park stand 1-1-8,HSP118,Sheffield,Caledonia,VT,VT FPR,public_state,not cut,7/16/2020,4
 Mathewson State Forest,Mathewson State Forest stand 3-1-11,MSF3111,Wheelock,Caledonia,VT,VT FPR,public_state,not cut,7/16/2020,4
 Long Pond property,Long Pond harvested,TNCLP,Greensboro,Orleans,VT,The Nature Conservancy,private,cut,7/28/2020,6
-Long Pond property,Long Pond unharvested,TNCLP,Greensboro,Orleans,VT,The Nature Conservancy,private,not cut,7/29/2020,4
+Long Pond property,Long Pond unharvested,TNCLPunh,Greensboro,Orleans,VT,The Nature Conservancy,private,not cut,7/29/2020,4
 Stoner Woodlot,Stoner Woodlot,SW,Greensboro,Orleans,VT,Stoner family,private,not cut,7/29/2020,4
 October Mountain State Forest,Heaphy Richardson Lot,OMSFHR,Becket,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,8/10/2020,6
 October Mountain State Forest,"Schoolhouse Lot, BB stand",OMSFSCH,Washington,Berkshire,MA,Massachusetts Department of Conservation & Recreation,public_state,cut,8/11/2020,6

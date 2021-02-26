@@ -1,0 +1,47 @@
+Download county soil data
+	http://websoilsurvey.sc.egov.usda.gov/App/WebSoilSurvey.aspx
+	Download Soils Data tab
+	Download databases by county
+
+Import all county databases into state Access template (e.g., soildb_WI_2003.mdb) using the Import macro.
+
+Import queries 01-20 from SSURGO_mu_summary.accdb using the 'Import Access database' tool on the EXTERNAL DATA tab (Access 2013)
+
+
+All fields added below should have Data Type = Number and Field Size = Double, unless otherwise indicated in [].
+Fields can be added by opening a table in Design View and manually entered or copied and pasted from another table.
+
+1.  [Query] Make_horizon_texture_summary
+1a.  Add fields:  depth, sumdepth, weight, ksat_weight, sand_weight, silt_weight, clay_weight, fieldcap_weight,maxdepth
+2. [Query] Make_horizon_depth_temp
+2a. [Query] Make_horizon_depth_summary
+2b.  Add fields:  hzdept_trunc, hzdepb_trunc, depth
+3.  [Query] Update_hzdep1
+4.  [Query] Update_hzdep2
+5.  [Query] Update_hzdep3
+6.  [Query] Update_hzdep4
+6a. [Query] Update_depth_summary
+6b. [Query] Update_depth
+7.  [Query] Make_horizon_maxdepth
+7a. [Query] Make_horizon_sumdepth
+8.  [Query] Update_sumdepth
+9.  [Query] Update_weight
+10.  [Query] Update_weight2
+10a. [Query] Update_maxdepth
+11.  [Query]  Make_comp_text_summary
+11a.  Add fields:  texture[Text],texdesc[Text],texcl[Text], sum_comppct, weight, ksat_weight, sand_weight, silt_weight, clay_weight, fieldcap_weight, maxdepth_weight
+12.  [Query] Make_comp_maxweight
+13.  [Query] Update_texture
+14.  [Query] Make_mu_sumpct
+15.  [Query] Update_sum_comppct
+16.  [Query] Update_compweight
+17.  [Query] Update_compweight2
+18.  [Query] Make_mu_summary
+18a.  Add fields:  texture[Text], texdesc[Text], texcl[Text]
+19.  [Query] Make_mu_maxweight
+20.  [Query] Update_mu_text
+
+[mu_summary] table can be joined to the spatial layer soilmu_a_###.shp by MUKEY
+
+Export the joined table as .csv for use with the script ecoregions_from_ssurgo.R.
+

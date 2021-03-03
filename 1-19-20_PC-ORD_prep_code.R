@@ -119,37 +119,9 @@ for (i in 1:nrow(overstory_plus)){ #iterating thru each tree/stump/snag in all p
 }
 
 #checking to see if it worked!!
-glimpse(ash_cut)
-glimpse(ash_cut[ash_cut$harvest_status=="YES",])
+#glimpse(ash_cut)
+#glimpse(ash_cut[ash_cut$harvest_status=="YES",])
 #I think it worked!!
-
-#now to create some basic boxplots comparing standing and cut ash BA
-# in harvested and non-harvested sites
-
-#quickly getting max and min values for cut ash BA
-max(ash_cut$cut_ash_sum)
-min(ash_cut$cut_ash_sum)
-
-#this one maps BA (in sq m) of standing ash against harvest status 
-#across all plots
-boxplot(formula=live_ash_sum~harvest_status, data=ash_cut)
-
-#ditto this one, except comparing only "matrix" plots against unharvested
-boxplot(formula=live_ash_sum~harvest_status, 
-        data=ash_cut[ash_cut$gap_status=="NO",])
-
-#now just looking @ the spread of CUT ash in harvested sites
-boxplot(formula=cut_ash_sum~gap_status,
-        data=ash_cut[ash_cut$harvest_status=="YES",])
-
-live_ash_BA_all <- aov(formula=live_ash_sum~harvest_status, data=ash_cut)
-print(live_ash_BA_all)
-print(summary(live_ash_BA_all))
-
-live_ash_BA_mat <- aov(formula=live_ash_sum~harvest_status, 
-                       data=ash_cut[ash_cut$gap_status=="NO",])
-print(live_ash_BA_mat)
-print(summary(live_ash_BA_mat))
 
 # Matrix of overstory parameters for stump to BA -------------------------------
 #numbers/parameters from Westfall 2010
@@ -355,6 +327,11 @@ for (i in 2:(ncol(BA_ha_df)-1)){
 #NOW I'm removing the num_plots col (the last one) since I no longer need it:
 BA_ha_df <- BA_ha_df[,1:41]
 
+##############################################
+
+# THE BELOW SECTION WAS TESTING THAT I DON'T NEED TO RUN AGAIN IN FUTURE 
+# BUT DON'T WANT TO DELETE, FOR POSTERITY'S SAKE -------------------------------
+
 #testing something...to make sure all species were taken care of
 #first for elm: which sites did it have BA>0?
 BA_ha_df[BA_ha_df$ULAM>0,BA_ha_df$ULAM] #ans: a few, OK
@@ -375,16 +352,52 @@ sum(overstory_plus2$status=="live")
 overstory_plus2[overstory_plus2$species=="BELE",]
 overstory_plus2$BA_sqm[1071] #it's in there all right...
 
-BA_sp_df[BA_sp_df$standcode=="OSFCD1","BELE"] #THERE WAS NEVER AN ISSUE IT JUST SHOWED UP AS 0 ELSEWHERE!!!
-BA_ha_df[BA_ha_df$standcode=="OSFCD1","BELE"]
+
+# BA_sp_df[BA_sp_df$standcode=="OSFCD1","BELE"] #THERE WAS NEVER AN ISSUE IT JUST SHOWED UP AS 0 ELSEWHERE!!!
+# BA_ha_df[BA_ha_df$standcode=="OSFCD1","BELE"]
 #let's replicate this with BENI just to make sure...
-sum(overstory_plus2$species=="BENI")
-overstory_plus2[overstory_plus2$species=="BENI",c("status", "BA_sqm", "Stand_code")] #checking in which stands BENI live exists
-sum(overstory_plus2$BA_sqm[overstory_plus2$species=="BENI" & overstory_plus2$Stand_code=="BRSP"]) #this num should be same as...
-BA_sp_df[BA_sp_df$standcode=="BRSP","BENI"] #YASSSSS
-BA_ha_df[BA_ha_df$standcode=="BRSP","BENI"] # & now to make sure it converted correctly to sqm/ha...
-sum(BA_ha_df$BENI)
-sum(BA_ha_df$CACO)
-sum(BA_ha_df$THOC)
+# sum(overstory_plus2$species=="BENI")
+# overstory_plus2[overstory_plus2$species=="BENI",c("status", "BA_sqm", "Stand_code")] #checking in which stands BENI live exists
+# sum(overstory_plus2$BA_sqm[overstory_plus2$species=="BENI" & overstory_plus2$Stand_code=="BRSP"]) #this num should be same as...
+# BA_sp_df[BA_sp_df$standcode=="BRSP","BENI"] #YASSSSS
+# BA_ha_df[BA_ha_df$standcode=="BRSP","BENI"] # & now to make sure it converted correctly to sqm/ha...
+# sum(BA_ha_df$BENI)
+# sum(BA_ha_df$CACO)
+# sum(BA_ha_df$THOC)
+
+##############################################
 
 #per Tony's advice- I should also do a separate primary matrix for REGENERATION (ask: Just seedlings??)
+
+# --------------------------------------------------
+# Creating explanatory (secondary) matrix for NMS analysis in PC-ORD
+# 02 Feb 2021
+# HH
+# --------------------------------------------------
+#
+
+#Per Jeri's book: Explanatory matrix not needed to run NMS (i.e. the initial free ordination), BUT needed to INTERPRET it!
+#Important- explanatory variables evaluted independently, so just throw anything on there to try it out if it might be explanatory
+#Structure- rows are the same as main matrix (e.g. sample units- in my case, "Sites")
+
+#Step 1. Establish the matrix w/ rows as sites, same as primary (response) matrix.
+#Step 2. Start adding variables as columns. (Can always add more on later.) For now:
+# Harvest status (categorical [C])
+#Ash harvest intensity (Quantitative [Q]) -measured by BA/ha of ash removed per site, I think?
+#remember to exclude stumps of higher decay classes- likely just fell, not harvested!
+# Presence/absence of EAB?? (C) AND/OR # of EAB markers present as a tally of the info we collected (Q)
+# Total harvest intensity (Q)- maybe also separated out by each species?? (Ask Tony)
+# Harvest type- based on that summary spreadsheet I sent Tony (C)- Is this a good idea??
+# Climate variables? Latitude? Altitude? Soil type??
+# Forest type- n. hardwood vs rich n. hardwood vs oaky hardwood? (C) How to delineate those?
+
+#VARIABLES TONY SUGGESTED:
+#% ash removal, total % ash in stand, state, year harvested, type of tx, beech component as proxy for forest type, % BA removed overall
+
+explan_mat <- data.frame("stand_code" = stand_info$standcode,
+                         "harvest_status" = stand_info$Harvest_status, #categorical variable
+                         "state" = stand_info$State,#categorical variable
+                         "year_harvested" = rep(0), #numeric variable- what to do w/ unharvested stands??
+                         "treat_type" = rep(NULL), #categorical variable- treatment type (based on that table I sent Tony)
+                         "perc_ash_total" #quantitative variable- % ash of all species, all BA (both standing and harvested)
+                          )

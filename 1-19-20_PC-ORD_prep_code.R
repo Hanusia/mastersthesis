@@ -334,23 +334,23 @@ BA_ha_df <- BA_ha_df[,1:41]
 
 #testing something...to make sure all species were taken care of
 #first for elm: which sites did it have BA>0?
-BA_ha_df[BA_ha_df$ULAM>0,BA_ha_df$ULAM] #ans: a few, OK
+#BA_ha_df[BA_ha_df$ULAM>0,BA_ha_df$ULAM] #ans: a few, OK
 #next for bitternut hickory: asking which sites did it have BA>0?
-BA_ha_df[BA_ha_df$CACO>0,BA_ha_df$CACO] #NONE...WHY????
-BA_ha_df[BA_ha_df$CAOV>0,BA_ha_df$CAOV] #NONE...WHY????
-BA_sp_df[BA_sp_df$CAOV>0,BA_sp_df$CAOV] #NONE...WHY????
-glimpse(overstory_plus2)
-overstory_plus2[overstory_plus_2[overstory_plus2$species=="CACO",],overstory_plus2$DBH_cm]
-sum(overstory_plus2$species=="BELE")
-overstory_plus2$DBH_cm[overstory_plus2$species=="CACO"] # so the DBH DOES exist in overstory_plus2...
-overstory_plus2$status[overstory_plus2$species=="CACO"] #and it IS  alive...now let's check for a sp I actually care about
-overstory_plus2$DBH_cm[overstory_plus2$species=="BELE"] #ditto, we still have DBH
-overstory_plus2$BA_sqm[overstory_plus2$species=="BELE"] #and it still has BA
-overstory_plus2$status[overstory_plus2$species=="BELE"] #and it's considered live......
-sum(overstory_plus2$status=="live")
+#BA_ha_df[BA_ha_df$CACO>0,BA_ha_df$CACO] #NONE...WHY????
+#BA_ha_df[BA_ha_df$CAOV>0,BA_ha_df$CAOV] #NONE...WHY????
+#BA_sp_df[BA_sp_df$CAOV>0,BA_sp_df$CAOV] #NONE...WHY????
+#glimpse(overstory_plus2)
+#overstory_plus2[overstory_plus_2[overstory_plus2$species=="CACO",],overstory_plus2$DBH_cm]
+#sum(overstory_plus2$species=="BELE")
+#overstory_plus2$DBH_cm[overstory_plus2$species=="CACO"] # so the DBH DOES exist in overstory_plus2...
+#overstory_plus2$status[overstory_plus2$species=="CACO"] #and it IS  alive...now let's check for a sp I actually care about
+#overstory_plus2$DBH_cm[overstory_plus2$species=="BELE"] #ditto, we still have DBH
+#overstory_plus2$BA_sqm[overstory_plus2$species=="BELE"] #and it still has BA
+#overstory_plus2$status[overstory_plus2$species=="BELE"] #and it's considered live......
+#sum(overstory_plus2$status=="live")
 
-overstory_plus2[overstory_plus2$species=="BELE",]
-overstory_plus2$BA_sqm[1071] #it's in there all right...
+#overstory_plus2[overstory_plus2$species=="BELE",]
+#overstory_plus2$BA_sqm[1071] #it's in there all right...
 
 
 # BA_sp_df[BA_sp_df$standcode=="OSFCD1","BELE"] #THERE WAS NEVER AN ISSUE IT JUST SHOWED UP AS 0 ELSEWHERE!!!
@@ -393,11 +393,64 @@ overstory_plus2$BA_sqm[1071] #it's in there all right...
 
 #VARIABLES TONY SUGGESTED:
 #% ash removal, total % ash in stand, state, year harvested, type of tx, beech component as proxy for forest type, % BA removed overall
+#SEE SETUP OF DATAFRAME BELOW FOR VARIABLE NAMES:
 
-explan_mat <- data.frame("stand_code" = stand_info$standcode,
+#PREPARATION FOR percentage variables: create an analogue to BA_sp_df that represents CUT trees
+
+#basically creating this the same way I did BA_sp_df
+BA_sp_cut <- as.data.frame(BA_sp)
+BA_sp_cut <- cbind(standcode, BA_sp_cut)
+
+#similarly using the same for loop to find & match species, but instead of live trees
+#I'm adding BA for stumps of decay class 1 or 2
+
+for(i in 1:nrow(overstory_plus2)){
+  #if(overstory_plus2$species[i]!=""){
+  #find the right row (Based on stand code)
+  j=which(BA_sp_cut$standcode==overstory_plus2$Stand_code[i])[1]
+  if(overstory_plus2$status[i]=="stump"){
+    if(is.na(overstory_plus2$decay_class[i])==FALSE&(overstory_plus2$decay_class[i]<3)){ #includes only stumps w/ DC 1 or 2
+    k=spec_df$num[as.character(spec_df$sp)==as.character(overstory_plus2$species[i])]+1
+    BA_sp_cut[j,k] %+=% overstory_plus2$BA_sqm[i]
+    }
+  }
+  #  }    
+}
+#loooooks like it worked!!
+
+#prop of ash cut/(ash cut + ash standing) B/C FRAM IS COL 3 IN BOTH DFs
+#explan_mat$perc_ash_removed <- BA_sp_cut[,3] / (BA_sp_df[,3]+BA_sp_cut[,3]) 
+
+#testing the above...
+BA_sp_cut[2,3] / (BA_sp_df[2,3]+BA_sp_cut[2,3])
+
+#now doing a similar-ish thing for perc_ash_total
+explan_mat$perc_ash_total <- (BA_sp_df[,3]+BA_sp_cut[,3]) / sum((BA_sp_df[,2:41]+BA_sp_cut[,2:41])) 
+
+#testing the above (w/ row 2- MP19 I think): 
+#(BA_sp_df[2,3]+BA_sp_cut[2,3]) / sum((BA_sp_df[2,2:41]+BA_sp_cut[2,2:41])) 
+(BA_sp_df[,3]+BA_sp_cut[,3]) / sum(is.na((BA_sp_df[,2:41])==FALSE+is.na(BA_sp_cut[,2:41]))==FALSE) 
+
+#actually setting up the dataframe:
+
+explan_mat <- data.frame("stand_code" = stand_info$Stand_code,
                          "harvest_status" = stand_info$Harvest_status, #categorical variable
                          "state" = stand_info$State,#categorical variable
-                         "year_harvested" = rep(0), #numeric variable- what to do w/ unharvested stands??
-                         "treat_type" = rep(NULL), #categorical variable- treatment type (based on that table I sent Tony)
-                         "perc_ash_total" #quantitative variable- % ash of all species, all BA (both standing and harvested)
-                          )
+                         "year_harvested" = rep(x=0, times=45), #quantitative variable- what to do w/ unharvested stands??
+                         "treat_type" = rep("TBD", times=45), #categorical variable- treatment type (based on that table I sent Tony)
+                         #"forest_type" = rep(NULL),% BA beech as proxy for NH / rich NH forest type
+                         "perc_ash_total" = rep(x=0, times=45), #quantitative variable- % ash of all species, all BA (both standing and harvested)
+                         "perc_ash_removed" = rep(x=0, times=45), #quantitative variable- BA ash removed / BA ash in stand
+                         "perc_BA_removed" = rep(x=0, times=45) #quantitative variable- BA cut / total BA (live + cut)
+)
+
+
+sum((BA_sp_df[,2:41]+BA_sp_cut[,2:41]))
+(BA_sp_df[2,3]+BA_sp_cut[2,3]) / sum((is.na((BA_sp_df[2,2:41])==FALSE)+(is.na(BA_sp_cut[2,2:41]))==FALSE)) 
+(BA_sp_df[2,3]+BA_sp_cut[2,3]) / sum(((BA_sp_df[2,2:41])+(BA_sp_cut[2,2:41]))) 
+sum((BA_sp_df[2,2:41])+(BA_sp_cut[2,2:41]))
+sum((is.na(BA_sp_df[2,2:41])==FALSE)+(is.na(BA_sp_cut[2,2:41])==FALSE))
+#^the above line of code is just COUNTING UP THE FALSES....NOT OK!!
+
+sum((BA_sp_df[,2:41]+BA_sp_cut[,2:41])) 
+

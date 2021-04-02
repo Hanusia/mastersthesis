@@ -384,6 +384,9 @@ print(p100)
 #okay, before I COMPLETELY go to bed...let's look at boxplots?!
 #JK- I'm actually going to bed now! It's 4 a.m.!!!
 
+
+##############################################
+
 # NEW STUFF STARTED IN MARCH 2021 -------------------------------
 
 #first up: disaggregate data on basal area of cut ash per plot 
@@ -391,12 +394,368 @@ print(p100)
 #basically modifying plot 1 (the purple one) to have one measure for gap plots 
 #and another for matrix (harvested) plots
 p20 <- ggplot(ash_cut[ash_cut$harvest_status=="YES",], 
-       aes(x=BA_sqm_per_ha_cut, alpha=0.6)) + #alpha=opacity
-  geom_density(aes(fill=gap_status)) + #separating density measures by gap status
+       aes(x=BA_sqm_per_ha_cut)) + #alpha=opacity
+  geom_density(aes(fill=gap_status), alpha=0.6) + #separating density measures by gap status
   theme_classic() + 
-  labs(x="Basal area of cut ash trees (sq. m/ha)", y="density")
+  labs(x="Basal area of cut ash trees (sq. m/ha)", y="density") +
+  scale_fill_discrete(name="Plot type", labels=c("matrix", "gap"))
 print(p20)
 
 #Should I t-test the total/density of ash BA cut (sq m./ha) for gap vs. matrix?
 #To add some kind of significance to this graph (aka p20)?
 #maybe try to make the other plot first, and then revisit this......
+
+p21 <- ggplot(ash_cut[ash_cut$harvest_status=="YES",], 
+             aes(x=prop_BA_cut)) +
+  geom_density(aes(fill=gap_status), alpha=0.6) +
+  theme_classic() + 
+  labs(x="Proportion of ash basal area (sq. m) harvested", y="density")
+print(p21)
+#this one looks pretty funky, so I think I'm NOT going to use it.
+#I will just use regular p3 instead.
+
+
+##############################################
+
+#okey doke. Going to plot # of small saplings 
+#(all species, &/or "main" 6 overstory sp? For now, I think the latter- same 6 sp as in p12) against BA ash cut.
+glimpse(small_sapling_data)
+#since they are separated by >1ft & >4.5ft (but all <1in DBH), I'm just gonna group those tallies together for now.
+#Should be relatively easier to separate them later on if I want to.
+#model this after p5
+seedlings_vec
+
+#OK FIRST I need to create a new dataframe like sdling_stand_most. 
+#This will be used link stand-level data to individual plot data for small saplings!
+
+#finding out which seedlings showed up in the MOST plots:
+how_many_smallsap = data.frame("species"=unique(small_sapling_data$species), 
+                                "num_plots_present"=rep(0))
+for(i in 1:nrow(how_many_smallsap)){
+  how_many_smallsap$num_plots_present[i] <-
+    sum(small_sapling_data$species==how_many_smallsap$species[i])
+}
+#now see which are present in the most plots
+how_many_smallsap[order(how_many_smallsap$num_plots_present),]
+#RESULT: same top 6 species (excluding understory sp and things like RUBUS)- makes my life easier!!
+
+#copied from above: some_small_seedlings df to collect counts of each of 6 focal sp per plot
+some_small_saplings <- data.frame("plot_ID" = plot_info$plot_ID, 
+                             "stand_ID" = plot_info$Stand_name,
+                             "harvest_status" = plot_info$harvest_status, 
+                             "gap_status" = plot_info$gap_status, 
+                             "ash_sapling_sum"=rep(0), #starting @ zero so they can be added to
+                             "sugar_maple_sapling_sum"=rep(0),
+                             "red_maple_sapling_sum"=rep(0),
+                             "yellow_birch_sapling_sum"=rep(0),
+                             "beech_sapling_sum"=rep(0),
+                             "black_cherry_sapling_sum"=rep(0)
+)
+
+#creating a vector of the 6 species we're looking at for use in the loop...
+seedlings_vec <- c("FRAM", "ACSA", "ACRU", "BEAL", "FAGR", "PRSE")#just copying this one direct
+
+#adding an incremental operator (I found it online)
+`%+=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 + e2))
+
+#for loop to sum up all the SMALL SAPLINGS of these species, per plot... (again based on above code)
+for(i in 1:nrow(small_sapling_data)){ #iterating thru each small sapling!
+  for (j in 1:length(seedlings_vec)){ # 'j' will refer to each species separately!
+    if(small_sapling_data$species[i]==seedlings_vec[j]){
+      some_small_saplings[small_sapling_data$plot_ID[i]==some_small_saplings$plot_ID,4+j] %+=% #referring to correct column!
+        (small_sapling_data$over_1_ft[i]+small_sapling_data$over_4.5_ft[i]) #incl both size classes for saplings <1in DBH (NOT shrubs)
+    }
+  }
+}
+
+glimpse(some_small_saplings)
+
+
+#For this FIRST step, mimicking some_seedlings_stand...
+#& since I'm gonna use the same 6 species for now...I'm just gonna copy some_seedlings_stand.
+#IF I WANTED TO USE DIFFERENT SPECIES THIS WOULD WORK DIFFERENTLY.
+small_saplings_stand <- data.frame("stand_ID" = rep(stand_info$Stand_name, each=6),
+                                  #repeating 6 times so there's one line per stand per species
+                                  # making harvest status a binary variable of cut vs. not (not implicating "to be cut")
+                                  "harvest_status" = rep(ifelse(stand_info$Harvest_status=="cut",TRUE,FALSE), each=6) ,
+                                  "num_plots" = rep(stand_info$num_plots, each=6),
+                                  "species" = rep(seedlings_vec, times=nrow(stand_info)),
+                                  "stand_sum" = rep(0),
+                                  "prop_ash_BA_cut" = rep(ash_cut_stand$prop_BA_cut, each=6)
+                                  )
+
+#NOW TO MIMICK THE FOR LOOP AND ACTUALLY GET ALL THE SMALL SAPLING TALLY DATA IN HERE.
+#for loop to sum up all these SMALL SAPLINGS per stand...
+for(i in 1:nrow(some_small_saplings)){ #iterating thru each PLOT!
+  for (j in 1:length(seedlings_vec)){
+    small_saplings_stand$stand_sum[
+      small_saplings_stand$species==seedlings_vec[j] & 
+        small_saplings_stand$stand_ID==some_small_saplings$stand_ID[i]] <-
+      small_saplings_stand$stand_sum[
+        small_saplings_stand$species==seedlings_vec[j] & 
+          small_saplings_stand$stand_ID==some_small_saplings$stand_ID[i]] + 
+      some_small_saplings[i,4+j]
+  }
+}
+
+
+
+#DIVIDING the count by (# plots * 3 * 5) [# subplots per plot * area in sq m of each subplot]
+#(so for small saplings, each subplot where they were tallied was 5 m^2, w/ 3 subplots/plot)
+#to get count per meter-squared!!
+small_saplings_stand$saplings_per_sqm <- small_saplings_stand$stand_sum / 
+  (small_saplings_stand$num_plots*15)
+
+#checking to see if it worked...
+glimpse(small_saplings_stand)
+
+#AHEM: now EXCLUDING one stand b/c it was just too WEIRD
+small_saplings_stand_most <- small_saplings_stand[small_saplings_stand$stand_ID!="Shaker State Forest",]
+
+#okay I'm now caught up to this point
+
+##############################################
+###NOW DO THE SAME WITH LARGE SAPLINGS, THEN COMBINE THEM###
+
+#copied from above: some_small_seedlings df to collect counts of each of 6 focal sp per plot
+some_large_saplings <- data.frame("plot_ID" = plot_info$plot_ID, 
+                                  "stand_ID" = plot_info$Stand_name,
+                                  "harvest_status" = plot_info$harvest_status, 
+                                  "gap_status" = plot_info$gap_status, 
+                                  "ash_sapling_sum"=rep(0), #starting @ zero so they can be added to
+                                  "sugar_maple_sapling_sum"=rep(0),
+                                  "red_maple_sapling_sum"=rep(0),
+                                  "yellow_birch_sapling_sum"=rep(0),
+                                  "beech_sapling_sum"=rep(0),
+                                  "black_cherry_sapling_sum"=rep(0)
+)
+
+#creating a vector of the 6 species we're looking at for use in the loop...
+seedlings_vec <- c("FRAM", "ACSA", "ACRU", "BEAL", "FAGR", "PRSE")#just copying this one direct
+
+#adding an incremental operator (I found it online)
+`%+=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 + e2))
+
+#for loop to sum up all the LARGE SAPLINGS of these species, per plot... (again based on above code)
+for(i in 1:nrow(large_sapling_data)){ #iterating thru each large sapling!
+  for (j in 1:length(seedlings_vec)){ # 'j' will refer to each species separately!
+    if(large_sapling_data$species[i]==seedlings_vec[j]){
+      some_large_saplings[large_sapling_data$plot_ID[i]==some_large_saplings$plot_ID,4+j] %+=% #referring to correct column!
+        (large_sapling_data$class_1[i]+large_sapling_data$class_2[i]+large_sapling_data$class_3[i]) #incl all size classes for lg saplings btwn 1&4 in DBH
+    }
+  }
+}
+
+glimpse(some_large_saplings)
+
+
+#For this FIRST step, mimicking some_seedlings_stand...
+#& since I'm gonna use the same 6 species for now...I'm just gonna copy some_seedlings_stand.
+#IF I WANTED TO USE DIFFERENT SPECIES THIS WOULD WORK DIFFERENTLY.
+large_saplings_stand <- data.frame("stand_ID" = rep(stand_info$Stand_name, each=6),
+                                   #repeating 6 times so there's one line per stand per species
+                                   # making harvest status a binary variable of cut vs. not (not implicating "to be cut")
+                                   "harvest_status" = rep(ifelse(stand_info$Harvest_status=="cut",TRUE,FALSE), each=6) ,
+                                   "num_plots" = rep(stand_info$num_plots, each=6),
+                                   "species" = rep(seedlings_vec, times=nrow(stand_info)),
+                                   "stand_sum" = rep(0),
+                                   "prop_ash_BA_cut" = rep(ash_cut_stand$prop_BA_cut, each=6)
+)
+
+#NOW TO MIMICK THE FOR LOOP AND ACTUALLY GET ALL THE SMALL SAPLING TALLY DATA IN HERE.
+#for loop to sum up all these SMALL SAPLINGS per stand...
+for(i in 1:nrow(some_large_saplings)){ #iterating thru each PLOT!
+  for (j in 1:length(seedlings_vec)){
+    large_saplings_stand$stand_sum[
+      large_saplings_stand$species==seedlings_vec[j] & 
+        large_saplings_stand$stand_ID==some_large_saplings$stand_ID[i]] <-
+      large_saplings_stand$stand_sum[
+        large_saplings_stand$species==seedlings_vec[j] & 
+          large_saplings_stand$stand_ID==some_large_saplings$stand_ID[i]] + 
+      some_large_saplings[i,4+j]
+  }
+}
+
+
+
+#DIVIDING the count by (# plots * 3 * 40) [# subplots per plot * area in sq m of each subplot]
+#(so for large saplings, each subplot where they were tallied was 40 m^2, w/ 3 subplots/plot)
+#to get count per meter-squared!!
+large_saplings_stand$saplings_per_sqm <- large_saplings_stand$stand_sum / 
+  (large_saplings_stand$num_plots*120)
+
+#checking to see if it worked...
+glimpse(large_saplings_stand)
+
+#AHEM: now EXCLUDING one stand b/c it was just too WEIRD
+large_saplings_stand_most <- large_saplings_stand[large_saplings_stand$stand_ID!="Shaker State Forest",]
+
+#okay I'm now caught up to THIS point!
+
+#now to COMBINE small + lg saplings:
+
+glimpse(large_saplings_stand_most)
+glimpse(small_saplings_stand_most)
+
+saplings_stand_final <- large_saplings_stand_most
+saplings_stand_final$stand_sum %+=% small_saplings_stand_most$stand_sum
+saplings_stand_final$saplings_per_sqm %+=% small_saplings_stand_most$saplings_per_sqm
+
+glimpse(saplings_stand_final)
+
+#now they are combined into 1 df (saplings_stand_final), now to make plots!
+
+##############################################
+#next step: making the actual plots...
+
+###### all below needs to be updated for saplings instead of seedlings! #####
+
+#for these scatterplots, look ONLY @ harvested sites (can incorporate unharv ones in a boxplot instead)
+
+#adding a FORMULA/FUNCTION for linear regression!( thanks Google!- copied from above, lm_eqn)
+
+lm_eqn2 <- function(speci){
+  m <- lm(saplings_per_sqm ~ prop_ash_BA_cut, 
+          data=saplings_stand_final[saplings_stand_final$species==speci & saplings_stand_final$harvest_status==TRUE,]);
+  eq <- substitute(italic(r)^2~"="~r2, 
+                   list(r2 = format(summary(m)$r.squared, digits = 3)))
+  as.character(as.expression(eq));
+}
+
+#ash saplings:
+p25 <- ggplot(data=saplings_stand_final[saplings_stand_final$species=="FRAM" & 
+                                    saplings_stand_final$harvest_status==TRUE,], 
+             aes(x=prop_ash_BA_cut, y=saplings_per_sqm)) +
+  geom_point() + theme_classic() +
+  labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
+        y= "Number of white ash \n saplings per square meter") +
+  geom_smooth (method=lm) +
+  geom_text(x=.5, y=2, label=lm_eqn2("FRAM"), parse=TRUE)
+
+print(p25)
+
+##GOT UP TO THIS POINT.... doesn't seem to be a relationship between ash saplings & cut ash BA...
+# at least not a linear relationship...looks like it could be almost a normal curve though??
+
+#OK, now onto the other species!
+p27 <- ggplot(data=saplings_stand_final[saplings_stand_final$species=="ACSA" & 
+                                    saplings_stand_final$harvest_status==TRUE,], 
+             aes(x=prop_ash_BA_cut, y=saplings_per_sqm)) +
+  geom_point() + theme_classic() + 
+  labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
+        y= "Number of sugar maple \n saplings per square meter")+
+  geom_smooth (method=lm)+
+  geom_text(x=.5, y=25, label=lm_eqn2("ACSA"), parse=TRUE)
+print(p27)
+
+p28 <- ggplot(data=saplings_stand_final[saplings_stand_final$species=="ACRU" & 
+                                    saplings_stand_final$harvest_status==TRUE,], 
+             aes(x=prop_ash_BA_cut, y=saplings_per_sqm)) +
+  geom_point() + theme_classic() + 
+  labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
+        y= "Number of red maple \n saplings per square meter")+
+  geom_smooth (method=lm)+
+  geom_text(x=.5, y=2, label=lm_eqn2("ACRU"), parse=TRUE)
+print(p28)
+
+p29 <- ggplot(data=saplings_stand_final[saplings_stand_final$species=="BEAL" & 
+                                    saplings_stand_final$harvest_status==TRUE,], 
+             aes(x=prop_ash_BA_cut, y=saplings_per_sqm)) +
+  geom_point() + theme_classic() + 
+  labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
+        y= "Number of yellow birch \n saplings per square meter")+
+  geom_smooth (method=lm)+
+  geom_text(x=.5, y=.5, label=lm_eqn2("BEAL"), parse=TRUE)
+print(p29)
+
+p30 <- ggplot(data=saplings_stand_final[saplings_stand_final$species=="FAGR" & 
+                                     saplings_stand_final$harvest_status==TRUE,], 
+              aes(x=prop_ash_BA_cut, y=saplings_per_sqm)) +
+  geom_point() + theme_classic() + 
+  labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
+        y= "Number of American beech \n saplings per square meter")+
+  geom_smooth (method=lm)+
+  geom_text(x=.5, y=.5, label=lm_eqn2("FAGR"), parse=TRUE)
+print(p30)
+
+p31 <- ggplot(data=saplings_stand_final[saplings_stand_final$species=="PRSE" & 
+                                     saplings_stand_final$harvest_status==TRUE,], 
+              aes(x=prop_ash_BA_cut, y=saplings_per_sqm)) +
+  geom_point() + theme_classic() + 
+  labs (x="Proportion of ash basal area (sq. m) \n harvested per stand",
+        y= "Number of black cherry \n saplings per square meter")+
+  geom_smooth (method=lm) +
+  geom_text(x=.5, y=.3, label=lm_eqn2("PRSE"), parse=TRUE)
+print(p31)
+
+#patchwork it all together!!
+(p25 | p27 | p28) / (p29 | p30 | p31)
+
+## LET'S TRY A DIF VERSION OF THIS USING FACET_WRAP
+
+#this looks good!! just wanna change the label names to common names.
+
+##NEED TO UPDATE R-SQUARED VALUES##
+new_labels2 <- c(ACRU = "red maple, R^2=0.0767", 
+                ACSA = "sugar maple, R^2=0.394", 
+                BEAL = "yellow birch, R^2=0.0121",
+                FAGR = "American beech, R^2=0.0314", 
+                FRAM = "white ash, R^2=0.0001", 
+                PRSE = "black cherry, R^2=0.193")
+
+p32 <- ggplot(data=saplings_stand_final[saplings_stand_final$harvest_status==TRUE,], 
+              aes(x=prop_ash_BA_cut, y=saplings_per_sqm)) +
+  geom_point() + theme_classic() + 
+  labs (x="Proportion of ash basal area (sq. m) harvested per stand",
+        y= "Number of saplings \n per square meter")+
+  geom_smooth (method=lm) +
+  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y", 
+             labeller=labeller(species=new_labels))
+print(p32)
+
+##UPDATE: Tony asked me to change these (Figs. 1 & 2) from density
+#plots to histograms:
+p40 <- ggplot(ash_cut[ash_cut$harvest_status=="YES",], 
+              aes(x=BA_sqm_per_ha_cut)) + 
+  geom_histogram(aes(fill=gap_status)) + #separating density measures by gap status
+  theme_classic() + 
+  labs(x="Basal area of cut ash trees (sq. m/ha)", y="frequency") +
+  scale_fill_discrete(name="Plot type", labels=c("matrix", "gap"))
+print(p40)
+
+#once again, changing p3 to be a histogram instead of density plot
+p41 <- ggplot(ash_cut[ash_cut$harvest_status=="YES",], 
+             aes(x=prop_BA_cut)) +
+  geom_histogram(fill="sky blue") +
+  theme_classic() + 
+  labs(x="Proportion of ash basal area (sq. m) harvested", y="frequency")
+print(p41)
+
+
+# now also- changing facetwrap figs to add "start y-axis @ 0 for each plot"
+# Found the answer on stack overflow using scale_y_continuous()
+
+p42 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$harvest_status==TRUE,], 
+              aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
+  geom_point() + theme_classic() + 
+  labs (x="Proportion of ash basal area (sq. m) harvested per stand",
+        y= "Number of seedlings \n per square meter")+
+  geom_smooth (method=lm) +
+  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y", 
+             labeller=labeller(species=new_labels)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, NA))
+print(p42)
+
+p43 <- ggplot(data=saplings_stand_final[saplings_stand_final$harvest_status==TRUE,], 
+              aes(x=prop_ash_BA_cut, y=saplings_per_sqm)) +
+  geom_point() + theme_classic() + 
+  labs (x="Proportion of ash basal area (sq. m) harvested per stand",
+        y= "Number of saplings \n per square meter")+
+  geom_smooth (method=lm) +
+  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y", 
+             labeller=labeller(species=new_labels2))+
+  scale_y_continuous(expand = c(0, 0), limits = c(0, NA))
+print(p43)

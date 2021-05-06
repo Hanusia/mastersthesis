@@ -8,9 +8,9 @@
 ### BELOW IS ALL COPIED FROM 12-14-20 ### 
 ### update 2/1/2021: NOW THERE ARE MODIFICATIONS towards the end ###
 
-stand_info <- read.csv("STAND_INFO_EAB_project_2020_cleaned_data.csv")
-plot_info <- read.csv("PLOT_INFO_EAB_project_2020_cleaned_data.csv")
-overstory_data <- read.csv("TREES_EAB_project_2020_cleaned_data.csv")
+stand_info <- read.csv("STAND_INFO_EAB_project_2020_cleaned_data.csv", fileEncoding = fileEncoding = "UTF-8-BOM")
+plot_info <- read.csv("PLOT_INFO_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
+overstory_data <- read.csv("TREES_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
 
 library(tibble)
 library(ggplot2)
@@ -20,14 +20,15 @@ library(ggplot2)
 #glimpse(stand_info)
 
 #changing name of plot_ID column since it had some weird characters in it
-names(overstory_data)[1] <- "plot_ID"
-names(plot_info)[1] <- "plot_ID"
+#names(overstory_data)[1] <- "plot_ID"
+#names(plot_info)[1] <- "plot_ID"
 #names(overstory_data) #success!
 #names(plot_info)
 
 #ditto for the first column, "Property" in stand_info
-names(stand_info)[1]<- "Property"
+#names(stand_info)[1]<- "Property"
 # names(stand_info) #works out!
+#These lines are no longer needed since I added "fileEncoding = "UTF-8-BOM"" in the read.csv command!
 
 ##############################################
 

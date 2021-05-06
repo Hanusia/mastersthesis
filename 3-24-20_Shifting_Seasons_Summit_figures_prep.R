@@ -721,7 +721,8 @@ p40 <- ggplot(ash_cut[ash_cut$harvest_status=="YES",],
   geom_histogram(aes(fill=gap_status)) + #separating density measures by gap status
   theme_classic() + 
   labs(x="Basal area of cut ash trees (sq. m/ha)", y="frequency") +
-  scale_fill_discrete(name="Plot type", labels=c("matrix", "gap"))
+  scale_fill_discrete(name="Plot type", labels=c("matrix", "gap")) +
+  theme(legend.position = c(0.7, 0.7))
 print(p40)
 
 #once again, changing p3 to be a histogram instead of density plot

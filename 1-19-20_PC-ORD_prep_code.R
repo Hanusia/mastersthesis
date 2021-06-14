@@ -455,3 +455,7 @@ sum((is.na(BA_sp_df[2,2:41])==FALSE)+(is.na(BA_sp_cut[2,2:41])==FALSE))
 
 sum((BA_sp_df[,2:41]+BA_sp_cut[,2:41])) 
 
+## ACTION ITEMS FOR NEXT TIME
+#actually comment the rest of this code that is NOT yet commented out
+#troubleshoot what ever is going on up there
+#update workflow doc!

@@ -41,3 +41,73 @@ glimpse(plot_info_plus)
 
 #STARTING this with seedling & sapling density! (next session...)
 
+# starting w/ seedling data; copying some of this over from 3-24-30_Shifting_Seasons_Summit_figure_prep
+
+#tying seedling data to more explanatory plot data
+seedlings_plus <- merge(x=seedling_data,y=plot_info,by="plot_ID")
+
+#sub-step 1: tally # seedlings per plot
+seedlings_per_plot <- plot_info_plus #creating a new df
+seedlings_per_plot$num_seedlings <- rep(0) #adding the seedling tally column
+
+#for loop to cycle through seedlings_plus, adding to the correct row in seedlings_per_plot
+for(i in 1:nrow(seedlings_plus)){
+  for(j in 1:nrow(seedlings_per_plot)){
+    if(seedlings_plus$plot_ID[i]==seedlings_per_plot$plot_ID[j]){
+      seedlings_per_plot$num_seedlings[j] = (seedlings_per_plot$num_seedlings[j] + seedlings_plus$tally[i]) 
+      #tallying ALL seedlings in each plot!
+    }
+  }
+}
+
+#next sub-step: converting from 'seedlings per plot' to 'seedlings per stand'
+
+seedlings_per_stand <- stand_info #creating a new dataframe to capture this stuff
+seedlings_per_stand$num_seedlings <- rep(0)
+seedlings_per_stand$seedling_area <- seedlings_per_stand$num_plots*3
+#this is because each plot has 3 seedling subplots, each 1 sq meter in size
+#so multiplying area of seedlings counts (3 sqm/plot) times num plots gives us total area of seedling counts in each stand
+
+#now we need a for loop to iterate thru stand and seedling-per-plot info: 
+for(i in 1:nrow(seedlings_per_stand)){
+  for(j in 1:nrow(seedlings_per_plot)){
+    if(seedlings_per_stand$Stand_name[i]==seedlings_per_plot$Stand_name[j]){
+      #assuming we are talking about the same plot......
+      #add up all the seedlings
+      seedlings_per_stand$num_seedlings[i] = (
+        seedlings_per_stand$num_seedlings[i] +
+          seedlings_per_plot$num_seedlings[j]
+      )
+    }
+  }
+}
+# it worked!
+
+#now, one last step to calculate seedlings DENSITY:
+seedlings_per_stand$seedlings_per_sqm <- seedlings_per_stand$num_seedlings/seedlings_per_stand$seedling_area
+# Q: should I exclude RUBUS/other shrubby species from this count/density???
+
+##############################################
+
+#LATER, will do the same thing for sapling data.....for now, will try an ANOVA with this......
+
+aov1 <- aov(formula = seedlings_per_sqm ~ as.factor(treatment_type), 
+            data =seedlings_per_stand)
+summary(aov1)
+#not significant.....
+
+#should I try this WITHOUT rubus?
+
+mean(seedlings_per_stand[seedlings_per_stand$treatment_type=="regen_focus","seedlings_per_sqm"])
+mean(seedlings_per_stand[seedlings_per_stand$treatment_type=="thinning_focus","seedlings_per_sqm"])
+
+p1 <- ggplot(data=seedlings_per_stand, aes(x=as.factor(treatment_type), y=seedlings_per_sqm)) +
+  geom_boxplot() + 
+  theme_classic()
+print(p1)
+
+
+#NEXT STEP: try this without rubus.
+
+#THEN, try it again with saplings.
+#will need to re-look at how I calculate area w/ the 2 classes of 

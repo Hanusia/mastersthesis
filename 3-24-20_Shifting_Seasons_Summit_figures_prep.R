@@ -338,7 +338,7 @@ print(p11)
 #patchwork it all together!!
 (p5 | p7 | p8) / (p9 | p10 | p11)
 
-## LET'S TRY A DIF VERSION OF THIS USING FACET_WRAP
+## LET'S TRY A DIF VERSION OF THIS USING FACET_WRAP (ACTUALLY DON'T NEED ABOVE)
 
 #this looks good!! just wanna change the label names to common names.
 new_labels <- c(ACRU = "red maple, R^2=0.0917", 
@@ -348,6 +348,7 @@ new_labels <- c(ACRU = "red maple, R^2=0.0917",
                 FRAM = "white ash, R^2=0.0158", 
                 PRSE = "black cherry, R^2=0.0144")
 
+#THIS IS THE ACTUALLY VALUABLE ONE
 p12 <- ggplot(data=sdlg_stand_most[sdlg_stand_most$harvest_status==TRUE,], 
               aes(x=prop_ash_BA_cut, y=seedlings_per_sqm)) +
   geom_point() + theme_classic() + 

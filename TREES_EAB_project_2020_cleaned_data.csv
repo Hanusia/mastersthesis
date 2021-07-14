@@ -1,4 +1,4 @@
-﻿plot_ID,tree_ID,species,DBH_cm,status,height_m,decay_class,to be cut,notes
+plot_ID,tree_ID,species,DBH_cm,status,height_m,decay_class,to be cut,notes
 HRgap1,1,ACSA,14.9,live,,,NO,
 HRgap1,2,ACSA,30,live,,,NO,
 HRgap1,3,ACSA,15,live,,,NO,
@@ -1304,7 +1304,7 @@ GMRB6unh4,25,ACSA,10.9,live,,,NO,
 GMRB6unh4,26,ACSA,23.1,live,,,NO,
 GMRB6unh4,27,FRAM,29.6,live,,,NO,
 GMRB6unh4,28,ACSA,23.9,live,,,YES,*
-GMRB6unh4,29,ACSA,20.1,live,,,YES,*
+GMRB6unh4,29,ACSA,20.2,live,,,YES,*
 GMRB6unh4,30,FRAM,36.6,live,,,NO,
 GMRB6unh4,31,ACSA,19.6,snag,3.8,3,NO,
 GMRB6unh4,32,ACSA,10.8,live,,,NO,

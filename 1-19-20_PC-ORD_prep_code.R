@@ -19,17 +19,6 @@ library(ggplot2)
 #glimpse(plot_info)
 #glimpse(stand_info)
 
-#changing name of plot_ID column since it had some weird characters in it
-#names(overstory_data)[1] <- "plot_ID"
-#names(plot_info)[1] <- "plot_ID"
-#names(overstory_data) #success!
-#names(plot_info)
-
-#ditto for the first column, "Property" in stand_info
-#names(stand_info)[1]<- "Property"
-# names(stand_info) #works out!
-#These lines are no longer needed since I added "fileEncoding = "UTF-8-BOM"" in the read.csv command!
-
 ##############################################
 
 #merging the overstory df w/ the plot_info df on the basis of the plot_ID column
@@ -388,9 +377,9 @@ BA_ha_df <- BA_ha_df[,1:41]
 #remember to exclude stumps of higher decay classes- likely just fell, not harvested!
 # Presence/absence of EAB?? (C) AND/OR # of EAB markers present as a tally of the info we collected (Q)
 # Total harvest intensity (Q)- maybe also separated out by each species?? (Ask Tony)
-# Harvest type- based on that summary spreadsheet I sent Tony (C)- Is this a good idea??
+# Harvest type- based on that summary spreadsheet I sent Tony (C)
 # Climate variables? Latitude? Altitude? Soil type??
-# Forest type- n. hardwood vs rich n. hardwood vs oaky hardwood? (C) How to delineate those?
+# MAYBE- Forest type- n. hardwood vs rich n. hardwood vs oaky hardwood? (C) How to delineate those?
 
 #VARIABLES TONY SUGGESTED:
 #% ash removal, total % ash in stand, state, year harvested, type of tx, beech component as proxy for forest type, % BA removed overall

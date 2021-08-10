@@ -104,8 +104,10 @@ print(p)
 
 #need to do a t-test to confirm this dif is signif......
 
-t.test(ash_cut$BA_sqm_per_ha_live~ash_cut$harvest_status)
+tt1 <- t.test(ash_cut$BA_sqm_per_ha_live~ash_cut$harvest_status)
 #we good! very significant (p<0.0001)
+tt1
+summary(tt1)
 
 # now creating SECOND BOXPLOT: range of cut ash BA in all harvested sites -------------------------------
 

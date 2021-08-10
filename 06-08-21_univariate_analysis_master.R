@@ -94,6 +94,7 @@ seedlings_per_stand$seedlings_per_sqm <- seedlings_per_stand$num_seedlings/seedl
 
 aov1 <- aov(formula = seedlings_per_sqm ~ as.factor(treatment_type), 
             data =seedlings_per_stand)
+aov1
 summary(aov1)
 #not significant.....
 
@@ -689,32 +690,163 @@ print(p8)
 ##############################################
 # Now doing models & graphs w/ harvest year... -------------------------------
 
-#BUT FIRST need to add on harvest mean year to the 4 DFs since adding it to them within the list does NOT translate outside of that list four_dfs!!!
-four_dfs <- list(seedlings_per_stand, some_seedlings_stand, saplings_stand_final, saplings_stand_all)
+#ACTUALLY, want to translate this to years SINCE harvest:
 
-seedlings_per_stand$harvest_mean_year <- four_dfs[[1]]$harvest_mean_year
-some_seedlings_stand$harvest_mean_year <- four_dfs[[2]]$harvest_mean_year
-saplings_stand_final$harvest_mean_year <- four_dfs[[3]]$harvest_mean_year
-saplings_stand_all$harvest_mean_year <- four_dfs[[4]]$harvest_mean_year
+#FIRST creating a function to do this: 
+years_since_harv <- function(dfx){ #input = a dataframe
+  dfx$years_since_harvest <- rep(0) #creating that column in the df first
+  for(i in 1:nrow(dfx)){ #iterating thru each row
+    if((dfx$harvest_start_year[i]!="na")&(dfx$harvest_start_year[i]!="UNKNOWN")){ #if harvested...
+  dfx$years_since_harvest[i] <- 2020 -  #calculating mean years SINCE harvested (as of 2020) 
+    ((as.numeric(dfx$harvest_start_year[i]) + as.numeric(dfx$harvest_end_year[i]))/2)
+    }
+    else dfx$years_since_harvest[i] <- NA #ZEROING OUT the unharvested stands w/ 25s (yrs since harvest)
+  }
+  return(dfx) #returning the new MODIFIED dataframe...
+}
+#trying it out! 
+seedlings_per_stand <- years_since_harv(seedlings_per_stand) #and assigning the modified output BACK TO the original df...
+#update: it worked!!! now doing this w/ the remaining DFs:
+some_seedlings_stand <- years_since_harv(some_seedlings_stand)
+saplings_stand_final <- years_since_harv(saplings_stand_final)
+saplings_stand_all <- years_since_harv(saplings_stand_all)
 
 #now to run models, using ONLY harvested sites!
-m5 <- glm(data=seedlings_per_stand[seedlings_per_stand$Harvest_status=="cut",], 
-          formula = seedlings_per_sqm ~ as.numeric(harvest_mean_year))
+#don't need to specify that in the model; lines w/ NAs will be discounted per the messages I got!
+m5 <- glm(data=seedlings_per_stand, 
+          formula = seedlings_per_sqm ~ years_since_harvest)
 summary(m5)
-#result: not signif
+#result: not signif.
 
-m6 <- glm(data=some_seedlings_stand[some_seedlings_stand$Harvest_status=="cut",],
-          formula=seedlings_per_sqm ~ species*as.numeric(harvest_mean_year))
+m6 <- glm(data=some_seedlings_stand,
+          formula=seedlings_per_sqm ~ species*years_since_harvest)
 summary(m6)
-#this one is not working!
+#only ACSA is significant. (not in combo w/ years since harvest...)
 
 #next, do the same w/ saplings:
 
-m7 <- glm(data=saplings_stand_all[saplings_stand_all$Harvest_status=="cut",], #looking @ saplings overall:
-          formula=total_saplings_per_sqm ~ as.numeric(harvest_mean_year))
+m7 <- glm(data=saplings_stand_all, #looking @ saplings overall:
+          formula=total_saplings_per_sqm ~ years_since_harvest)
 summary(m7)
-#this one IS signif!
+#this one IS signif BUT only at 0.08 level...so not really...
 
-m8 <- glm(data=saplings_stand_final[saplings_stand_final$harvest_status=="cut",], #looking at saplings by SPECIES
-          formula = saplings_per_sqm ~ as.numeric(harvest_mean_year)*species)
+m8 <- glm(data=saplings_stand_final, #looking at saplings by SPECIES
+          formula = saplings_per_sqm ~ species*years_since_harvest)
 summary(m8)
+#signif: just ACSA on its own, and also years_since_harvest x FAGR (??)
+
+#now to graph 'em!
+#now to graph 'em!
+
+p9 <- ggplot(data=seedlings_per_stand,
+             aes(x=years_since_harvest, y=seedlings_per_sqm)) +
+  geom_point(aes(col=factor(treatment_type))) + theme_classic() #+
+#geom_smooth(method=lm)
+print(p9)
+#might add a regression line later...TBD!
+
+p10 <- ggplot(data=some_seedlings_stand,
+             aes(x=years_since_harvest, y=seedlings_per_sqm)) + 
+  geom_point(aes(col=factor(treatment_type))) + theme_classic() +
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y")
+print(p10)
+
+#all saplings together:
+p11 <- ggplot(data=saplings_stand_all,
+             aes(x=years_since_harvest, y=total_saplings_per_sqm)) +
+  geom_point(aes(col=factor(treatment_type))) + theme_classic() 
+print(p11)
+
+#saplings x species:
+p12 <- ggplot(data=saplings_stand_final,
+             aes(x=years_since_harvest, y=saplings_per_sqm)) + 
+  geom_point(aes(col=factor(treatment_type))) + theme_classic() +
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y")
+print(p12)
+
+##############################################
+
+# looking @ ash health parameters as Tony recommended re: Robinett & McCullough... -------------------------------
+
+# First, comparing ash health vs individual tree diameter
+#the way Robinett & McCullough did it was grouping into size classes & ANOVA...
+#and then also just straight-up regression
+
+#df in question = ash_health_plus
+#first, need to transform DBH to numeric var & transform classes to numbers
+ash_health_plus$DBH_adj <- rep(0) #adding a numeric var to fill in
+for(i in 1:nrow(ash_health_plus)){
+  if(ash_health_plus$DBH_cm[i]=="I") {
+    ash_health_plus$DBH_adj[i] <- 2.5
+  } else if(ash_health_plus$DBH_cm[i]=="II"){
+    ash_health_plus$DBH_adj[i] <- 5.1
+  } else if(ash_health_plus$DBH_cm[i]=="III"){
+    ash_health_plus$DBH_adj[i] <- 7.6
+  } else {
+  ash_health_plus$DBH_adj[i] <- as.numeric(ash_health_plus$DBH_cm[i])
+  }
+}
+
+#now, to separate them into classes: 
+ash_health_plus$DBH_class <- rep(NA)
+for(i in 1:nrow(ash_health_plus)){
+  if(ash_health_plus$DBH_adj[i]>=10.0 & ash_health_plus$DBH_adj[i]<=20.0) {
+    ash_health_plus$DBH_class[i] <- 1 #separate into 3 categories like R&M paper did
+  } else if(ash_health_plus$DBH_adj[i]>=20.1 & ash_health_plus$DBH_adj[i]<=30.0) {
+    ash_health_plus$DBH_class[i] <- 2
+  } else if(ash_health_plus$DBH_adj[i]>=30.1) {
+    ash_health_plus$DBH_class[i] <- 3
+  }
+}
+
+#now, do an anova w/ diam class & health index!
+aov21 <- aov(formula = tree_health_total ~ as.factor(DBH_class), 
+             data =ash_health_plus)
+summary(aov21)
+#result: not significant.
+#NEXT STEP: do this separated by EAB status (infested yes/no); waiting on VT data!
+
+#next: do regression vs. just straight up DBH.
+m9 <- glm(data=ash_health_plus,
+          formula= tree_health_total ~ DBH_adj)
+summary(m9)
+#however, regression vs. diameter is VERY significant.
+
+#time to graph it!
+p13 <- ggplot(data=ash_health_plus,
+              aes(x=DBH_adj, y=tree_health_total)) + 
+  geom_point(aes(col=factor(treatment_type))) + theme_classic()
+print(p13)
+#REMEMBER! At this stage, "tree health total" is still the total ISSUES with the tree- higher number = worse!!
+
+#Second, comparing ash health vs stand density (basal area, living+dead, all species)
+#this is the variable Robinett & McCullough used in their paper!
+#so in my case, want to use snags + stumps + live trees BA
+#and regress that BA in sqm/ha against ash health index (instead of survival)
+#will need to bring in formulas etc for calculating DBH from stumps...use code from PC-ORD prep!
+#OR just run that code in its own script, export results (@ stand level) in a .csv, and add that .csv here?!
+
+#update: the latter is what I ended up doing! 
+#now to import that file here so I can merge the dataframes.
+
+overstory_plus <- read.csv(file="stand_basal_area_dataframe_09Aug2021.csv")
+glimpse(overstory_plus) #this input worked
+#and as a reminder from the other script, its column BA_sqm_ha is basal area in units of sqm/ha for ALL LIVE AND DEAD TREES PER STAND
+glimpse(ash_health_stand)
+#now to append that number onto the ash_health_stand dataframe (also at the stand level):
+ash_health_stand$total_preharvest_BA_sqm_ha <- overstory_plus$BA_sqm_ha
+#extra-descriptive label to remind what we're talkin' about...
+
+#now to see how these two vars correlate!
+m10 <- glm(data=ash_health_stand,
+          formula= avg_ash_health ~ total_preharvest_BA_sqm_ha)
+summary(m10)
+#ONLY the intercept is signif (e.g. signif dif from zero, which isn't exactly helpful!)
+
+#time to graph it!
+p14 <- ggplot(data=ash_health_stand,
+              aes(x=total_preharvest_BA_sqm_ha, y=avg_ash_health)) + 
+  geom_point(aes(col=factor(treatment_type))) + theme_classic()
+print(p14)
+#REMEMBER! At this stage, "avg_ash_health" is still the total ISSUES with the tree- higher number = worse!!
+#lol there is basically NO clear relationship here.

@@ -176,6 +176,7 @@ Dout4 %>% inner_join(updateFreq)
 Dcombout <- Dcomb %>% dplyr::select(mukey,OBJECTID,Shape_Area,elev,elevbin,soilindex) %>% inner_join(soilsRemapDf, by=c("soilindex"="soilindex")) %>%
   arrange(OBJECTID)
 
+#skipped creating these output files on 7/14/21
 ## Write some output if you want --> You will want to join Dcombout to your merged soil shapefile, linking Object ID's
 ## Individual polygons (rows in your shapefile) can have the same MUKEY, but different soilindex2 based on mean Elevation by ObjectID.
 write.csv(Dcomb, file="~/mastersthesis_repo/mastersthesis/LANDIS_stuff/Dcomb_6May2021.csv",row.names=FALSE)
@@ -184,7 +185,7 @@ write.csv(Dout3,"~/mastersthesis_repo/mastersthesis/LANDIS_stuff/VT-MA_soilindex
 write.csv(Dout4,"~/mastersthesis_repo/mastersthesis/LANDIS_stuff/VT-MA_soilindex2remap_means.csv",row.names=F)
 
 #Scale mean soil vars to mean=1 sd=0 to plot class comparisons
-Dout4norm <- Dout4 %>% mutate(across(fieldcap:elev, ~scale(.x))) # ??where is across function from?
+Dout4norm <- Dout4 %>% mutate(across(fieldcap:elev, ~scale(.x))) 
 
 # Vizualize class soil variable means
 plot(c(1,11), c(-4,4), xlab = "soil var", ylab = "Scaled mean", type = "n")
@@ -204,7 +205,7 @@ library(rgdal)
 library(sf)
 
 # STOPPED HERE FOR NOW...NEED TO READ UP ON WHAT THE BELOW MEANS
-
+#update 7/14/21: continuing on today!!
 
 # Try visualizing soils classes you just created by plotting in sf format
 # Read in shapefile of merged county data - use sf
@@ -222,8 +223,12 @@ soilCols <- data.frame(soilindex2,soilCols)
 shape <- shape %>% inner_join(soilCols)
 
 # plot polygon of soilindex 2 class, no outlines
-plot(shape["soilindex2"],pch=20,cex=2,key.pos=1,col=shape$soilCols, lty=0)
-
+plot(shape["soilindex2"],pch=20,cex=2,
+     key.size=lcm(2),
+   #  key.pos=4, key.length=2.5, key.width=2,
+     col=shape$soilCols, lty=0)
+#shapefile_1 <- plot(shape["soilindex2"],pch=20,cex=2,key.pos=2,col=shape$soilCols, lty=0)
+#view(shapefile_1)
 
 # Read in shapefile of merged county data 
 #soilPoly <-readOGR(dsn="data",layer="soil_mu_a_vtma_mu_summary_elev_by_oid")

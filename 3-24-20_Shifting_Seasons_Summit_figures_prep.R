@@ -563,8 +563,8 @@ large_saplings_stand <- data.frame("stand_ID" = rep(stand_info$Stand_name, each=
                                    "prop_ash_BA_cut" = rep(ash_cut_stand$prop_BA_cut, each=6)
 )
 
-#NOW TO MIMICK THE FOR LOOP AND ACTUALLY GET ALL THE SMALL SAPLING TALLY DATA IN HERE.
-#for loop to sum up all these SMALL SAPLINGS per stand...
+#NOW TO MIMICK THE FOR LOOP AND ACTUALLY GET ALL THE LARGE SAPLING TALLY DATA IN HERE.
+#for loop to sum up all these LARGE SAPLINGS per stand...
 for(i in 1:nrow(some_large_saplings)){ #iterating thru each PLOT!
   for (j in 1:length(seedlings_vec)){
     large_saplings_stand$stand_sum[
@@ -595,16 +595,35 @@ large_saplings_stand_most <- large_saplings_stand[large_saplings_stand$stand_ID!
 
 #now to COMBINE small + lg saplings:
 
+#***EDIT AUGUST 2021: updating this code so the "combined density" of small & large saplings is actually ACCURATE 
+
 glimpse(large_saplings_stand_most)
 glimpse(small_saplings_stand_most)
 
-saplings_stand_final <- large_saplings_stand_most
-saplings_stand_final$stand_sum %+=% small_saplings_stand_most$stand_sum
-saplings_stand_final$saplings_per_sqm %+=% small_saplings_stand_most$saplings_per_sqm
+#***THE BELOW FEW LINES WERE OUTDATED so I'm replacing them below, but leaving them here for...posterity I guess??***
+#saplings_stand_final <- large_saplings_stand_most
+#saplings_stand_final$stand_sum %+=% small_saplings_stand_most$stand_sum
+#saplings_stand_final$saplings_per_sqm %+=% small_saplings_stand_most$saplings_per_sqm
+
+#glimpse(saplings_stand_final)
+
+#now they are combined into 1 df (saplings_stand_final), now to make plots!
+
+#*** ok below few lines are the replacement code that is better!***
+saplings_stand_final <- large_saplings_stand
+saplings_stand_final$stand_sum %+=% small_saplings_stand$stand_sum #adding on the small saplings tallies to the existing large saplings tallies in the dataframe
+saplings_stand_final$saplings_per_sqm <- rep(0)
+saplings_stand_final$saplings_per_sqm <- 
+  (saplings_stand_final$stand_sum / 
+     ((large_saplings_stand$num_plots*120) +   (small_saplings_stand$num_plots*15)
+     ))
+#UPDATE: CHANGED DENSITY CALC TO TOTAL SAPLIGNS (lg + small) DIVIDED BY SUM OF TOTAL AREA (lg + small)
 
 glimpse(saplings_stand_final)
 
-#now they are combined into 1 df (saplings_stand_final), now to make plots!
+#now they are ACTUALLY combined into 1 df (saplings_stand_final), now to make plots! & anovas!
+
+
 
 ##############################################
 #next step: making the actual plots...
@@ -712,7 +731,7 @@ p32 <- ggplot(data=saplings_stand_final[saplings_stand_final$harvest_status==TRU
   geom_smooth (method=lm) +
   #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
   facet_wrap(~ species, nrow=2, ncol=3, scales="free_y", 
-             labeller=labeller(species=new_labels))
+             labeller=labeller(species=new_labels2))
 print(p32)
 
 ##UPDATE: Tony asked me to change these (Figs. 1 & 2) from density

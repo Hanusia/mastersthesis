@@ -1,32 +1,27 @@
 # --------------------------------------------------
-# FEMC conference code
-# 14 Dec 2020
+# Basal area per stand calculations
+# 09 Aug 2021
 # HH
 # --------------------------------------------------
 #
+#Repeating/copying/adding to some of the code from previous scripts, 
+#to create my own "clean" script producing a CSV 
+#& easily have this info on hand.
 
-### BELOW IS ALL COPIED FROM 10-23-20 ### 
+##############################################
+#Below is copied from 1-19-20_PC-ORD_prep_code
 
-stand_info <- read.csv("STAND_INFO_EAB_project_2020_cleaned_data.csv")
-plot_info <- read.csv("PLOT_INFO_EAB_project_2020_cleaned_data.csv")
-overstory_data <- read.csv("TREES_EAB_project_2020_cleaned_data.csv")
+
+stand_info <- read.csv("STAND_INFO_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
+plot_info <- read.csv("PLOT_INFO_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
+overstory_data <- read.csv("TREES_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
 
 library(tibble)
 library(ggplot2)
 
-glimpse(overstory_data)
-glimpse(plot_info)
-glimpse(stand_info)
-
-#changing name of plot_ID column since it had some weird characters in it
-names(overstory_data)[1] <- "plot_ID"
-names(plot_info)[1] <- "plot_ID"
-#names(overstory_data) #success!
-#names(plot_info)
-
-#ditto for the first column, "Property" in stand_info
-names(stand_info)[1]<- "Property"
-# names(stand_info) #works out!
+#glimpse(overstory_data)
+#glimpse(plot_info)
+#glimpse(stand_info)
 
 ##############################################
 
@@ -44,7 +39,6 @@ overstory_plus <- merge(x=overstory_data,y=plot_info,by="plot_ID")
 #B0 & B1 = estimated fixed-effects parameters; 
 #(for white ash, B0 = -0.1074 & B1 = 0.0685)
 #Ei = random error for tree i
-#IN THE BELOW MODEL, I'm gonna convert things to use METRIC, not imperial, units!
 
 overstory_plus$ASH_stump_DBH <- rep(NA)
 overstory_plus$BA_sqm <- rep(NA)
@@ -52,8 +46,6 @@ overstory_plus$BA_sqm <- rep(NA)
 #calculating BA for live trees & stumps using standard conversion from DBH to BA
 #overstory_plus$BA_sqft <- overstory_plus$DBH_cm*overstory_plus$DBH_cm*0.005454
 
-#BUT SINCE WE WANNA DO IT USING METRIC UNITS:
-#RIGHT NOW THIS IS ONLY DOING IT CORRECTLY FOR LIVE TREES, NOT USING THE CORRECT DATA FOR STUMPS!!
 overstory_plus$BA_sqm <- overstory_plus$DBH_cm*overstory_plus$DBH_cm*pi/40000
 
 #only calculating the stump DBH w/ these constants for ash
@@ -121,40 +113,9 @@ for (i in 1:nrow(overstory_plus)){ #iterating thru each tree/stump/snag in all p
 }
 
 #checking to see if it worked!!
-glimpse(ash_cut)
-glimpse(ash_cut[ash_cut$harvest_status=="YES",])
+#glimpse(ash_cut)
+#glimpse(ash_cut[ash_cut$harvest_status=="YES",])
 #I think it worked!!
-
-#now to create some basic boxplots comparing standing and cut ash BA
-# in harvested and non-harvested sites
-
-#quickly getting max and min values for cut ash BA
-max(ash_cut$cut_ash_sum)
-min(ash_cut$cut_ash_sum)
-
-#this one maps BA (in sq m) of standing ash against harvest status 
-#across all plots
-b1 <- boxplot(formula=live_ash_sum~harvest_status, data=ash_cut)
-b1
-
-#ditto this one, except comparing only "matrix" plots against unharvested
-b2 <- boxplot(formula=live_ash_sum~harvest_status, 
-        data=ash_cut[ash_cut$gap_status=="NO",])
-b2
-
-#now just looking @ the spread of CUT ash in harvested sites
-b3 <- boxplot(formula=cut_ash_sum~gap_status,
-        data=ash_cut[ash_cut$harvest_status=="YES",])
-b3
-
-live_ash_BA_all <- aov(formula=live_ash_sum~harvest_status, data=ash_cut)
-print(live_ash_BA_all)
-print(summary(live_ash_BA_all))
-
-live_ash_BA_mat <- aov(formula=live_ash_sum~harvest_status, 
-                       data=ash_cut[ash_cut$gap_status=="NO",])
-print(live_ash_BA_mat)
-print(summary(live_ash_BA_mat))
 
 # Matrix of overstory parameters for stump to BA -------------------------------
 #numbers/parameters from Westfall 2010
@@ -276,6 +237,7 @@ stump_to_DBH
 #now, adding a few columns to the overstory data frame
 #to actually calculate this ish.
 
+#converting to imperial units to make sure things work with these calculations
 overstory_plus$diam_in <- overstory_plus$DBH_cm*.393701
 overstory_plus$height_ft <- overstory_plus$height_m*3.28084
 overstory_plus$stump_DBH_in <- rep(0)
@@ -298,92 +260,32 @@ overstory_plus$stump_DBH_cm <- overstory_plus$stump_DBH_in*2.54
 overstory_plus$BA_sqm[overstory_plus$status=="stump"] <- 
   overstory_plus$stump_DBH_cm[overstory_plus$status=="stump"]*overstory_plus$stump_DBH_cm[overstory_plus$status=="stump"]*pi/40000 
 
-#calculate: TOTAL basal area cut per species (across all cut plots)
+#as of this point, overstory_plus$BA_sqm contains the BA for each 
+#live tree, snag, AND stump (projected) in each stand. BUT not yet aggregated @ the stand level.
+
+# #now to aggregate @ the stand level -------------------------------
 
 
+#I'll try it this way:
+#aggregate function, summing up BA_sqm by stand name
+#sooo much simpler than doing this with a for loop!!
+BA_stand_sum <- aggregate(BA_sqm ~ Stand_name, data=overstory_plus, FUN=sum)
+BA_stand_sum #this is the TOTAL (NOT per ha!) basal area of all trees, live/snag/stump (pre-harvest totals), in a stand
 
-#also want to calculate: BA/ha per stand, per species, for both standing and cut trees!
+#testing the aggregate:
+# sum(overstory_plus$BA_sqm[overstory_plus$Stand_name=="Algonquin State Forest stand 1-14"])
+#it seems to have worked!
 
+#now to merge w/ remaining stand info: 
+stand_info_plus <- merge(x=stand_info, y=BA_stand_sum, by="Stand_name")
+glimpse(stand_info_plus)
+#update: it worked!
 
-#BA_stand_sp <- data.frame(
-#  "stand" = stand_info$Stand_name,
-#  "stand_code" = stand_info$Stand_code,
-#  "FRAM" = rep(0),)
+#next step: calculate BA in sqm PER HECTARE
+stand_info_plus$BA_sqm_ha <- stand_info_plus$BA_sqm / #total BA in square meters per stand divided by
+  (.04 * stand_info_plus$num_plots) #total area (in ha) of plots sampled in that stand, calculated by # of plots * 0.04 ha/plot!
 
-#OKAY THIS IS CLEARLY NOT WORKING FOR NOW...SO I'M JUST GONNA ADD ALL COL NAMES MANUALLY LOL
-#for(i in 1:length(species_list)){
-  #newName <- paste("",species_list[i])
-#  newName <- species_list[[i]]
-#  BA_stand_sp[newName] <- rep(0)
-  #BA_stand_sp <- cbind(BA_stand_sp, newName <- rep(0))
-  #Newcolname <- as.name(stump_to_DBH$species[i])
-  #BA_stand_sp[[Newcolname]] <- rep(0)
-  #BA_stand_sp <- BA_stand_sp + (stump_to_DBH$species[i] <- rep(0))
-#}
+#this column is the PRE HARVEST TOTAL BA (in sqm) PER HECTARE OF ALL LIVE & DEAD TREES!!
 
-##JK I'M TRYING IT AS A MATRIX FIRST, INSTEAD
-species_list <-as.character(unique(overstory_plus$species))
-species_list_cut <- as.character(paste(species_list,"_cut", sep=""))
-matcolnames <- c(species_list,species_list_cut)
-
-BA_sp <- matrix(data=rep(0), nrow=45, ncol=80)
-colnames(BA_sp) <- matcolnames
-rownames(BA_sp) <- unique(stand_info$Stand_code)
-#Matrix is in place!!
-#First convet into a dataframe.
-#now to fill it up.
-#THEN will divide to make it BA/ha.
-#then I can graph it!
-
-standcode <- unique(stand_info$Stand_code)
-BA_sp_df <- as.data.frame(BA_sp)
-BA_sp_df <- cbind(standcode, BA_sp_df)
-#BA_sp_df <- data.frame(row.names=matcolnames)
-overstory_plus2 <- merge(x=overstory_plus,y=stand_info,by="Stand_name")
-
-#adding an incremental operator (I found it online)
-`%+=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 + e2))
-
-#adding a simple intermediary matrix to try to make this work.....
-spec_df <- data.frame(sp = colnames(BA_sp_df)[2:40], num = 1:length(colnames(BA_sp_df)[2:40]))
-spec_df$sp
-
-for(i in 1:nrow(overstory_plus2)){
-  #if(overstory_plus2$species[i]!=""){
-  #find the right row (Based on stand code)
-  j=which(BA_sp_df$standcode==overstory_plus2$Stand_code[i])[1]
-  if(overstory_plus2$status[i]=="stump"){
-    k=spec_df$num[as.character(spec_df$sp)==as.character(overstory_plus2$species[i])]+39
-    BA_sp_df[j,k] %+=% overstory_plus2$BA_sqm[i]
- #   BA_sp_df[BA_sp_df[BA_sp_df$standcode==overstory_plus2$Stand_code[i],], 
-  #           BA_sp_df[,overstory_plus2$species[i]+40]] %+=% overstory_plus2$BA_sqm[i]
-  } else{
-    k=spec_df$num[as.character(spec_df$sp)==as.character(overstory_plus2$species[i])]+1
-    BA_sp_df[j,k] %+=% overstory_plus2$BA_sqm[i]
-  #  BA_sp_df[BA_sp_df[BA_sp_df$standcode==overstory_plus2$Stand_code[i],], 
-  #           BA_sp_df[,overstory_plus2$species[i]]] %+=% overstory_plus2$BA_sqm[i]
-  }
-#  }    
-}
-##I FINALLY GOT THIS MATRIX TO WORK BABYYY
-
-BA_ha_df <- cbind(BA_sp_df, "num_plots"=stand_info2$num_plots) #now to get it into BA/ha...
-#just add on the # plots column since stands are in the same order
-#each plot = 400 square meters = 0.04 hectares
-#so, BA/stand /(.04 ha * n plots/stand)
-
-for (i in 2:(ncol(BA_ha_df)-1)){
-  for(j in 1:nrow(BA_ha_df)){
-    BA_ha_df[j,i] = BA_ha_df[j,i]/(0.04*BA_ha_df$num_plots[j])
-  }
-}
-#I DID IT!! this dataframe (BA_ha_df) has basal area per hectare per species per stand!!!
-#NOW I'm removing the num_plots col since I no longer need it:
-BA_ha_df <- BA_ha_df[,1:81]
-
-#NEXT creating a sum total of BA/ha cut per species:
-
-total_BA_cut <- data.frame(species = colnames(BA_ha_df)[2:41],
-                           BA_ha_cut = colSums(BA_ha_df[,42:81]))
-###ok so...clearly I have messed up...SOMETHING. 
-#I'm gonna need to debug this later and focus on my ACUTAL presentation for now!!!
+#NOW TO EXPORT IT AS A CSV: 
+write.csv(stand_info_plus, file="stand_basal_area_dataframe_09Aug2021.csv")

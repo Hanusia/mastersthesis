@@ -289,3 +289,10 @@ stand_info_plus$BA_sqm_ha <- stand_info_plus$BA_sqm / #total BA in square meters
 
 #NOW TO EXPORT IT AS A CSV: 
 write.csv(stand_info_plus, file="stand_basal_area_dataframe_09Aug2021.csv")
+
+##updates oct. 2021: trying to finagle this to give BA per stand BY SPECIES, not just aggregate w/ all species.
+BA_stand_sum_sp <- aggregate(BA_sqm ~ Stand_name*species, data=overstory_plus, FUN=sum)
+View(BA_stand_sum_sp) #this worked! 
+#this is the TOTAL (NOT per ha!) basal area per species of all trees, live/snag/stump (pre-harvest totals), in a stand
+write.csv(BA_stand_sum_sp, file="stand_basal_area_species_df_22Oct21.csv")
+

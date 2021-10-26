@@ -1,0 +1,413 @@
+"","Stand_name","species","BA_sqm"
+"1","Shaker State Forest","",0.114608441595609
+"2","Cardigan Mountain State Forest comp 1, stand 1","ABBA",0.831865373769233
+"3","Cardigan Mountain State Forest comp 6, stand 2","ABBA",0.138201342284094
+"4","County Rd ash salvage","ABBA",0.628008862306466
+"5","Holbrook State Park stand 1-1-8","ABBA",0.184922782970093
+"6","Mathewson State Forest stand 3-1-11","ABBA",0.0233616683702571
+"7","Mud Pond 2019","ABBA",0.0728790663634792
+"8","Roaring Brook stand 125-5","ABBA",0.519215730247765
+"9","Mud Pond 2013-14","ACER",0.0508938009881546
+"10","Balance Rock State Park","ACPE",0.0179856179418016
+"11","Camel's Hump SP stand 1-3-8","ACPE",0.0307907495978336
+"12","Camel's Hump SP stand 2-2-14","ACPE",0.00817128249198705
+"13","Camel's Hump SP stand 2-2-4","ACPE",0.022336176440979
+"14","Cardigan Mountain State Forest comp 6, stand 2","ACPE",0.0546864887192009
+"15","Cook Brook stand 62-6","ACPE",0.0681045958094696
+"16","Dennis Hill State Park stand 1","ACPE",0.00882473376393373
+"17","Heaphy Richardson Lot","ACPE",0.0964188563965336
+"18","Hill Roberts property","ACPE",0.214260545965641
+"19","Jason Mills property stand 1","ACPE",0.00833228911548353
+"20","Kearsarge Mountain State Forest comp 4, stand 26","ACPE",0.00817128249198705
+"21","Long Pond harvested","ACPE",0.0126676869774374
+"22","Mad Tom stand 58-14","ACPE",0.00754194249239428
+"23","Mathewson State Forest stand 3-1-11","ACPE",0.0371179172021634
+"24","Mud Pond 2013-14","ACPE",0.00865901475145687
+"25","Mud Pond 2019","ACPE",0.0503181041343843
+"26","Mud Pond unharvested","ACPE",0.0302951633567298
+"27","Potter Mtn Rd. Hancock Unit","ACPE",0.0213575878018369
+"28","Roaring Brook stand 125-5","ACPE",0.0120762821603992
+"29","Sherlock Lot 2017","ACPE",0.0223877746476443
+"30","Sunnyside stand 63-49","ACPE",0.0142532880310005
+"31","Tunxis State Forest stand 49","ACPE",0.00833228911548353
+"32","Algonquin State Forest stand 1-14","ACRU",0.440926455922145
+"33","Balance Rock State Park","ACRU",1.02378378474817
+"34","Camel's Hump SP stand 1-4-5","ACRU",0.0880816186268604
+"35","Camel's Hump SP stand 2-2-14","ACRU",0.00817128249198705
+"36","Camel's Hump SP stand 2-3-1","ACRU",0.256213374261679
+"37","Cardigan Mountain State Forest comp 1, stand 1","ACRU",0.671368560248263
+"38","Cardigan Mountain State Forest comp 6, stand 2","ACRU",0.536437941174745
+"39","Clam Dam unit 1","ACRU",0.648359633080732
+"40","Clam Dam unit 3","ACRU",0.4638160999962
+"41","County Rd ash salvage","ACRU",0.543684068272557
+"42","Dennis Hill State Park stand 1","ACRU",0.629436697861624
+"43","Groton State Forest stand 3-9-6","ACRU",0.114608441595609
+"44","Haystack Mountain State Park","ACRU",0.734911984056097
+"45","Heaphy Richardson Lot","ACRU",2.93263901089765
+"46","Hill Roberts property","ACRU",0.492404593143867
+"47","Housatonic State Forest stand 16-1","ACRU",0.201043080273825
+"48","Jason Mills property stand 1","ACRU",0.0463769761504559
+"49","Mathewson State Forest stand 3-1-11","ACRU",0.138895309002349
+"50","Mud Pond 2019","ACRU",0.82001483972621
+"51","Roaring Brook stand 125-5","ACRU",0.0834689752132272
+"52","Roaring Brook stand 125-6","ACRU",0.273669633841351
+"53","Shaker State Forest","ACRU",0.977303136040144
+"54","Sherlock Lot 2017","ACRU",0.85606679035411
+"55","Stoner Woodlot","ACRU",0.111445643191608
+"56","Tunxis State Forest stand 49","ACRU",0.841584762608738
+"57","York Lake stand 2","ACRU",1.66834956555714
+"58","Algonquin State Forest stand 1-14","ACSA",0.955338691002571
+"59","Alpaca stand 66-30","ACSA",2.07089988551224
+"60","Balance Rock State Park","ACSA",1.24263898230588
+"61","Camel's Hump SP stand 1-3-8","ACSA",4.0625186909109
+"62","Camel's Hump SP stand 1-4-5","ACSA",2.09713247563155
+"63","Camel's Hump SP stand 2-2-14","ACSA",1.74006376817399
+"64","Camel's Hump SP stand 2-2-4","ACSA",3.58983997061229
+"65","Camel's Hump SP stand 2-3-1","ACSA",1.88439560326337
+"66","Cardigan Mountain State Forest comp 1, stand 1","ACSA",1.70593743257621
+"67","Cardigan Mountain State Forest comp 6, stand 2","ACSA",1.69304826331669
+"68","Clam Dam unit 1","ACSA",3.84802530660942
+"69","Clam Dam unit 3","ACSA",1.88010890008755
+"70","Clements Woodlot East","ACSA",1.7735908449731
+"71","Cook Brook stand 62-6","ACSA",3.31325636453619
+"72","County Rd ash salvage","ACSA",2.3442699651264
+"73","Dennis Hill State Park stand 1","ACSA",2.5158632751617
+"74","Groton State Forest stand 3-9-6","ACSA",5.19616412598624
+"75","Haystack Mountain State Park","ACSA",1.19513253126026
+"76","Heaphy Richardson Lot","ACSA",0.381165558149514
+"77","Hill Roberts property","ACSA",4.84200873707731
+"78","Holbrook State Park stand 1-1-8","ACSA",2.84857063131617
+"79","Housatonic State Forest stand 16-1","ACSA",2.68055798331425
+"80","Jason Mills property stand 1","ACSA",2.56347017478902
+"81","Jason Mills property stand 3","ACSA",2.12872646354213
+"82","Jason Mills property stand 7","ACSA",2.94463608694605
+"83","Joe Nelson property","ACSA",0.936350905004274
+"84","Kearsarge Mountain State Forest comp 4, stand 26","ACSA",1.82700420326943
+"85","Long Pond harvested","ACSA",5.91960775921951
+"86","Long Pond unharvested","ACSA",3.55000668519887
+"87","Mad Tom stand 58-14","ACSA",3.72693470557548
+"88","Mathewson State Forest stand 3-1-11","ACSA",1.67404869634594
+"89","Mud Pond 2013-14","ACSA",2.39904209987812
+"90","Mud Pond 2019","ACSA",2.8054764258955
+"91","Mud Pond unharvested","ACSA",4.43544894859095
+"92","Potter Mtn Rd. Hancock Unit","ACSA",2.75867882220285
+"93","Roaring Brook stand 125-5","ACSA",3.47638488362306
+"94","Roaring Brook stand 125-6","ACSA",1.30848863909866
+"95","Schoolhouse Lot, BB stand","ACSA",4.75396969573472
+"96","Shaker State Forest","ACSA",0.574265708019542
+"97","Sherlock Lot 2014","ACSA",3.83015134917506
+"98","Sherlock Lot 2017","ACSA",1.43981509064534
+"99","Stoner Woodlot","ACSA",2.98028468607254
+"100","Sunnyside stand 63-49","ACSA",7.06296072161048
+"101","Tunxis State Forest stand 49","ACSA",1.39878560812412
+"102","York Lake stand 2","ACSA",2.36363738617011
+"103","Camel's Hump SP stand 2-3-1","ACSP",0.0103868907109313
+"104","Jason Mills property stand 3","ACSP",0.122541748444087
+"105","Mud Pond 2019","ACSP",0.687492395190309
+"106","Sherlock Lot 2014","ACSP",0.758323043168227
+"107","Tunxis State Forest stand 49","ACSP",0.0191134497044403
+"108","York Lake stand 2","ACSP",0.0820887108394888
+"109","Clam Dam unit 1","ACSP2",0.0382879778418722
+"110","Algonquin State Forest stand 1-14","BEAL",0.147253516257224
+"111","Alpaca stand 66-30","BEAL",1.42391669189295
+"112","Balance Rock State Park","BEAL",0.0422269322550638
+"113","Camel's Hump SP stand 1-3-8","BEAL",0.222774262056869
+"114","Camel's Hump SP stand 1-4-5","BEAL",0.879034482483402
+"115","Camel's Hump SP stand 2-2-14","BEAL",0.21960222681897
+"116","Camel's Hump SP stand 2-2-4","BEAL",0.118847235483465
+"117","Camel's Hump SP stand 2-3-1","BEAL",0.333990353475109
+"118","Cardigan Mountain State Forest comp 1, stand 1","BEAL",0.0974278567712901
+"119","Clam Dam unit 1","BEAL",0.0216424317905801
+"120","Clam Dam unit 3","BEAL",0.109271661075324
+"121","Cook Brook stand 62-6","BEAL",0.406536977618895
+"122","County Rd ash salvage","BEAL",0.497482633919371
+"123","Dennis Hill State Park stand 1","BEAL",0.197256000045484
+"124","Heaphy Richardson Lot","BEAL",0.318874950745335
+"125","Hill Roberts property","BEAL",1.4438342951892
+"126","Holbrook State Park stand 1-1-8","BEAL",0.463663732752501
+"127","Jason Mills property stand 1","BEAL",0.241879072381512
+"128","Jason Mills property stand 3","BEAL",0.112447811248103
+"129","Jason Mills property stand 7","BEAL",0.198190503456104
+"130","Joe Nelson property","BEAL",0.160373592576779
+"131","Kearsarge Mountain State Forest comp 4, stand 26","BEAL",0.906389212535766
+"132","Long Pond harvested","BEAL",0.612006951706359
+"133","Long Pond unharvested","BEAL",0.983147283773985
+"134","Mad Tom stand 58-14","BEAL",0.742150011923746
+"135","Mathewson State Forest stand 3-1-11","BEAL",0.137359070194743
+"136","Mud Pond 2013-14","BEAL",0.813122241992785
+"137","Mud Pond 2019","BEAL",2.43172051912779
+"138","Mud Pond unharvested","BEAL",0.154711657216846
+"139","Potter Mtn Rd. Hancock Unit","BEAL",0.644508728458234
+"140","Roaring Brook stand 125-5","BEAL",0.610960911713134
+"141","Roaring Brook stand 125-6","BEAL",1.35456750892149
+"142","Schoolhouse Lot, BB stand","BEAL",0.08656501477334
+"143","Shaker State Forest","BEAL",0.258502403730279
+"144","Sherlock Lot 2014","BEAL",0.426670471188694
+"145","Sherlock Lot 2017","BEAL",1.85837193252518
+"146","Stoner Woodlot","BEAL",0.577704778353659
+"147","Sunnyside stand 63-49","BEAL",0.430105240026854
+"148","York Lake stand 2","BEAL",0.370232050919863
+"149","Clam Dam unit 1","BELE",0.257377334339834
+"150","Shaker State Forest","BELE",0.0973139740375975
+"151","Balance Rock State Park","BENI",0.237820134673074
+"152","Clam Dam unit 3","BENI",0.0735415424278835
+"153","Alpaca stand 66-30","BEPA",0.0564104376878583
+"154","Balance Rock State Park","BEPA",0.188307063656172
+"155","Camel's Hump SP stand 2-2-14","BEPA",0.347051255235949
+"156","Camel's Hump SP stand 2-2-4","BEPA",0.166307163718079
+"157","Cardigan Mountain State Forest comp 1, stand 1","BEPA",0.391503705694033
+"158","Cardigan Mountain State Forest comp 6, stand 2","BEPA",1.23604177643157
+"159","County Rd ash salvage","BEPA",0.00882473376393373
+"160","Haystack Mountain State Park","BEPA",0.0193592793295837
+"161","Heaphy Richardson Lot","BEPA",0.062141525729408
+"162","Hill Roberts property","BEPA",0.619778896487338
+"163","Holbrook State Park stand 1-1-8","BEPA",0.0819398049890924
+"164","Jason Mills property stand 1","BEPA",0.822567249015637
+"165","Kearsarge Mountain State Forest comp 4, stand 26","BEPA",0.157439345038326
+"166","Mathewson State Forest stand 3-1-11","BEPA",0.0868037758150128
+"167","Potter Mtn Rd. Hancock Unit","BEPA",0.0552402350251256
+"168","Roaring Brook stand 125-6","BEPA",0.183881345005428
+"169","Schoolhouse Lot, BB stand","BEPA",0.110678006490884
+"170","Sherlock Lot 2017","BEPA",0.0387075630848798
+"171","Sunnyside stand 63-49","BEPA",0.0876959881286323
+"172","Haystack Mountain State Park","BEPO",0.126500940585773
+"173","Mathewson State Forest stand 3-1-11","BESP",0.0147411381288067
+"174","Sunnyside stand 63-49","BESP",0.127283290203113
+"175","County Rd ash salvage","CACA",0.00899202357273738
+"176","Housatonic State Forest stand 16-1","CACO",0.0237787147950211
+"177","Algonquin State Forest stand 1-14","CAOV",0.0660519855417254
+"178","Algonquin State Forest stand 1-14","FAGR",1.07388040660047
+"179","Alpaca stand 66-30","FAGR",0.919651536557641
+"180","Balance Rock State Park","FAGR",0.133655917854324
+"181","Camel's Hump SP stand 1-3-8","FAGR",0.229920556179115
+"182","Camel's Hump SP stand 1-4-5","FAGR",0.040211600567786
+"183","Camel's Hump SP stand 2-2-14","FAGR",1.15087848634547
+"184","Camel's Hump SP stand 2-2-4","FAGR",0.251259763154236
+"185","Camel's Hump SP stand 2-3-1","FAGR",0.314073656959169
+"186","Cardigan Mountain State Forest comp 6, stand 2","FAGR",0.306306069123168
+"187","Clam Dam unit 1","FAGR",0.146276632420179
+"188","Clam Dam unit 3","FAGR",0.523712134733216
+"189","Clements Woodlot East","FAGR",0.531428245536586
+"190","Cook Brook stand 62-6","FAGR",0.60674460662049
+"191","County Rd ash salvage","FAGR",0.0325831959549831
+"192","Dennis Hill State Park stand 1","FAGR",0.025487093144593
+"193","Groton State Forest stand 3-9-6","FAGR",0.51825390337335
+"194","Haystack Mountain State Park","FAGR",0.114121494734303
+"195","Heaphy Richardson Lot","FAGR",1.22491412767631
+"196","Hill Roberts property","FAGR",0.956801102382817
+"197","Holbrook State Park stand 1-1-8","FAGR",0.168924677489266
+"198","Jason Mills property stand 3","FAGR",0.429688979000254
+"199","Jason Mills property stand 7","FAGR",0.0533882255551049
+"200","Kearsarge Mountain State Forest comp 4, stand 26","FAGR",0.667028449997329
+"201","Long Pond harvested","FAGR",0.00756722995046782
+"202","Long Pond unharvested","FAGR",0.0778525929467721
+"203","Mad Tom stand 58-14","FAGR",0.931769461986834
+"204","Mathewson State Forest stand 3-1-11","FAGR",0.104939404806023
+"205","Mud Pond 2013-14","FAGR",0.0793228583086521
+"206","Mud Pond 2019","FAGR",0.307275194651405
+"207","Mud Pond unharvested","FAGR",0.106803154647765
+"208","Potter Mtn Rd. Hancock Unit","FAGR",0.52816394872037
+"209","Roaring Brook stand 125-5","FAGR",0.21371940663106
+"210","Roaring Brook stand 125-6","FAGR",0.46320967233837
+"211","Schoolhouse Lot, BB stand","FAGR",0.573381484047352
+"212","Shaker State Forest","FAGR",1.15552777429179
+"213","Sherlock Lot 2014","FAGR",1.17988358892449
+"214","Sherlock Lot 2017","FAGR",2.78535427650769
+"215","Sunnyside stand 63-49","FAGR",0.3116366518737
+"216","Tunxis State Forest stand 49","FAGR",0.0265935818126376
+"217","York Lake stand 2","FAGR",0.042665969828403
+"218","Algonquin State Forest stand 1-14","FRAM",3.52455466185227
+"219","Alpaca stand 66-30","FRAM",2.49634892753802
+"220","Balance Rock State Park","FRAM",1.98750581574684
+"221","Camel's Hump SP stand 1-3-8","FRAM",4.94853587966138
+"222","Camel's Hump SP stand 1-4-5","FRAM",3.16763174429907
+"223","Camel's Hump SP stand 2-2-14","FRAM",2.0372623601944
+"224","Camel's Hump SP stand 2-2-4","FRAM",1.75391372930651
+"225","Camel's Hump SP stand 2-3-1","FRAM",2.8697435726912
+"226","Cardigan Mountain State Forest comp 1, stand 1","FRAM",2.28102874436256
+"227","Cardigan Mountain State Forest comp 6, stand 2","FRAM",1.54110337127187
+"228","Clam Dam unit 1","FRAM",5.17078368233704
+"229","Clam Dam unit 3","FRAM",2.67804437436731
+"230","Clements Woodlot East","FRAM",3.09169157485357
+"231","Cook Brook stand 62-6","FRAM",2.81774791489378
+"232","County Rd ash salvage","FRAM",2.89311592615597
+"233","Dennis Hill State Park stand 1","FRAM",4.53350871256635
+"234","Groton State Forest stand 3-9-6","FRAM",2.83231004060848
+"235","Haystack Mountain State Park","FRAM",3.37576539919205
+"236","Heaphy Richardson Lot","FRAM",2.72114432717078
+"237","Hill Roberts property","FRAM",2.0186908352227
+"238","Holbrook State Park stand 1-1-8","FRAM",1.95190057540738
+"239","Housatonic State Forest stand 16-1","FRAM",5.59610925918677
+"240","Jason Mills property stand 1","FRAM",2.18666249865663
+"241","Jason Mills property stand 3","FRAM",1.54708122925111
+"242","Jason Mills property stand 7","FRAM",3.27042911492285
+"243","Joe Nelson property","FRAM",1.64854367638777
+"244","Kearsarge Mountain State Forest comp 4, stand 26","FRAM",1.80272440444616
+"245","Long Pond harvested","FRAM",1.90532567592952
+"246","Long Pond unharvested","FRAM",1.84504951147165
+"247","Mad Tom stand 58-14","FRAM",1.95384033460486
+"248","Mathewson State Forest stand 3-1-11","FRAM",1.10785594575088
+"249","Mud Pond 2013-14","FRAM",2.95131957309924
+"250","Mud Pond 2019","FRAM",1.80200860393074
+"251","Mud Pond unharvested","FRAM",2.17460728848208
+"252","Potter Mtn Rd. Hancock Unit","FRAM",4.68002301046738
+"253","Roaring Brook stand 125-5","FRAM",1.80152588684882
+"254","Roaring Brook stand 125-6","FRAM",3.89330508975912
+"255","Schoolhouse Lot, BB stand","FRAM",4.99917179449836
+"256","Shaker State Forest","FRAM",0.942069389031971
+"257","Sherlock Lot 2014","FRAM",2.19857795579906
+"258","Sherlock Lot 2017","FRAM",1.80628045893348
+"259","Stoner Woodlot","FRAM",1.45986904639113
+"260","Sunnyside stand 63-49","FRAM",2.01377469133206
+"261","Tunxis State Forest stand 49","FRAM",2.85303422676492
+"262","York Lake stand 2","FRAM",5.38688648114534
+"263","Balance Rock State Park","FRNI",0.0232352192659501
+"264","Joe Nelson property","FRNI",0.899269116117627
+"265","Mud Pond 2019","FRNI",0.0206119894002026
+"266","Housatonic State Forest stand 16-1","HAVI",0.0105683176866761
+"267","Algonquin State Forest stand 1-14","OSVI",0.107563420069934
+"268","Balance Rock State Park","OSVI",0.0558080372965325
+"269","Camel's Hump SP stand 2-2-14","OSVI",0.228713442968481
+"270","Camel's Hump SP stand 2-2-4","OSVI",0.0160606070433144
+"271","Camel's Hump SP stand 2-3-1","OSVI",0.0216424317905801
+"272","Clam Dam unit 3","OSVI",0.014957122623741
+"273","Clements Woodlot East","OSVI",0.256723883067887
+"274","Hill Roberts property","OSVI",0.590296620229725
+"275","Housatonic State Forest stand 16-1","OSVI",0.0191134497044403
+"276","Jason Mills property stand 3","OSVI",0.0109358840271461
+"277","Joe Nelson property","OSVI",0.0419253393603192
+"278","Long Pond harvested","OSVI",0.0545144865214169
+"279","Long Pond unharvested","OSVI",0.047904575578264
+"280","Mud Pond 2019","OSVI",0.0598551940325195
+"281","Potter Mtn Rd. Hancock Unit","OSVI",0.153590894037678
+"282","Shaker State Forest","OSVI",0.0211625535127442
+"283","Tunxis State Forest stand 49","OSVI",0.0174366246255868
+"284","Cardigan Mountain State Forest comp 1, stand 1","PIRU",0.332524230613702
+"285","Cardigan Mountain State Forest comp 6, stand 2","PIRU",0.333304130989955
+"286","Cook Brook stand 62-6","PIRU",0.0811104245285447
+"287","Hill Roberts property","PIRU",0.309054962695059
+"288","Kearsarge Mountain State Forest comp 4, stand 26","PIRU",0.242315753760361
+"289","Mathewson State Forest stand 3-1-11","PIRU",0.0339794661412272
+"290","Mud Pond 2019","PIRU",0.0381247976476389
+"291","Joe Nelson property","PISP",0.120072456618365
+"292","Sherlock Lot 2017","PISP",0.00916088417786784
+"293","Clam Dam unit 1","PIST",0.0383260073516502
+"294","County Rd ash salvage","PIST",0.0918633107836191
+"295","Dennis Hill State Park stand 1","PIST",0.836905207149449
+"296","Haystack Mountain State Park","PIST",0.44879457472306
+"297","Mathewson State Forest stand 3-1-11","PIST",0.811673471343725
+"298","Shaker State Forest","PIST",0.148793682055647
+"299","Tunxis State Forest stand 49","PIST",0.0326851299679482
+"300","York Lake stand 2","PIST",1.20173130010818
+"301","Camel's Hump SP stand 2-2-4","PODE",0.179450913965703
+"302","Camel's Hump SP stand 2-2-14","POGR",0.029864765163188
+"303","Cardigan Mountain State Forest comp 1, stand 1","POGR",0.180955736846772
+"304","Shaker State Forest","POGR",0.104634670318625
+"305","Holbrook State Park stand 1-1-8","POSP",0.0674256469295075
+"306","Cardigan Mountain State Forest comp 1, stand 1","POTR",0.125036173011037
+"307","Holbrook State Park stand 1-1-8","POTR",0.0514718540364152
+"308","Mathewson State Forest stand 3-1-11","POTR",0.234710743344184
+"309","Stoner Woodlot","POTR",0.0716314540945009
+"310","Camel's Hump SP stand 2-2-14","PRPE",0.0201061929829747
+"311","Mathewson State Forest stand 3-1-11","PRPE",0.0189006068021596
+"312","Balance Rock State Park","PRSE",1.00428077755468
+"313","Camel's Hump SP stand 1-4-5","PRSE",0.20380218402184
+"314","Camel's Hump SP stand 2-3-1","PRSE",0.0710211997215411
+"315","Cardigan Mountain State Forest comp 1, stand 1","PRSE",0.0441150294398713
+"316","Cardigan Mountain State Forest comp 6, stand 2","PRSE",0.0711578590019722
+"317","Clam Dam unit 3","PRSE",0.680993245636062
+"318","County Rd ash salvage","PRSE",2.2045901824574
+"319","Dennis Hill State Park stand 1","PRSE",2.31576895334561
+"320","Groton State Forest stand 3-9-6","PRSE",0.266891647691231
+"321","Haystack Mountain State Park","PRSE",0.244924061061004
+"322","Jason Mills property stand 3","PRSE",0.0510705155749191
+"323","Joe Nelson property","PRSE",0.14454546338983
+"324","Long Pond harvested","PRSE",0.139204755878727
+"325","Mad Tom stand 58-14","PRSE",0.260634380523443
+"326","Mathewson State Forest stand 3-1-11","PRSE",0.146980197696362
+"327","Mud Pond 2013-14","PRSE",0.0297642341982731
+"328","Mud Pond 2019","PRSE",0.0831014088727572
+"329","Potter Mtn Rd. Hancock Unit","PRSE",0.179661400673493
+"330","Roaring Brook stand 125-5","PRSE",0.254819292521649
+"331","Roaring Brook stand 125-6","PRSE",0.315693147972095
+"332","Schoolhouse Lot, BB stand","PRSE",0.320694563476609
+"333","Sherlock Lot 2017","PRSE",0.045238934211693
+"334","York Lake stand 2","PRSE",0.665131779558917
+"335","Algonquin State Forest stand 1-14","QURU",0.802637653084022
+"336","Balance Rock State Park","QURU",0.445362384749013
+"337","Camel's Hump SP stand 2-3-1","QURU",0.0105683176866761
+"338","Cardigan Mountain State Forest comp 6, stand 2","QURU",0.294419067920148
+"339","County Rd ash salvage","QURU",0.60877782441263
+"340","Dennis Hill State Park stand 1","QURU",0.181710504481797
+"341","Haystack Mountain State Park","QURU",1.10735407632447
+"342","Heaphy Richardson Lot","QURU",1.66129634203014
+"343","Shaker State Forest","QURU",2.82894295198732
+"344","Tunxis State Forest stand 49","QURU",0.887998652472874
+"345","York Lake stand 2","QURU",0.377633574128434
+"346","Camel's Hump SP stand 2-2-4","ROPS",0.244544713748083
+"347","Mud Pond 2019","THOC",0.0526852941988642
+"348","Balance Rock State Park","TIAM",0.128658429340626
+"349","Camel's Hump SP stand 1-3-8","TIAM",0.104062115057508
+"350","Camel's Hump SP stand 1-4-5","TIAM",0.132025431267111
+"351","Cardigan Mountain State Forest comp 1, stand 1","TIAM",0.0274653737740088
+"352","Clam Dam unit 3","TIAM",0.0356327292751788
+"353","Clements Woodlot East","TIAM",0.0589645525152268
+"354","Joe Nelson property","TIAM",0.887139426882117
+"355","Long Pond harvested","TIAM",0.223903564436563
+"356","Mud Pond 2019","TIAM",0.0176714586764426
+"357","Potter Mtn Rd. Hancock Unit","TIAM",0.111036450748478
+"358","Shaker State Forest","TIAM",0.393025807334697
+"359","Balance Rock State Park","TSCA",0.0323654729154455
+"360","Clam Dam unit 1","TSCA",0.600665840257827
+"361","Clam Dam unit 3","TSCA",0.232664781128533
+"362","Clements Woodlot East","TSCA",0.0162860163162095
+"363","Cook Brook stand 62-6","TSCA",0.104264747783665
+"364","County Rd ash salvage","TSCA",0.0053469532059495
+"365","Heaphy Richardson Lot","TSCA",0.0848552049873059
+"366","Shaker State Forest","TSCA",0.593595292515994
+"367","Hill Roberts property","ULAM",0.0448627284914256
+"368","Joe Nelson property","ULAM",0.18933750604655
+"369","Shaker State Forest","ULRU",0.0132732289614169
+"370","Clam Dam unit 1","ULSP",0.0699396624454322
+"371","Clam Dam unit 3","ULSP",0.00916088417786784
+"372","Algonquin State Forest stand 1-14","UNK",0.156937535499646
+"373","Alpaca stand 66-30","UNK",0.180658619948478
+"374","Balance Rock State Park","UNK",0.3518152835311
+"375","Camel's Hump SP stand 1-3-8","UNK",2.93017079631786
+"376","Camel's Hump SP stand 1-4-5","UNK",0.141577617046466
+"377","Camel's Hump SP stand 2-2-14","UNK",0.237188527749001
+"378","Camel's Hump SP stand 2-2-4","UNK",0.414374447711036
+"379","Camel's Hump SP stand 2-3-1","UNK",0.171009081887051
+"380","Cardigan Mountain State Forest comp 1, stand 1","UNK",0.0720408930328786
+"381","Cardigan Mountain State Forest comp 6, stand 2","UNK",0.762636212892171
+"382","Clam Dam unit 1","UNK",0.589457631440973
+"383","Clam Dam unit 3","UNK",0.587448861430165
+"384","Clements Woodlot East","UNK",0.556677984447076
+"385","Cook Brook stand 62-6","UNK",0.0551419130131326
+"386","County Rd ash salvage","UNK",1.42034366598045
+"387","Groton State Forest stand 3-9-6","UNK",0.460457472368867
+"388","Heaphy Richardson Lot","UNK",0.572417747222602
+"389","Hill Roberts property","UNK",2.00331691823058
+"390","Holbrook State Park stand 1-1-8","UNK",0.297740993073056
+"391","Jason Mills property stand 1","UNK",0.173946710330382
+"392","Jason Mills property stand 3","UNK",0.584691677055533
+"393","Jason Mills property stand 7","UNK",1.57823301503924
+"394","Joe Nelson property","UNK",1.39300405452853
+"395","Long Pond harvested","UNK",0.688588489570341
+"396","Long Pond unharvested","UNK",0.404596123744939
+"397","Mad Tom stand 58-14","UNK",0.530491092224867
+"398","Mathewson State Forest stand 3-1-11","UNK",1.5168697693593
+"399","Mud Pond 2013-14","UNK",1.84359192794118
+"400","Mud Pond 2019","UNK",2.17196896947606
+"401","Mud Pond unharvested","UNK",0.630756144001528
+"402","Potter Mtn Rd. Hancock Unit","UNK",0.346513561631171
+"403","Roaring Brook stand 125-5","UNK",0.600613816259462
+"404","Roaring Brook stand 125-6","UNK",0.130396534999942
+"405","Schoolhouse Lot, BB stand","UNK",0.297646932193439
+"406","Shaker State Forest","UNK",0.754135857393912
+"407","Sherlock Lot 2014","UNK",0.0125206997924146
+"408","Sherlock Lot 2017","UNK",0.271860943311729
+"409","Stoner Woodlot","UNK",0.225119579313204
+"410","Sunnyside stand 63-49","UNK",0.393182375988745
+"411","Tunxis State Forest stand 49","UNK",0.111822919957971
+"412","York Lake stand 2","UNK",0.453366005950321

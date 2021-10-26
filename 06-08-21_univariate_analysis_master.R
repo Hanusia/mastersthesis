@@ -12,6 +12,7 @@ overstory_data <- read.csv("TREES_EAB_project_2020_cleaned_data.csv", fileEncodi
 small_sapling_data <- read.csv("SAPLINGS_SMALL_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
 large_sapling_data <- read.csv("SAPLINGS_LARGE_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
 ash_damage_data <- read.csv("ASH_DAMAGE_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
+ground_cover_data <- read.csv("GROUND_COVER_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
 
 library(tidyverse) #includes tidyr, dplyr, tibble!
 library(ggplot2)
@@ -850,3 +851,109 @@ p14 <- ggplot(data=ash_health_stand,
 print(p14)
 #REMEMBER! At this stage, "avg_ash_health" is still the total ISSUES with the tree- higher number = worse!!
 #lol there is basically NO clear relationship here.
+
+# exploring ground cover data! -------------------------------
+glimpse(ground_cover_data)
+
+#step 1: append stand-level data to this df so we can aggregate @ the stand level
+#step 2: avg 3 azimuths' data points for each plot per each cover type, then aggregate by stand
+#step 3: chi-square test by treatment type, harvest status, & years since harvest.
+
+#for step 1: I'll try using dplyr to do this?
+#ground_cover_try <- ground_cover_data %>%
+#  group_by(plot_ID, life_form) %>% #grouping by plot_ID first and then life_form second
+#  summarize(avg_cover_class = mean(cover_class))
+#this worked!! but there is still a separate row for each cover class within each 
+#could do that with tidyr probably?
+#glimpse(ground_cover_try)
+
+#ground_cover_tidy <- ground_cover_try %>%
+#  spread(life_form, avg_cover_class)
+#glimpse(ground_cover_tidy)
+#update: this DID work for what I wanted to happen!
+#would then need to "gather" this back using the reverse once I append/aggregate stand info.
+#testing w/ gather:
+#ground_cover_gather <- ground_cover_tidy %>%
+#  gather(life_form, avg_cover_class)
+#glimpse(ground_cover_gather)
+#this did NOT work, so maybe try pivot_wider for that instead if I do end up wanting to use it...
+#ground_cover_gather <- ground_cover_tidy %>%
+#  pivot_longer(cols=!plot_ID, names_to = "life_form", values_to = "avg_cover_class")
+#glimpse(ground_cover_gather)
+#update: pivot_longer DID work for this!
+#next step = merge data w/ stand info. 
+
+#TL;DR IS: we're gonna use ground_cover_tidy to merge w/ stand-level data, then use pivot_longer to transfer back to a format that works well for ANOVAS/chi-square tests.
+
+#UPDATE FOR TONIGHT: not sure about the best analysis to do with this data.
+#I was originally thinking chi-square, but b/c each ground cover class has a num. var. associated with it, internet resources are actually pointing me to MANOVA.
+#email Tony to ask about this! Also ask if I need to treat cover class values differently b/c they are actually factors, e.g. Braun-Blanquet cover classes.
+
+## 8-16-21 update ##
+#Asked Tony about how to treat this data & he said assign midpoint vals to BB classes,
+#then average to the plot level. (? not stand level??)
+#use PerMANOVA for categorical vars & multiple regression for continuous ones.
+
+#Step 1: Assigning midpoint values to each of the Braun-Blanquet classes
+Braun_Blanquet_classes <- c(0:6)
+Braun_Blanquet_midpoints <- c(0, 0.5, 3, 10.5, 23, 45.5, 80.5)
+#some of the above stuff will be irrelevant b/c we don't want to avg the cover classes themselves, but the midpoints of each class!
+ground_cover_data$midpoint_val <- rep(NA)
+
+for(h in 1:nrow(ground_cover_data)){
+for(i in 1:length(Braun_Blanquet_classes)){
+  if(is.na(ground_cover_data$cover_class[h])==FALSE){ #NEEDED TO REMOVE NAs! b/c they mess up the if statements b/c no t/f!
+  if(ground_cover_data$cover_class[h]==Braun_Blanquet_classes[i]){
+    ground_cover_data$midpoint_val[h] <- Braun_Blanquet_midpoints[i]
+  } 
+  }
+}
+}
+#Braun_Blanquet_classes[1]
+#ground_cover_data$cover_class[1]
+
+ground_cover_try <- ground_cover_data %>%
+  group_by(plot_ID, life_form) %>% #grouping by plot_ID first and then life_form second
+ summarize(avg_cover_val = mean(midpoint_val, na.rm = TRUE))
+glimpse(ground_cover_try)
+
+ground_cover_tidy <- ground_cover_try %>%
+  spread(life_form, avg_cover_val)
+glimpse(ground_cover_tidy)
+#this *should* work now for PerMANOVA!
+
+#installing the needed package:
+#install.packages("PERMANOVA")
+#library(PERMANOVA)
+#turns out this package is VERY new so I'll try using adonis 1st.
+
+#actually, it's looking like I should use the adonis function in the vegan package instead...
+library(vegan)
+#PERMANOVA AKA NPMANOVA
+
+#next step: need to associate categorical variables w/ this dataframe (@ the plot level)
+#vars of interest: for now just start w/ tx type!
+
+#need to make input a matrix instead of dataframe!
+
+mat_dimnames <- list(ground_cover_tidy$plot_ID, #row names (plot codes)
+                     ground_cover_data$life_form[1:5]) #column names (life form codes)
+ground_cover_mat <- as.matrix(x=ground_cover_tidy[,2:6],
+                              dimnames=mat_dimnames)
+
+run1 <- adonis(formula=ground_cover_mat ~ treatment_type, #using ground_cover_tidy as the DATA MATRIX so dissimilarity will be calculated in the function, and tx type as first var of interest 
+               data=plot_info_plus #name of dataframe w/ treatment_type var (or other vars of interest)
+               #leaving other parameters as default for now- permutations = 999 and method = "bray," sqrt = FALSE (but will try w/ it on as welL!)
+)
+#I think I need to make sure the plots are in the same order btwn matrix & dataframe!! so the variables they apply are the same??
+#to compare:
+ground_cover_tidy$plot_ID[1:5]
+
+plot_info_plus$plot_ID[1:5]
+  
+#??why are they in different orders?
+  
+run2 <- adonis(formula=ground_cover_mat ~ treatment_type*site_ID, #using ground_cover_tidy as the DATA MATRIX so dissimilarity will be calculated in the function, and tx type as first var of interest 
+                 data=plot_info_plus #name of dataframe w/ treatment_type var (or other vars of interest)
+                 #leaving other parameters as default for now- permutations = 999 and method = "bray," sqrt = FALSE (but will try w/ it on as welL!)
+  )

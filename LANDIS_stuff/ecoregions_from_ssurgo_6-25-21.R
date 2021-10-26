@@ -179,10 +179,10 @@ Dcombout <- Dcomb %>% dplyr::select(mukey,OBJECTID,Shape_Area,elev,elevbin,soili
 #skipped creating these output files on 7/14/21
 ## Write some output if you want --> You will want to join Dcombout to your merged soil shapefile, linking Object ID's
 ## Individual polygons (rows in your shapefile) can have the same MUKEY, but different soilindex2 based on mean Elevation by ObjectID.
-write.csv(Dcomb, file="~/mastersthesis_repo/mastersthesis/LANDIS_stuff/Dcomb_6May2021.csv",row.names=FALSE)
-write.csv(Dcombout,"~/mastersthesis_repo/mastersthesis/LANDIS_stuff/VT-MA_soilindex2.csv",row.names=F)
-write.csv(Dout3,"~/mastersthesis_repo/mastersthesis/LANDIS_stuff/VT-MA_soilindex_means.csv",row.names=F)
-write.csv(Dout4,"~/mastersthesis_repo/mastersthesis/LANDIS_stuff/VT-MA_soilindex2remap_means.csv",row.names=F)
+write.csv(Dcomb, file="~/mastersthesis_repo/mastersthesis/LANDIS_stuff/Dcomb_17Aug21.csv",row.names=FALSE)
+write.csv(Dcombout,"~/mastersthesis_repo/mastersthesis/LANDIS_stuff/VT-MA_soilindex2_17Aug21.csv",row.names=F)
+write.csv(Dout3,"~/mastersthesis_repo/mastersthesis/LANDIS_stuff/VT-MA_soilindex_means_17Aug21.csv",row.names=F)
+write.csv(Dout4,"~/mastersthesis_repo/mastersthesis/LANDIS_stuff/VT-MA_soilindex2remap_means_17Aug21.csv",row.names=F)
 
 #Scale mean soil vars to mean=1 sd=0 to plot class comparisons
 Dout4norm <- Dout4 %>% mutate(across(fieldcap:elev, ~scale(.x))) 
@@ -229,6 +229,14 @@ plot(shape["soilindex2"],pch=20,cex=2,
      col=shape$soilCols, lty=0)
 #shapefile_1 <- plot(shape["soilindex2"],pch=20,cex=2,key.pos=2,col=shape$soilCols, lty=0)
 #view(shapefile_1)
+
+st_write(shape, "C:/Users/theha/Documents/layers_for_LANDIS/Soils/soilmu_a_Merge_colors_17Aug2021.shp")
+
+#gonna try this with only plotting ONE soil class @ a time...
+plot(shape["soilindex2"==16],pch=20,cex=2,
+     key.size=lcm(2),
+     #  key.pos=4, key.length=2.5, key.width=2,
+     col=shape$soilCols, lty=0)
 
 # Read in shapefile of merged county data 
 #soilPoly <-readOGR(dsn="data",layer="soil_mu_a_vtma_mu_summary_elev_by_oid")

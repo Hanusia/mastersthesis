@@ -18,6 +18,7 @@ overstory_data <- read.csv("TREES_EAB_project_2020_cleaned_data.csv", fileEncodi
 
 library(tibble)
 library(ggplot2)
+library(tidyverse)
 
 #glimpse(overstory_data)
 #glimpse(plot_info)
@@ -296,3 +297,138 @@ View(BA_stand_sum_sp) #this worked!
 #this is the TOTAL (NOT per ha!) basal area per species of all trees, live/snag/stump (pre-harvest totals), in a stand
 write.csv(BA_stand_sum_sp, file="stand_basal_area_species_df_22Oct21.csv")
 
+# Overstory aggregation for LANDIS -------------------------------
+#for this purpose- using live trees + stumps with decay class 1 or 2, aggregated by PLOT and SPECIES
+
+#first step- subset the data needed from gargantuan overstory_plus DF
+overstory_LANDISprep <- overstory_plus[,c("plot_ID", "species", "DBH_cm", "status",
+                                          "decay_class", "stump_DBH_cm", "BA_sqm")]
+
+#now selecting out only live trees + stumps
+overstory_LANDISprep<- overstory_LANDISprep[overstory_LANDISprep$status!="snag",]
+overstory_LANDISprep <- overstory_LANDISprep[overstory_LANDISprep$decay_class < 3 | overstory_LANDISprep$status=="live",]
+
+#next, convert BA_sqm to BA per ha:
+#overstory_LANDISprep$BA_sqm_ha <- overstory_LANDISprep$BA_sqm/0.04 #dividing by area of each plot...
+#update: not actually doing this @ this stage, only once combined w/ larger sapling data
+
+#now, to aggregate to plot level w/ only the species...
+overstory_LANDISprep <- overstory_LANDISprep[,c("plot_ID", "species", "BA_sqm")]
+
+plot_BA_LANDIS <- aggregate(BA_sqm ~ plot_ID*species, data=overstory_LANDISprep, FUN=sum)
+#renaming this one column
+names(plot_BA_LANDIS)[3] <- "BA_sqm_overstory"
+
+
+##############################################
+# now to do the same thing with large sapling data! (all over 1in diam) -------------------------------
+
+large_sapling_data <- read.csv("SAPLINGS_LARGE_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
+
+#RECALCULATING
+#first need to get data into long(er) format
+#maybe try using uncount function?
+
+#first, pivot_longer
+large_sapling_data <- pivot_longer(data=large_sapling_data,
+                                   cols=c("class_1", "class_2", "class_3"),
+                                   names_to="class",
+                                   values_to="tally",
+                                   names_prefix="class_")
+#now, let's try uncount!
+large_sapling_data <- uncount(data=large_sapling_data,
+                              weights=tally) #basically, making a separate row for each observation of a variable 
+
+#it worked! now to convert to DBH (in)
+large_sapling_data$class <- as.numeric(large_sapling_data$class) #first gotta convert this to numeric
+large_sapling_data$DBH_in <- large_sapling_data$class + 0.5 #assigning midpoint values - basically the class + 0.5 to get to midpoint of each class (again, in in.)
+#converting to cm instead of in
+large_sapling_data$DBH_cm <- large_sapling_data$DBH_in*2.54
+#and converting to BA 
+large_sapling_data$sapling_BA_sqm <- large_sapling_data$DBH_cm*large_sapling_data$DBH_cm*pi/40000
+
+#now to get the "good stuff"
+large_sapling_data <- large_sapling_data[,c("plot_ID", "species", "sapling_BA_sqm")]
+sapling_BA_LANDIS <-aggregate(sapling_BA_sqm ~ plot_ID*species, data=large_sapling_data, FUN=sum)
+
+
+##############################################
+# next step is to combine these two DFs -------------------------------
+#need to combine: plot_BA_LANDIS and sapling_BA_LANDIS
+#by species, and by plot
+#then will need to finagle how to convert their BA to BA per ha (remembering that they are on DIFFERENT AMOUNTS OF AREA)
+#let's just try this with merge to start??
+over1in_BA_LANDIS <- merge(x=plot_BA_LANDIS, y=sapling_BA_LANDIS,
+                           all=TRUE)
+#this seemed to work!!
+#next, convert NAs to 0s
+over1in_BA_LANDIS[is.na(over1in_BA_LANDIS)] <- 0
+#next, calculate BA per HA (total):
+#basically, ADD both BAs for per-plot, per-species, then DIVIDE by sum of area
+
+#area will be: total plot area in ha (0.04) + 3*total large-sapling plot area in ha (the TOTAL of that part, including the *3, is 120 sq m or .012 ha)
+#so the total area = 0.04 + 0.012 = 0.052
+
+over1in_BA_LANDIS$total_BA_ha <- (over1in_BA_LANDIS$BA_sqm_overstory + over1in_BA_LANDIS$sapling_BA_sqm)/ 0.052
+#I think this worked, woo!
+
+#NEXT STEP is to convert this data from long to wide format...I think.
+#then I will replace the species codes w/ numerical codes.
+#ACTUALLY, it's probably easier to do that part first?! 
+
+##############################################
+
+#converting my species codes to FIA area codes!
+#ALSO- forgot that I need to SUBSET my data to only counties of interest...which to do first??
+#ok I think order is: 1) convert to species codes, 2) convert to wide format w/ pivot.wider, and 3) subset (basically, rows) to only those in my study area.
+#then I'll add lat/long for each plot.
+
+#ok, first need to load in MY species codes key and the FIA one
+#MERGE them based on common name
+#and then ASSIGN NUMERIC FIA CODES based on MY 4-letter code
+
+#first, loading in data
+
+FIA_species_table <- read.csv("C:/Users/theha/Documents/layers_for_LANDIS/FIA/2021 Master Species FGver9-1_9_2021_final.csv")
+my_species_table <- read.csv("C:/Users/theha/OneDrive - University of Vermont/Ash project/EAB_project_2020_additional_data.csv", fileEncoding = "UTF-8-BOM")
+
+#question: should I remove instances that are dead??
+
+#OK changed my mind- I'm gonna subset by location 1st!
+
+all_BA_LANDIS <- merge(x=over1in_BA_LANDIS, y=plot_info[,c("plot_ID", "Stand_name")], all.x=TRUE)
+all_BA_LANDIS <- merge(x=all_BA_LANDIS, y=stand_info[,c("Stand_name", "County")], all.x=TRUE)
+all_BA_LANDIS <- all_BA_LANDIS[all_BA_LANDIS$County %in% c("Bennington", "Berkshire", "Orleans", "Caledonia"),]
+#subsetting complete!
+
+#next step: import waypoints
+my_LANDIS_waypoints <- read.csv("C:/Users/theha/Documents/waypoint_textfiles/LANDIS_waypoints.csv")
+#NOTE: will NOT append/merge these until the data is in WIDE format (1 row per plot)- 
+#before I do that, 1st need to rename species, probably?!!?
+
+all_BA_LANDIS$plot_ID[!(all_BA_LANDIS$plot_ID %in% my_LANDIS_waypoints$ident)]
+#UPDATE: I ALSO need all the lat/longs from GMSF, and others in this list below. 
+#(a few of them are truly missing, will need to track down in Avenza screenshots I think)
+#this list includes: OMSFCRgap1, MP1314mat1, MP19gap4
+#OK that's not so bad!!
+
+#NOW BACK TO SPECIES SHIT
+#let's upload what I have so far & then see where we're at.....
+
+#first things first (I'm the realest (JK!!))
+#see which of my species codes from the SUBSET I'm using aren't in MY list...
+all_BA_LANDIS$species[!(all_BA_LANDIS$species %in% my_species_table$spec_code)]
+
+#ok, executive decision: filtering out any dead saplings!
+throwaway <- grep(pattern="\\w+-dead", x=all_BA_LANDIS$species, value=TRUE, fixed=FALSE, perl=TRUE)
+# I HAD TO FIDDLE WITH THIS SO MUCH BUT THIS VERSION OF IT FINALLY WORKED!!!!
+head(throwaway)
+length(throwaway)
+
+#OK next steps/to ask Jane tomorrow:
+#-should I delete the "dead" saplings?
+#what about trees that were only ID-ed to the genus level or unknown- get rid of those, too??
+#what about if I can't find lat/long data for some of them?
+#action items for ME tomorrow: first and biggest is finding out species list I want to include,
+#next is finding lost lat/longs
+#and fleshing out my species codes key

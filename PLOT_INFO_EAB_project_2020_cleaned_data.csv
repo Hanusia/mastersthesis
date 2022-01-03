@@ -31,7 +31,7 @@ MP1314gap3,YES,YES,6/10/2020,Mud Pond ,"CS,BB,ED",HH,ED,,Mud Pond property,Mud P
 CH138mat2,YES,NO,6/17/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
 CH138gap3,YES,YES,6/17/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
 CH138mat3,YES,NO,6/17/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
-CH138mat4,YES,NO,6/17/2020,CHSP,"CS, ED",HH,HT,More open than most matrix plots we've been in but still not a gap,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
+CH138mat4,YES,NO,6/17/2020,Camel's Hump SP,"CS, ED",HH,HT,More open than most matrix plots we've been in but still not a gap,Camel's Hump State Park,Camel's Hump SP stand 1-3-8
 CH145unh1,NO,NO,6/17/2020,Camel's Hump SP,"CS, ED",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 1-4-5
 CH2214unh4,NO,NO,6/22/2020,Camel's Hump SP,"ED, HT",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-2-14
 CH224gap1,YES,YES,6/22/2020,Camel's Hump SP,"ED, HT",HH,HT,,Camel's Hump State Park,Camel's Hump SP stand 2-2-4
@@ -123,12 +123,12 @@ OMSFHRgap2,YES,YES,8/10/2020,October Mtn SF - Heapy Richardson Lot,"HT, MW",HH,M
 OMSFHRmat2,YES,NO,8/10/2020,October Mtn SF - Heapy Richardson Lot,"HT, MW",HH,MW,,October Mountain State Forest,Heaphy Richardson Lot
 OMSFHRgap3,YES,YES,8/10/2020,October Mtn SF,"HT, MW",HH,MW,,October Mountain State Forest,Heaphy Richardson Lot
 OMSFHRmat3,YES,NO,8/10/2020,October Mtn SF - Heapy Richardson Lot,"HT, MW",HH,MW,,October Mountain State Forest,Heaphy Richardson Lot
-OMSFSCHmat1,YES,NO,8/11/2020,October Mtn SF Schoolhouse Lot,"HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
-OMSFSCHgap1,YES,YES,8/11/2020,October Mtn SF Schoolhouse Lot,"HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
-OMSFSCHgap2,YES,YES,8/11/2020,October Mtn SF Schoolhouse Lot,"HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
-OMSFSCHmat2,YES,NO,8/11/2020,"October Mtn SF Schoolhouse Lot, BB stand","HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
-OMSFSCHmat3,YES,NO,8/11/2020,October Mtn SF,"HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
-OMSFSCHgap3,YES,YES,8/11/2020,"October Mtn SF Schoolhouse Lot, BB stand","HT, MW",HH,MW,,October Mountain State Forest,"Schoolhouse Lot, BB stand"
+OMSFSCHmat1,YES,NO,8/11/2020,October Mtn SF Schoolhouse Lot,"HT, MW",HH,MW,,October Mountain State Forest,Schoolhouse Lot BB stand
+OMSFSCHgap1,YES,YES,8/11/2020,October Mtn SF Schoolhouse Lot,"HT, MW",HH,MW,,October Mountain State Forest,Schoolhouse Lot BB stand
+OMSFSCHgap2,YES,YES,8/11/2020,October Mtn SF Schoolhouse Lot,"HT, MW",HH,MW,,October Mountain State Forest,Schoolhouse Lot BB stand
+OMSFSCHmat2,YES,NO,8/11/2020,"October Mtn SF Schoolhouse Lot, BB stand","HT, MW",HH,MW,,October Mountain State Forest,Schoolhouse Lot BB stand
+OMSFSCHmat3,YES,NO,8/11/2020,October Mtn SF,"HT, MW",HH,MW,,October Mountain State Forest,Schoolhouse Lot BB stand
+OMSFSCHgap3,YES,YES,8/11/2020,"October Mtn SF Schoolhouse Lot, BB stand","HT, MW",HH,MW,,October Mountain State Forest,Schoolhouse Lot BB stand
 OMSFCRmat1,YES,NO,8/11/2020,October Mtn SF County Rd ash salvage,"HT, MW",HH,MW,,October Mountain State Forest,County Rd ash salvage
 OMSFCRgap1,YES,NO,8/11/2020,October Mtn SF County Rd ash salvage,"HT, MW",HH,MW,,October Mountain State Forest,County Rd ash salvage
 OSFCD1gap1,YES,YES,8/12/2020,Otis SF - Clam Dam stand 1,"HT, MW, JW",HH,MW,,Otis State Forest,Clam Dam unit 1
@@ -210,10 +210,10 @@ JMP3unh2,NO,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,MW,,Jason Mills property
 JMP3unh3,NO,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,MW,,Jason Mills property,Jason Mills property stand 3
 JMP7mat4,YES,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,MW,,Jason Mills property,Jason Mills property stand 7
 JMP3unh4,NO,NO,7/2/2020,Jason Mills Property,"CS,ED",HH,MW,,Jason Mills property,Jason Mills property stand 3
-KMSFunh1,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ",HH,MW,,Kearsarge Mountain State Forest,"Kearsarge Mountain State Forest comp 4, stand 26"
-KMSFunh2,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ","HH, TM",MW,,Kearsarge Mountain State Forest,"Kearsarge Mountain State Forest comp 4, stand 26"
-KMSFunh3,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ","HH, TM",MW,,Kearsarge Mountain State Forest,"Kearsarge Mountain State Forest comp 4, stand 26"
-KMSFunh4,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ","HH, TM",MW,,Kearsarge Mountain State Forest,"Kearsarge Mountain State Forest comp 4, stand 26"
+KMSFunh1,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ",HH,MW,,Kearsarge Mountain State Forest,Kearsarge Mountain State Forest comp 4 stand 26
+KMSFunh2,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ","HH, TM",MW,,Kearsarge Mountain State Forest,Kearsarge Mountain State Forest comp 4 stand 26
+KMSFunh3,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ","HH, TM",MW,,Kearsarge Mountain State Forest,Kearsarge Mountain State Forest comp 4 stand 26
+KMSFunh4,NO,NO,9/15/2020,Kearsarge Mtn SF,"MW, TM, EJ","HH, TM",MW,,Kearsarge Mountain State Forest,Kearsarge Mountain State Forest comp 4 stand 26
 SSF1gap1,YES,YES,9/15/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
 SSF1gap2,YES,YES,9/15/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
 SSF1gap3,YES,YES,9/15/2020,Shaker State Forest,"MW, EJ, TM",HH,MW,,Shaker State Forest,Shaker State Forest
@@ -221,11 +221,11 @@ SSF1mat1,NO,NO,9/16/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,"""*"" ove
 SSF1mat2,NO,NO,9/16/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
 SSF1mat3,NO,NO,9/16/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
 SSF1mat4,NO,NO,9/16/2020,Shaker State Forest,"MW, EJ, TM","HH, TM",MW,,Shaker State Forest,Shaker State Forest
-CMSF11unh1,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 1, stand 1"
-CMSF11unh2,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 1, stand 1"
-CMSF11unh3,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 1, stand 1"
-CMSF11unh4,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 1, stand 1"
-CMSF62unh1,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 6, stand 2"
-CMSF62unh2,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 6, stand 2"
-CMSF62unh3,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 6, stand 2"
-CMSF62unh4,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,"Cardigan Mountain State Forest comp 6, stand 2"
+CMSF11unh1,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,Cardigan Mountain State Forest comp 1 stand 1
+CMSF11unh2,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,Cardigan Mountain State Forest comp 1 stand 1
+CMSF11unh3,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,Cardigan Mountain State Forest comp 1 stand 1
+CMSF11unh4,NO,NO,9/16/2020,Cardigan Mountain State Forest,"MW, EJ, TM","HH, TM",MW,,Cardigan Mountain State Forest,Cardigan Mountain State Forest comp 1 stand 1
+CMSF62unh1,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,Cardigan Mountain State Forest comp 6 stand 2
+CMSF62unh2,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,Cardigan Mountain State Forest comp 6 stand 2
+CMSF62unh3,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,Cardigan Mountain State Forest comp 6 stand 2
+CMSF62unh4,NO,NO,9/17/2020,Cardigan Mountain State Forest,"HH, MW",HH,MW,,Cardigan Mountain State Forest,Cardigan Mountain State Forest comp 6 stand 2

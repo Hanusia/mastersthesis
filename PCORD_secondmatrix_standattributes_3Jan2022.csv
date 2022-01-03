@@ -1,0 +1,46 @@
+Stand_name,State,Ownership_cat,treatment_type,EAB_present,forest_type
+Hill Roberts property,VT,private_nonprofit,na,yes,NH
+Mud Pond 2019,VT,private_nonprofit,thinning_focus,no,RNH
+Mud Pond 2013-14,VT,private_nonprofit,regen_focus,no,RNH
+Mud Pond unharvested,VT,private_nonprofit,na,no,RNH
+Camel's Hump SP stand 1-3-8,VT,public_state,thinning_focus,yes,NH
+Camel's Hump SP stand 1-4-5,VT,public_state,na,yes,NH
+Camel's Hump SP stand 2-2-14,VT,public_state,na,yes,NH
+Camel's Hump SP stand 2-2-4,VT,public_state,thinning_focus,yes,NH
+Camel's Hump SP stand 2-3-1,VT,public_state,na,yes,NH
+Clements Woodlot East,VT,private,na,yes,RNH
+Joe Nelson property,VT,private,na,no,RNH
+Jason Mills property stand 7,VT,private,thinning_focus,yes,RNH
+Jason Mills property stand 3,VT,private,na,yes,RNH
+Sunnyside stand 63-49,VT,public_national,thinning_focus,yes,NH
+Cook Brook stand 62-6,VT,public_national,thinning_focus,yes,NH
+Alpaca stand 66-30,VT,public_national,regen_focus,yes,NH
+Roaring Brook stand 125-5,VT,public_national,na,yes,NH
+Roaring Brook stand 125-6,VT,public_national,na,yes,NH
+Mad Tom stand 58-14,VT,public_national,thinning_focus,yes,NH
+Jason Mills property stand 1,VT,private,thinning_focus,yes,RNH
+Groton State Forest stand 3-9-6,VT,public_state,other,yes,NH
+Holbrook State Park stand 1-1-8,VT,public_state,na,no,NH
+Mathewson State Forest stand 3-1-11,VT,public_state,na,no,NH
+Long Pond harvested,VT,private_nonprofit,regen_focus,no,RNH
+Long Pond unharvested,VT,private_nonprofit,na,no,RNH
+Stoner Woodlot,VT,private,na,no,RNH
+Heaphy Richardson Lot,MA,public_state,thinning_focus,yes,NH
+Schoolhouse Lot BB stand,MA,public_state,thinning_focus,yes,NH
+County Rd ash salvage,MA,public_state,thinning_focus,yes,NH
+Clam Dam unit 1,MA,public_state,thinning_focus,yes,NH
+Clam Dam unit 3,MA,public_state,na,yes,NH
+Potter Mtn Rd. Hancock Unit,MA,public_state,thinning_focus,yes,NH
+Balance Rock State Park,MA,public_state,na,yes,RNH
+Dennis Hill State Park stand 1,CT,public_state,thinning_focus,yes,NH
+Haystack Mountain State Park,CT,public_state,na,yes,NH
+Housatonic State Forest stand 16-1,CT,public_state,thinning_focus,yes,NH
+Algonquin State Forest stand 1-14,CT,public_state,na,yes,NH
+York Lake stand 2,MA,public_state,thinning_focus,yes,RNH
+Tunxis State Forest stand 49,CT,public_state,na,yes,RNH
+Sherlock Lot 2014,MA,public_state,thinning_focus,yes,NH
+Sherlock Lot 2017,MA,public_state,thinning_focus,yes,NH
+Kearsarge Mountain State Forest comp 4 stand 26,NH,public_state,na,yes,NH
+Shaker State Forest,NH,public_state,other,yes,NH
+Cardigan Mountain State Forest comp 1 stand 1,NH,public_state,na,yes,NH
+Cardigan Mountain State Forest comp 6 stand 2,NH,public_state,na,yes,NH

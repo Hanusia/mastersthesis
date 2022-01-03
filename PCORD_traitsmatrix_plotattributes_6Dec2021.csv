@@ -1,0 +1,231 @@
+plot_ID,Stand_name,State,Ownership_cat,treatment_type,EAB_present,forest_type
+ASF114unh4,Algonquin State Forest stand 1-14,CT,public_state,na,yes,NH
+ASF114unh1,Algonquin State Forest stand 1-14,CT,public_state,na,yes,NH
+ASF114unh2,Algonquin State Forest stand 1-14,CT,public_state,na,yes,NH
+ASF114unh3,Algonquin State Forest stand 1-14,CT,public_state,na,yes,NH
+GMAgap1,Alpaca stand 66-30,VT,public_national,regen_focus,yes,NH
+GMAgap2,Alpaca stand 66-30,VT,public_national,regen_focus,yes,NH
+GMAmat1,Alpaca stand 66-30,VT,public_national,regen_focus,yes,NH
+GMAmat2,Alpaca stand 66-30,VT,public_national,regen_focus,yes,NH
+BRSPunh2,Balance Rock State Park,MA,public_state,na,yes,RNH
+BRSPunh1,Balance Rock State Park,MA,public_state,na,yes,RNH
+BRSPunh3,Balance Rock State Park,MA,public_state,na,yes,RNH
+BRSPunh4,Balance Rock State Park,MA,public_state,na,yes,RNH
+CH138mat1,Camel's Hump SP stand 1-3-8,VT,public_state,thinning_focus,yes,NH
+CH138gap1,Camel's Hump SP stand 1-3-8,VT,public_state,thinning_focus,yes,NH
+CH138mat2,Camel's Hump SP stand 1-3-8,VT,public_state,thinning_focus,yes,NH
+CH138mat3,Camel's Hump SP stand 1-3-8,VT,public_state,thinning_focus,yes,NH
+CH138gap2,Camel's Hump SP stand 1-3-8,VT,public_state,thinning_focus,yes,NH
+CH138gap3,Camel's Hump SP stand 1-3-8,VT,public_state,thinning_focus,yes,NH
+CH138mat4,Camel's Hump SP stand 1-3-8,VT,public_state,thinning_focus,yes,NH
+CH145unh3,Camel's Hump SP stand 1-4-5,VT,public_state,na,yes,NH
+CH145unh2,Camel's Hump SP stand 1-4-5,VT,public_state,na,yes,NH
+CH145unh4,Camel's Hump SP stand 1-4-5,VT,public_state,na,yes,NH
+CH145unh1,Camel's Hump SP stand 1-4-5,VT,public_state,na,yes,NH
+CH2214unh1,Camel's Hump SP stand 2-2-14,VT,public_state,na,yes,NH
+CH2214unh2,Camel's Hump SP stand 2-2-14,VT,public_state,na,yes,NH
+CH2214unh4,Camel's Hump SP stand 2-2-14,VT,public_state,na,yes,NH
+CH2214unh3,Camel's Hump SP stand 2-2-14,VT,public_state,na,yes,NH
+CH224gap1,Camel's Hump SP stand 2-2-4,VT,public_state,thinning_focus,yes,NH
+CH224mat3,Camel's Hump SP stand 2-2-4,VT,public_state,thinning_focus,yes,NH
+CH224mat1,Camel's Hump SP stand 2-2-4,VT,public_state,thinning_focus,yes,NH
+CH224mat2,Camel's Hump SP stand 2-2-4,VT,public_state,thinning_focus,yes,NH
+CH224gap2,Camel's Hump SP stand 2-2-4,VT,public_state,thinning_focus,yes,NH
+CH224gap3,Camel's Hump SP stand 2-2-4,VT,public_state,thinning_focus,yes,NH
+CH231unh1,Camel's Hump SP stand 2-3-1,VT,public_state,na,yes,NH
+CH231unh2,Camel's Hump SP stand 2-3-1,VT,public_state,na,yes,NH
+CH231unh3,Camel's Hump SP stand 2-3-1,VT,public_state,na,yes,NH
+CH231unh4,Camel's Hump SP stand 2-3-1,VT,public_state,na,yes,NH
+CMSF11unh1,"Cardigan Mountain State Forest comp 1, stand 1",NH,public_state,na,yes,NH
+CMSF11unh2,"Cardigan Mountain State Forest comp 1, stand 1",NH,public_state,na,yes,NH
+CMSF11unh3,"Cardigan Mountain State Forest comp 1, stand 1",NH,public_state,na,yes,NH
+CMSF11unh4,"Cardigan Mountain State Forest comp 1, stand 1",NH,public_state,na,yes,NH
+CMSF62unh1,"Cardigan Mountain State Forest comp 6, stand 2",NH,public_state,na,yes,NH
+CMSF62unh2,"Cardigan Mountain State Forest comp 6, stand 2",NH,public_state,na,yes,NH
+CMSF62unh3,"Cardigan Mountain State Forest comp 6, stand 2",NH,public_state,na,yes,NH
+CMSF62unh4,"Cardigan Mountain State Forest comp 6, stand 2",NH,public_state,na,yes,NH
+OSFCD1gap2,Clam Dam unit 1,MA,public_state,thinning_focus,yes,NH
+OSFCD1mat2,Clam Dam unit 1,MA,public_state,thinning_focus,yes,NH
+OSFCD1mat1,Clam Dam unit 1,MA,public_state,thinning_focus,yes,NH
+OSFCD1mat3,Clam Dam unit 1,MA,public_state,thinning_focus,yes,NH
+OSFCD1gap1,Clam Dam unit 1,MA,public_state,thinning_focus,yes,NH
+OSFCD1gap3,Clam Dam unit 1,MA,public_state,thinning_focus,yes,NH
+OSFCD3unh2,Clam Dam unit 3,MA,public_state,na,yes,NH
+OSFCD3unh3,Clam Dam unit 3,MA,public_state,na,yes,NH
+OSFCD3unh4,Clam Dam unit 3,MA,public_state,na,yes,NH
+OSFCD3unh1,Clam Dam unit 3,MA,public_state,na,yes,NH
+CWEunh3,Clements Woodlot East,VT,private,na,yes,RNH
+CWEunh4,Clements Woodlot East,VT,private,na,yes,RNH
+CWEunh2,Clements Woodlot East,VT,private,na,yes,RNH
+CWEunh1,Clements Woodlot East,VT,private,na,yes,RNH
+GMCBmat3,Cook Brook stand 62-6,VT,public_national,thinning_focus,yes,NH
+GMCBmat1,Cook Brook stand 62-6,VT,public_national,thinning_focus,yes,NH
+GMCBgap1,Cook Brook stand 62-6,VT,public_national,thinning_focus,yes,NH
+GMCBgap2,Cook Brook stand 62-6,VT,public_national,thinning_focus,yes,NH
+GMCBmat2,Cook Brook stand 62-6,VT,public_national,thinning_focus,yes,NH
+GMCBgap3,Cook Brook stand 62-6,VT,public_national,thinning_focus,yes,NH
+OMSFCRgap1,County Rd ash salvage,MA,public_state,thinning_focus,yes,NH
+OMSFCRmat3,County Rd ash salvage,MA,public_state,thinning_focus,yes,NH
+OMSFCRgap2,County Rd ash salvage,MA,public_state,thinning_focus,yes,NH
+OMSFCRgap3,County Rd ash salvage,MA,public_state,thinning_focus,yes,NH
+OMSFCRmat1,County Rd ash salvage,MA,public_state,thinning_focus,yes,NH
+OMSFCRmat2,County Rd ash salvage,MA,public_state,thinning_focus,yes,NH
+DHSPmat1,Dennis Hill State Park stand 1,CT,public_state,thinning_focus,yes,NH
+DHSPgap1,Dennis Hill State Park stand 1,CT,public_state,thinning_focus,yes,NH
+DHSPmat3,Dennis Hill State Park stand 1,CT,public_state,thinning_focus,yes,NH
+DHSPgap2,Dennis Hill State Park stand 1,CT,public_state,thinning_focus,yes,NH
+DHSPgap3,Dennis Hill State Park stand 1,CT,public_state,thinning_focus,yes,NH
+DHSPmat2,Dennis Hill State Park stand 1,CT,public_state,thinning_focus,yes,NH
+GSF396gap2,Groton State Forest stand 3-9-6,VT,public_state,other,yes,NH
+GSF396gap1,Groton State Forest stand 3-9-6,VT,public_state,other,yes,NH
+GSF396mat2,Groton State Forest stand 3-9-6,VT,public_state,other,yes,NH
+GSF396mat5,Groton State Forest stand 3-9-6,VT,public_state,other,yes,NH
+GSF396mat1,Groton State Forest stand 3-9-6,VT,public_state,other,yes,NH
+GSF396mat3,Groton State Forest stand 3-9-6,VT,public_state,other,yes,NH
+GSF396mat4,Groton State Forest stand 3-9-6,VT,public_state,other,yes,NH
+HMSPunh2,Haystack Mountain State Park,CT,public_state,na,yes,NH
+HMSPunh1,Haystack Mountain State Park,CT,public_state,na,yes,NH
+HMSPunh3,Haystack Mountain State Park,CT,public_state,na,yes,NH
+HMSPunh4,Haystack Mountain State Park,CT,public_state,na,yes,NH
+OMSFHRmat2,Heaphy Richardson Lot,MA,public_state,thinning_focus,yes,NH
+OMSFHRmat1,Heaphy Richardson Lot,MA,public_state,thinning_focus,yes,NH
+OMSFHRgap1,Heaphy Richardson Lot,MA,public_state,thinning_focus,yes,NH
+OMSFHRgap2,Heaphy Richardson Lot,MA,public_state,thinning_focus,yes,NH
+OMSFHRmat3,Heaphy Richardson Lot,MA,public_state,thinning_focus,yes,NH
+OMSFHRgap3,Heaphy Richardson Lot,MA,public_state,thinning_focus,yes,NH
+HRgap1,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HRgap2,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HRmat1,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HRgap3,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HRunh1,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HRunh2,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HRmat2,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HRunh3,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HRunh4,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HRmat3,Hill Roberts property,VT,private_nonprofit,na,yes,NH
+HSP118unh4,Holbrook State Park stand 1-1-8,VT,public_state,na,no,NH
+HSP118unh1,Holbrook State Park stand 1-1-8,VT,public_state,na,no,NH
+HSP118unh2,Holbrook State Park stand 1-1-8,VT,public_state,na,no,NH
+HSP118unh3,Holbrook State Park stand 1-1-8,VT,public_state,na,no,NH
+HSF161gap1,Housatonic State Forest stand 16-1,CT,public_state,thinning_focus,yes,NH
+HSF161mat1,Housatonic State Forest stand 16-1,CT,public_state,thinning_focus,yes,NH
+HSF161gap2,Housatonic State Forest stand 16-1,CT,public_state,thinning_focus,yes,NH
+HSF161mat2,Housatonic State Forest stand 16-1,CT,public_state,thinning_focus,yes,NH
+HSF161mat3,Housatonic State Forest stand 16-1,CT,public_state,thinning_focus,yes,NH
+HSF161gap3,Housatonic State Forest stand 16-1,CT,public_state,thinning_focus,yes,NH
+JMP1mat3,Jason Mills property stand 1,VT,private,thinning_focus,yes,RNH
+JMP1mat2,Jason Mills property stand 1,VT,private,thinning_focus,yes,RNH
+JMP1mat4,Jason Mills property stand 1,VT,private,thinning_focus,yes,RNH
+JMP1mat1,Jason Mills property stand 1,VT,private,thinning_focus,yes,RNH
+JMP3unh1,Jason Mills property stand 3,VT,private,na,yes,RNH
+JMP3unh4,Jason Mills property stand 3,VT,private,na,yes,RNH
+JMP3unh2,Jason Mills property stand 3,VT,private,na,yes,RNH
+JMP3unh3,Jason Mills property stand 3,VT,private,na,yes,RNH
+JMP7mat4,Jason Mills property stand 7,VT,private,thinning_focus,yes,RNH
+JMP7mat1,Jason Mills property stand 7,VT,private,thinning_focus,yes,RNH
+JMP7mat2,Jason Mills property stand 7,VT,private,thinning_focus,yes,RNH
+JMP7mat3,Jason Mills property stand 7,VT,private,thinning_focus,yes,RNH
+JNPunh4,Joe Nelson property,VT,private,na,no,RNH
+JNPunh1,Joe Nelson property,VT,private,na,no,RNH
+JNPunh2,Joe Nelson property,VT,private,na,no,RNH
+JNPunh3,Joe Nelson property,VT,private,na,no,RNH
+KMSFunh1,"Kearsarge Mountain State Forest comp 4, stand 26",NH,public_state,na,yes,NH
+KMSFunh2,"Kearsarge Mountain State Forest comp 4, stand 26",NH,public_state,na,yes,NH
+KMSFunh3,"Kearsarge Mountain State Forest comp 4, stand 26",NH,public_state,na,yes,NH
+KMSFunh4,"Kearsarge Mountain State Forest comp 4, stand 26",NH,public_state,na,yes,NH
+TNCLPgap1,Long Pond harvested,VT,private_nonprofit,regen_focus,no,RNH
+TNCLPmat3,Long Pond harvested,VT,private_nonprofit,regen_focus,no,RNH
+TNCLPmat1,Long Pond harvested,VT,private_nonprofit,regen_focus,no,RNH
+TNCLPmat2,Long Pond harvested,VT,private_nonprofit,regen_focus,no,RNH
+TNCLPgap2,Long Pond harvested,VT,private_nonprofit,regen_focus,no,RNH
+TNCLPgap3,Long Pond harvested,VT,private_nonprofit,regen_focus,no,RNH
+TNCLPunh3,Long Pond unharvested,VT,private_nonprofit,na,no,RNH
+TNCLPunh4,Long Pond unharvested,VT,private_nonprofit,na,no,RNH
+TNCLPunh1,Long Pond unharvested,VT,private_nonprofit,na,no,RNH
+TNCLPunh2,Long Pond unharvested,VT,private_nonprofit,na,no,RNH
+GMMTgap1,Mad Tom stand 58-14,VT,public_national,thinning_focus,yes,NH
+GMMTmat3,Mad Tom stand 58-14,VT,public_national,thinning_focus,yes,NH
+GMMTgap2,Mad Tom stand 58-14,VT,public_national,thinning_focus,yes,NH
+GMMTmat1,Mad Tom stand 58-14,VT,public_national,thinning_focus,yes,NH
+GMMTmat2,Mad Tom stand 58-14,VT,public_national,thinning_focus,yes,NH
+GMMTgap3,Mad Tom stand 58-14,VT,public_national,thinning_focus,yes,NH
+MSF3111unh1,Mathewson State Forest stand 3-1-11,VT,public_state,na,no,NH
+MSF3111unh4,Mathewson State Forest stand 3-1-11,VT,public_state,na,no,NH
+MSF3111unh2,Mathewson State Forest stand 3-1-11,VT,public_state,na,no,NH
+MSF3111unh3,Mathewson State Forest stand 3-1-11,VT,public_state,na,no,NH
+MP1314gap2,Mud Pond 2013-14,VT,private_nonprofit,regen_focus,no,RNH
+MP1314gap1,Mud Pond 2013-14,VT,private_nonprofit,regen_focus,no,RNH
+MP1314mat1,Mud Pond 2013-14,VT,private_nonprofit,regen_focus,no,RNH
+MP1314gap3,Mud Pond 2013-14,VT,private_nonprofit,regen_focus,no,RNH
+MP1314mat2,Mud Pond 2013-14,VT,private_nonprofit,regen_focus,no,RNH
+MP1314mat3,Mud Pond 2013-14,VT,private_nonprofit,regen_focus,no,RNH
+MP19gap1,Mud Pond 2019,VT,private_nonprofit,thinning_focus,no,RNH
+MP19mat1,Mud Pond 2019,VT,private_nonprofit,thinning_focus,no,RNH
+MP19gap3,Mud Pond 2019,VT,private_nonprofit,thinning_focus,no,RNH
+MP19mat2,Mud Pond 2019,VT,private_nonprofit,thinning_focus,no,RNH
+MP19mat3,Mud Pond 2019,VT,private_nonprofit,thinning_focus,no,RNH
+MP19gap2,Mud Pond 2019,VT,private_nonprofit,thinning_focus,no,RNH
+MP19gap4 ,Mud Pond 2019,VT,private_nonprofit,thinning_focus,no,RNH
+MPunh2,Mud Pond unharvested,VT,private_nonprofit,na,no,RNH
+MPunh1,Mud Pond unharvested,VT,private_nonprofit,na,no,RNH
+MPunh4,Mud Pond unharvested,VT,private_nonprofit,na,no,RNH
+MPunh3,Mud Pond unharvested,VT,private_nonprofit,na,no,RNH
+PSFPMHgap2,Potter Mtn Rd. Hancock Unit,MA,public_state,thinning_focus,yes,NH
+PSFPMHgap1,Potter Mtn Rd. Hancock Unit,MA,public_state,thinning_focus,yes,NH
+PSFPMHmat1,Potter Mtn Rd. Hancock Unit,MA,public_state,thinning_focus,yes,NH
+PSFPMHmat3,Potter Mtn Rd. Hancock Unit,MA,public_state,thinning_focus,yes,NH
+PSFPMHmat2,Potter Mtn Rd. Hancock Unit,MA,public_state,thinning_focus,yes,NH
+PSFPMHgap3,Potter Mtn Rd. Hancock Unit,MA,public_state,thinning_focus,yes,NH
+GMRB5unh2,Roaring Brook stand 125-5,VT,public_national,na,yes,NH
+GMRB5unh3,Roaring Brook stand 125-5,VT,public_national,na,yes,NH
+GMRB5unh1,Roaring Brook stand 125-5,VT,public_national,na,yes,NH
+GMRB5unh4,Roaring Brook stand 125-5,VT,public_national,na,yes,NH
+GMRB6unh2,Roaring Brook stand 125-6,VT,public_national,na,yes,NH
+GMRB6unh1,Roaring Brook stand 125-6,VT,public_national,na,yes,NH
+GMRB6unh3,Roaring Brook stand 125-6,VT,public_national,na,yes,NH
+GMRB6unh4,Roaring Brook stand 125-6,VT,public_national,na,yes,NH
+OMSFSCHgap2,"Schoolhouse Lot, BB stand",MA,public_state,thinning_focus,yes,NH
+OMSFSCHgap3,"Schoolhouse Lot, BB stand",MA,public_state,thinning_focus,yes,NH
+OMSFSCHgap1,"Schoolhouse Lot, BB stand",MA,public_state,thinning_focus,yes,NH
+OMSFSCHmat1,"Schoolhouse Lot, BB stand",MA,public_state,thinning_focus,yes,NH
+OMSFSCHmat2,"Schoolhouse Lot, BB stand",MA,public_state,thinning_focus,yes,NH
+OMSFSCHmat3,"Schoolhouse Lot, BB stand",MA,public_state,thinning_focus,yes,NH
+SSF1gap1,Shaker State Forest,NH,public_state,other,yes,NH
+SSF1gap2,Shaker State Forest,NH,public_state,other,yes,NH
+SSF1gap3,Shaker State Forest,NH,public_state,other,yes,NH
+SSF1mat1,Shaker State Forest,NH,public_state,other,yes,NH
+SSF1mat2,Shaker State Forest,NH,public_state,other,yes,NH
+SSF1mat3,Shaker State Forest,NH,public_state,other,yes,NH
+SSF1mat4,Shaker State Forest,NH,public_state,other,yes,NH
+OMSFSH14mat2,Sherlock Lot 2014,MA,public_state,thinning_focus,yes,NH
+OMSFSH14gap3,Sherlock Lot 2014,MA,public_state,thinning_focus,yes,NH
+OMSFSH14mat1,Sherlock Lot 2014,MA,public_state,thinning_focus,yes,NH
+OMSFSH14gap2,Sherlock Lot 2014,MA,public_state,thinning_focus,yes,NH
+OMSFSH14mat3,Sherlock Lot 2014,MA,public_state,thinning_focus,yes,NH
+OMSFSH14gap1,Sherlock Lot 2014,MA,public_state,thinning_focus,yes,NH
+OMSFSH17gap1,Sherlock Lot 2017,MA,public_state,thinning_focus,yes,NH
+OMSFSH17mat1,Sherlock Lot 2017,MA,public_state,thinning_focus,yes,NH
+OMSFSH17gap2,Sherlock Lot 2017,MA,public_state,thinning_focus,yes,NH
+OMSFSH17mat2,Sherlock Lot 2017,MA,public_state,thinning_focus,yes,NH
+OMSFSH17gap3,Sherlock Lot 2017,MA,public_state,thinning_focus,yes,NH
+OMSFSH17mat3,Sherlock Lot 2017,MA,public_state,thinning_focus,yes,NH
+SWunh3,Stoner Woodlot,VT,private,na,no,RNH
+SWunh4,Stoner Woodlot,VT,private,na,no,RNH
+SWunh1,Stoner Woodlot,VT,private,na,no,RNH
+SWunh2,Stoner Woodlot,VT,private,na,no,RNH
+GMSSgap3,Sunnyside stand 63-49,VT,public_national,thinning_focus,yes,NH
+GMSSgap1,Sunnyside stand 63-49,VT,public_national,thinning_focus,yes,NH
+GMSSmat1,Sunnyside stand 63-49,VT,public_national,thinning_focus,yes,NH
+GMSSmat2,Sunnyside stand 63-49,VT,public_national,thinning_focus,yes,NH
+GMSSgap2,Sunnyside stand 63-49,VT,public_national,thinning_focus,yes,NH
+GMSSmat3,Sunnyside stand 63-49,VT,public_national,thinning_focus,yes,NH
+TSF49unh1,Tunxis State Forest stand 49,CT,public_state,na,yes,RNH
+TSF49unh2,Tunxis State Forest stand 49,CT,public_state,na,yes,RNH
+TSF49unh3,Tunxis State Forest stand 49,CT,public_state,na,yes,RNH
+TSF49unh4,Tunxis State Forest stand 49,CT,public_state,na,yes,RNH
+SSFYL2mat1,York Lake stand 2,MA,public_state,thinning_focus,yes,RNH
+SSFYL2gap1,York Lake stand 2,MA,public_state,thinning_focus,yes,RNH
+SSFYL2mat2,York Lake stand 2,MA,public_state,thinning_focus,yes,RNH
+SSFYL2mat3,York Lake stand 2,MA,public_state,thinning_focus,yes,RNH
+SSFYL2gap2,York Lake stand 2,MA,public_state,thinning_focus,yes,RNH
+SSFYL2gap3,York Lake stand 2,MA,public_state,thinning_focus,yes,RNH

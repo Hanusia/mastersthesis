@@ -82,3 +82,41 @@ voi_stand_code <- stand_info[, c("Stand_code", "State", "Ownership_cat",
 voi_stand_code <- arrange(voi_stand_code, Stand_code)
 View(voi_stand_code)
 write.csv(voi_stand_code, "PCORD_secondmatrix_UPDATEDstandattributes_14Jan2022.csv")
+
+
+#hello again on Sunday Jan. 16th!
+
+# understory data primary matrix (stand level, seedling + sapling tally/ha) -------------------------------
+
+#first, write some pseudocode:
+#will probably be easier to aggregate sapling (small + large) data together first (??), 
+#save that, and then add in seedlings?
+
+#actually, first I will look at what I've got from the univariate analysis code and see if I can use that/rework it.
+#but, generally: need to aggregate each data set (sm/lg saplings/seedlings) BY azimuth, BY plot, then BY stand--
+#and finally combine tallies for each class...
+
+#ok, first step is to import relevant datasets
+seedling_data <- read.csv("SEEDLINGS_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
+small_sapling_data <- read.csv("SAPLINGS_SMALL_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
+large_sapling_data <- read.csv("SAPLINGS_LARGE_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
+
+
+View(seedling_data)
+#using "aggregate" function as in other code (more_organized_analysis from October) to do this...
+#I think the hardest part will actually be COMBINING them (seedlings + saplings, w/ dif species present.) At which stage to do that???
+#And then at some point, I'll need to pivot_wider....
+seedlings_sp <- aggregate(tally ~ plot_ID + species, data = seedling_data, FUN=sum)
+
+#to start, let's at least do the same for saplings. 
+#I think it will probably make the most sense to combine at the STAND level, with a consistent # of stands.
+
+#oooh, or maybe even merge w/ plot_info somehow? hmm so many options!!
+#maybe...use rbind and then re-aggregate???
+#or just ues merge? (multiple times?) #and then create a new column that adds the "tallies" for each plot(or stand)/species combo-row?
+#basically, seems like there are lots of different ways I can do this!
+#but next-to-last step will be: total tally, by species/stand in "long" format, that I can then use the "numplots" variable to get a per-ha value.
+#and finally, will pivot_wider to get it into the right format for PC-ORD.
+
+#RETURN TO THIS TOMORROW (Monday)
+#and use the following webpage for guidance: https://clayford.github.io/dwir/dwr_05_combine_merge_rehsape_data.html

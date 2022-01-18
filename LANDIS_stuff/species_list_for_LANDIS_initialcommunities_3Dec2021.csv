@@ -1,37 +1,36 @@
-FIA.Code,Common.Name,Genus,Species
-12,balsam fir,Abies,balsamea
-315,striped maple,Acer,pensylvanicum
-316,red maple,Acer,rubrum
-318,sugar maple,Acer,saccharum
-319,mountain maple,Acer,spicatum
-356,serviceberry spp.,Amelanchier,spp.
-371,yellow birch,Betula,alleghaniensis
-372,sweet birch,Betula,lenta
-373,river birch,Betula,nigra
-375,paper birch,Betula,papyrifera
-379,gray birch,Betula,populifolia
-391,"American hornbeam, musclewood",Carpinus,caroliniana
-402,bitternut hickory,Carya,cordiformis
-403,pignut hickory,Carya,glabra
-531,American beech,Fagus,grandifolia
-541,white ash,Fraxinus,americana
-543,black ash,Fraxinus,nigra
-71,tamarack,Larix,laricina
-660,apple spp.,Malus,spp.
-701,eastern hophornbeam,Ostrya,virginiana
-94,white spruce,Picea,glauca
-97,red spruce,Picea,rubens
-129,eastern white pine,Pinus,strobus
-741,balsam poplar,Populus,balsamifera
-743,bigtooth aspen,Populus,grandidentata
-746,quaking aspen,Populus,tremuloides
-761,pin cherry,Prunus,pensylvanica
-762,black cherry,Prunus,serotina
-832,chestnut oak,Quercus,prinus
-833,northern red oak,Quercus,rubra
-935,American mountain-ash,Sorbus,americana
-241,northern white-cedar,Thuja,occidentalis
-951,American basswood,Tilia,americana
-261,eastern hemlock,Tsuga,canadensis
-972,American elm,Ulmus,americana
-90,spruce spp.,Picea,spp.
+"","FIA.Code","Common.Name","Genus","Species"
+"2",12,"balsam fir","Abies","balsamea"
+"46",315,"striped maple","Acer","pensylvanicum"
+"50",316,"red maple","Acer","rubrum"
+"52",318,"sugar maple","Acer","saccharum"
+"53",319,"mountain maple","Acer","spicatum"
+"114",356,"serviceberry spp.","Amelanchier","spp."
+"200",371,"yellow birch","Betula","alleghaniensis"
+"201",372,"sweet birch","Betula","lenta"
+"203",373,"river birch","Betula","nigra"
+"205",375,"paper birch","Betula","papyrifera"
+"208",379,"gray birch","Betula","populifolia"
+"301",391,"American hornbeam, musclewood","Carpinus","caroliniana"
+"305",402,"bitternut hickory","Carya","cordiformis"
+"307",403,"pignut hickory","Carya","glabra"
+"850",531,"American beech","Fagus","grandifolia"
+"902",541,"white ash","Fraxinus","americana"
+"907",543,"black ash","Fraxinus","nigra"
+"1139",71,"tamarack","Larix","laricina"
+"1218",660,"apple spp.","Malus","spp."
+"1449",701,"eastern hophornbeam","Ostrya","virginiana"
+"1520",94,"white spruce","Picea","glauca"
+"1525",97,"red spruce","Picea","rubens"
+"1587",129,"eastern white pine","Pinus","strobus"
+"1675",741,"balsam poplar","Populus","balsamifera"
+"1679",743,"bigtooth aspen","Populus","grandidentata"
+"1682",746,"quaking aspen","Populus","tremuloides"
+"1741",761,"pin cherry","Prunus","pensylvanica"
+"1744",762,"black cherry","Prunus","serotina"
+"1857",832,"chestnut oak","Quercus","prinus"
+"1860",833,"northern red oak","Quercus","rubra"
+"2019",935,"American mountain-ash","Sorbus","americana"
+"2133",241,"northern white-cedar","Thuja","occidentalis"
+"2136",951,"American basswood","Tilia","americana"
+"2175",261,"eastern hemlock","Tsuga","canadensis"
+"2181",972,"American elm","Ulmus","americana"

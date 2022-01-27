@@ -61,7 +61,7 @@ intersect(spnames_included$FIA.Code, spnames_excluded$FIA.Code)
 #cool!
 
 #export list of included species to send to Jane
-#write.csv(x=spnames_included, file="LANDIS_stuff/species_list_for_LANDIS_initialcommunities_3Dec2021.csv")
+write.csv(x=spnames_included, file="LANDIS_stuff/species_list_for_LANDIS_initialcommunities_3Dec2021.csv")
 #ADDED spruce spp to the actual file!
 #final steps:
 #backup github,
@@ -218,8 +218,3 @@ for(i in 1:nrow(working_splist)){
 summary(as.factor(working_splist$status))
 summary(as.factor(working_splist$decision))
 View(working_splist)
-
-#FINAL UPDATE: after covo w/ Jane on 1/6/22, refined list further by adding some species I was borderline about.
-#It now numbers 19 species, and this is what they are: 
-
-final_splist <- read.csv("LANDIS_stuff/FINAL_species_list_for_LANDIS_18Jan2022.csv", fileEncoding = "UTF-8-BOM")

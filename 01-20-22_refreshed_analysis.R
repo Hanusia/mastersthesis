@@ -14,6 +14,7 @@ small_sapling_data <- read.csv("SAPLINGS_SMALL_EAB_project_2020_cleaned_data.csv
 large_sapling_data <- read.csv("SAPLINGS_LARGE_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
 ash_damage_data <- read.csv("ASH_DAMAGE_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
 ground_cover_data <- read.csv("GROUND_COVER_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
+cwd_data <- read.csv("CWD_EAB_project_2020_cleaned_data.csv", fileEncoding = "UTF-8-BOM")
 
 library(tidyverse) #includes tidyr, dplyr, tibble!
 library(ggplot2)
@@ -111,12 +112,12 @@ ground_cover_tidy <- ground_cover_tidy[, 2:6] #all rows, all cols minus plot_ID
 perman1 <- adonis(formula = ground_cover_tidy ~ Treatment, data=plot_info_plus)
 perman1
 #looks like it worked?! woohoo!
-perman1$aov.tab
+#perman1$aov.tab
 #perman1$coefficients
 #perman1$coef.sites 
 #perman1$f.perms
 #these outputs don't seem suuuper useful...
-perman1$terms
+#perman1$terms
 
 #NEXT QUESTION: how to determine, now, which SPECIFIC interactions are signif???
 #can we use Tukey's test for this?
@@ -202,6 +203,11 @@ perman8 #result: gap status is STILL signifcant w/ addition of controlling for b
 
 #actually, gonna go ahead and graph these b/c why not!
 
+#Tony's rec: run PerMANOVA w/ just site as var to see if it's signif.
+perman9 <- adonis(ground_cover_tidy~Stand_name,
+                  data=plot_info_plus)
+perman9
+
 # Graphing ground cover classes! -------------------------------
 #throwing together w/in 1 DF:
 ground_cover_vars <- ground_cover_tidy 
@@ -238,3 +244,95 @@ print(groundcover_p2)
 #alright...I think this is looking in good shape! Aside from 
 #the forest type names, colors, & signif indicators,
 #which I will add later.
+
+
+# switching gears to....CWD! / dead wood in general. (whoo!) -------------------------------
+#(side note: this whole thing I thought CWD stood for coarse woody debris, 
+#but now I learn it stands for coarse woody detritus...consider me SHOOK)
+
+#goals to analyze:
+#CWD volume by tx & forest type
+#CWD biomass by tx & forest type
+#citation = Harmon et al. 2008? (for biomass...deal w/ that later)
+#but for volume, using Harmon and Sexton 1996 fomula 7!
+#aka: V=9.869*Sum(d^2/8L)
+#analysis=LMM? Or just a regular ol' ANOVA?
+
+#alsooo, snag volume & snag BA
+
+### first step = convert CWD data to volume per HA (per stand)!
+
+View(cwd_data)
+#calculating volume per STAND, per total transect length, & Fraver et al. 2018 protocols.
+#(although I may eventually have to calculate it per plot too....and that's OK!!! but sticking with one thing at a time here)
+#sooo, this will basically entail setting up a for loop to iterate thru each piece of CWD...
+#OR, could try doing it w/o a loop? let's see...
+
+#first substep = convert diam to m (from cm) and square it
+
+cwd_data$diam_m_sq <- (cwd_data$diam_cm/100)*(cwd_data$diam_cm/100)
+
+#next step is to calculate total transect length per stand...
+#maybe do this outside of the loop b/c it won't take as long that way?
+#eg:
+stand_info$transect_length_m <- stand_info$num_plots*3*11.3
+#this will calculate the total transect length (in m) for each stand, given # plots, w/ 3 transects per plot
+#now need to concatenate this # (and stand name!) w/ the cwd_data df, since that's the only other var we need to calculate volume
+
+cwd_data <- merge(x=cwd_data, y=plot_info[, c("Stand_name", "plot_ID")])
+#make sure it has 2127 entries/rows both before&after this merge!
+#uh-oh...we're missing one!!
+#lsty <- setdiff(x=unique(cwd_data$plot_ID), y=plot_info$plot_ID)
+#OK, figured it out, so don't need the above line anymore (but keeping in b/c it's a useful example)
+cwd_data <- merge(x=cwd_data, y=stand_info[, c("Stand_name", "transect_length_m")])
+#NOTE: not all plots have CWD (as determined by length(unique(cwd_data$plot_ID)),
+#but all stands do....so this should be OK for analysis.
+
+#AT THIS POINT, divesting cwd_data into a new df b/c I might need to repeat this anlysis w/ plots, and don't want things to get overly confusing!!
+cwd_data_stand <- cwd_data
+View(cwd_data_stand)
+#now, doin' the math of d^2/8L, which will eventually be summed for each stand to get final volume.
+cwd_data_stand$diamsq_over_8L <- cwd_data_stand$diam_m_sq / (8*cwd_data_stand$transect_length_m)
+#next, aggregating by stand (basically summing/doing the 'sigma' part of the formula here)
+cwd_data_stand <- aggregate(formula=diamsq_over_8L ~ Stand_name, FUN=sum, data=cwd_data_stand)
+#and finally, multiplying by the constant to get volume per area in m^3/m^2:
+cwd_data_stand$stand_vol_m2_m3 <- cwd_data_stand$diamsq_over_8L*9.869 #THIS COL NAMED WRONG BUT IT'S OK!!!
+#annnd now, convert to cubic m per hectare, FROM cubic m per square m:
+cwd_data_stand$vol_m3_ha <- cwd_data_stand$stand_vol_m2_m3*10000
+#gut check: are these values approx similar in scale to other reported values?
+#yes!
+#OK SO now looking back at all these steps, it probably WOULD HAVE been faster/more efficient to set up a for loop!!
+#live and learn: 1-2 step processes may be easier to just use a standalone func like aggregate, but longer ones benefit from looping!
+#altho, at least I wasn't repeating any steps manually...the functions did the work for me...so not a total fail!
+
+### next step: calculate average + SE volume by tx & forest type
+
+#first substep=attach those vars to df
+cwd_data_stand <- merge(cwd_data_stand, stand_info[, c("Stand_name", "Treatment", "forest_type")])
+
+
+#next step = calc mean per tx type & forest type.
+#again, here is maybe the place for a loop....but is it actually faster b/c only repeating a couple times?? IDK
+#well, it definitely would be a more ORGANIZED output in a loop, but it's late and I'm tired! and I know how to do a loop!! maybe I'll redo this tomorrow instead.
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="unharvested"])
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="regeneration"])
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="removal"])
+
+#install.packages("plotrix") #to use easy standard error function
+library(plotrix)
+
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="unharvested"])
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="regeneration"])
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="removal"])
+
+#and now for forest type:
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="NH"])
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="RNH"])
+
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="NH"])
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="RNH"])
+
+#OK, that is enough for tonight!!!!
+#when I revisit this, next steps will include:
+#calculating biomass of CWD (seems a bit trickier, but hopefully i can steer in right direction...)
+#and calculating/comparing CWD among tx & site groups (using ANOVA or LMM!)

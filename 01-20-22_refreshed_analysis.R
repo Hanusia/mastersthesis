@@ -208,6 +208,62 @@ perman9 <- adonis(ground_cover_tidy~Stand_name,
                   data=plot_info_plus)
 perman9
 
+##############################################
+
+#FRIDAY 1/28/22 UPDATE after talking to Tony:
+#forest type can represent site(/random) effect in a way, so can just run this w/ tx*forest type as ind vars and call that good!
+
+#Q: what about gap status? (Just gonna ignore it for now TBH!)
+
+#SO, we wanna go w/ perman 2 for results!
+#perman2
+
+#stats to report = F & p
+
+### AND NOW NEED TO DO POST HOC ANALYSIS...
+
+#gonna try the answer from this link using package pairwiseAdonis: https://www-researchgate-net.ezproxy.uvm.edu/post/Posthoc_test_for_permanova_adonis
+
+#install.packages('devtools')
+library(devtools)
+install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis") 
+library(pairwiseAdonis)
+pair.mod<-pairwise.adonis(ground_cover_tidy,factors=plot_info_plus$Treatment)
+pair.mod
+
+#so, PAIRWISE result is that unharvested vs. removal is only signif dif.
+#makes sense since that would make up the bulk of the "harvested" group anyway...
+#maybe: re-do this as just harvested vs. unharvested?
+#&recreate the graph accordingly? Food for thought!
+
+#testing this:
+perman10 <- adonis(formula = ground_cover_tidy ~ harvest_status, data=plot_info_plus)
+perman10
+#also very signif, which makes sense!!
+
+#and does it interact w/ forest type?
+perman11 <- adonis(formula = ground_cover_tidy ~ harvest_status*forest_type, data=plot_info_plus)
+perman11 #and NOW the interaction is signif (maybe b/c of larger sample size by grouping together all harvested plots)...interesting!
+
+#should I ask Tony about this?
+#gonna also run a post-hoc test for this one: 
+pair.mod2<-pairwise.adonis(ground_cover_tidy,factors=plot_info_plus$harvest_status*plot_info_plus$forest_type)
+#JK, can't include the ~interaction~ in there...maybe try something creative?
+
+#making a fake column/vector that combines the two variables of interest into its own kind of factor
+plot_info_fake <- paste(plot_info_plus$harvest_status, plot_info_plus$forest_type)
+unique(plot_info_fake)
+pair.mod3 <-pairwise.adonis(ground_cover_tidy,factors=plot_info_fake)
+pair.mod3
+#OK, interesting result! not really sure what to make of it, to be honest LOL
+
+#maybe email Tony from here and see what he says??
+
+#one more thing first-check interaction w/ gap status:
+#IMPORTANT CAVEAT that gap status is correlated w/ harvest status, b/c gaps are only present in harvested stands!!
+
+##############################################
+  
 # Graphing ground cover classes! -------------------------------
 #throwing together w/in 1 DF:
 ground_cover_vars <- ground_cover_tidy 
@@ -336,3 +392,81 @@ std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="RNH"])
 #when I revisit this, next steps will include:
 #calculating biomass of CWD (seems a bit trickier, but hopefully i can steer in right direction...)
 #and calculating/comparing CWD among tx & site groups (using ANOVA or LMM!)
+
+
+### UPDATES 1/28/2022
+
+#Tony says: in calculating volume, need to incorporate VOLUME REDUCTION FACTOR for decay classes 4 & 5,
+#since they are likely no longer the shape assumed by that catchall equation!
+
+#SO, I found a volume reduction factor (VRF) from Fraver et al. 2013 (and used in Russell et al. 2014)
+#where calculated volume (for a piece!) is multiplied by 0.800 for DC 4, and 0.412 for DC 5.
+
+#this is separate from the DENSITY reduction factor that will need to be taken into account for biomass!
+
+#OK, so now to recalculate CWD volume taking all this into account:
+##need to keep the decay class in play here!
+
+#ALSO, need to maybe find another version of that equation for volume, b/c it takes stand/transect length 
+#already into account....need to calculate volume *individually* per piece...
+#cites Fraver et al. 2007: "Refining volume estimates of down woody debris" (seems promising!)
+#JK, that one is too complicated for me!!
+#Bolton and D'Amato 2011 also validates the same formula I've been using, which is pi-squared times
+#the sum of each diameter squared divided by 8L.
+#so...I THINK this is fine??? Just gotta figure out if it works to have volume in
+#this format when it comes to using it to calculate biomass!
+#but...maybe that's a question for another day!!
+
+#OK, so basically need to grab & modify a bunch of the stuff I did w/ cwd_data
+#to incorporate that decay class & calc volume at a per-item level first.
+
+## COPIED FROM ABOVE (yesterday's code):
+
+#first substep = convert diam to m (from cm) and square it
+cwd_data$diam_m_sq <- (cwd_data$diam_cm/100)*(cwd_data$diam_cm/100)
+
+#next step is to calculate total transect length per stand...
+stand_info$transect_length_m <- stand_info$num_plots*3*11.3
+#this will calculate the total transect length (in m) for each stand, given # plots, w/ 3 transects per plot
+#now need to concatenate this # (and stand name!) w/ the cwd_data df, since that's the only other var we need to calculate volume
+
+cwd_data <- merge(x=cwd_data, y=plot_info[, c("Stand_name", "plot_ID")])
+#make sure it has 2127 entries/rows both before&after this merge!
+#uh-oh...we're missing one!!
+#lsty <- setdiff(x=unique(cwd_data$plot_ID), y=plot_info$plot_ID)
+#OK, figured it out, so don't need the above line anymore (but keeping in b/c it's a useful example)
+cwd_data <- merge(x=cwd_data, y=stand_info[, c("Stand_name", "transect_length_m")])
+#NOTE: not all plots have CWD (as determined by length(unique(cwd_data$plot_ID)),
+#but all stands do....so this should be OK for analysis.
+
+#AT THIS POINT, divesting cwd_data into a new df b/c I might need to repeat this anlysis w/ plots, and don't want things to get overly confusing!!
+cwd_data_calc <- cwd_data
+View(cwd_data_calc)
+#now, doin' the math of (pi-squared)*(d^2/8L), which will eventually be summed for each stand to get final volume.
+cwd_data_calc$pisq_diamsq_over_8L <- pi * pi * cwd_data_calc$diam_m_sq / (8*cwd_data_calc$transect_length_m)
+
+#NEXT, applying volume reduction factor for decay classes 4 & 5!
+#nowww is a time to use a loop... (or could still do it without, probably, lol)
+cwd_data_calc$vol_VRF_applied <- rep(0) #creating new col to store updated volume
+
+for(i in 1:nrow(cwd_data_calc)){
+  if(cwd_data_calc$decay_class[i]==4){ #for CWD of DC 4,
+    cwd_data_calc$vol_VRF_applied[i] <- 0.800*cwd_data_calc$pisq_diamsq_over_8L[i]
+  #applying the VRF of 0.800 for these logs & storing that val in a new column!
+  } else if(cwd_data_calc$decay_class[i]==5){
+    cwd_data_calc$vol_VRF_applied[i] <- 0.412*cwd_data_calc$pisq_diamsq_over_8L[i]
+    #applying the VRF of 0.412 for these logs & storing that val in a new column!
+    } else cwd_data_calc$vol_VRF_applied[i] <- cwd_data_calc$pisq_diamsq_over_8L
+    #and for all other logs (in DC 1, 2, and 3), keep vol the same!
+}
+
+#getting an error message...is it the NA values??
+#UPDATE: looks like it! It basically just stopped after encountering the first NA for DC!
+#SOLUTION = remove NAs??
+
+###STOPPED HERE AS OF 1/28, BELOW THE LINE NOT YET UPDATED!!
+#next, aggregating by stand (basically summing/doing the 'sigma' part of the formula here)
+cwd_data_calc <- aggregate(formula=diamsq_over_8L ~ Stand_name, FUN=sum, data=cwd_data_calc)
+
+#annnd now, convert to cubic m per hectare, FROM cubic m per square m:
+cwd_data_calc$vol_m3_ha <- cwd_data_calc$stand_vol_m2_m3*10000

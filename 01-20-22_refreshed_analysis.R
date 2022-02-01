@@ -302,6 +302,7 @@ print(groundcover_p2)
 #which I will add later.
 
 
+
 # switching gears to....CWD! / dead wood in general. (whoo!) -------------------------------
 #(side note: this whole thing I thought CWD stood for coarse woody debris, 
 #but now I learn it stands for coarse woody detritus...consider me SHOOK)
@@ -318,7 +319,10 @@ print(groundcover_p2)
 
 ### first step = convert CWD data to volume per HA (per stand)!
 
-View(cwd_data)
+###COMMENTING OUT THE SECTION BELOW B/C I REPLACED IT W/ UPDATED CODE FURTHER DOWN!!
+
+##############################################
+#View(cwd_data)
 #calculating volume per STAND, per total transect length, & Fraver et al. 2018 protocols.
 #(although I may eventually have to calculate it per plot too....and that's OK!!! but sticking with one thing at a time here)
 #sooo, this will basically entail setting up a for loop to iterate thru each piece of CWD...
@@ -326,73 +330,44 @@ View(cwd_data)
 
 #first substep = convert diam to m (from cm) and square it
 
-cwd_data$diam_m_sq <- (cwd_data$diam_cm/100)*(cwd_data$diam_cm/100)
+#cwd_data$diam_m_sq <- (cwd_data$diam_cm/100)*(cwd_data$diam_cm/100)
 
 #next step is to calculate total transect length per stand...
 #maybe do this outside of the loop b/c it won't take as long that way?
 #eg:
-stand_info$transect_length_m <- stand_info$num_plots*3*11.3
+#stand_info$transect_length_m <- stand_info$num_plots*3*11.3
 #this will calculate the total transect length (in m) for each stand, given # plots, w/ 3 transects per plot
 #now need to concatenate this # (and stand name!) w/ the cwd_data df, since that's the only other var we need to calculate volume
 
-cwd_data <- merge(x=cwd_data, y=plot_info[, c("Stand_name", "plot_ID")])
+#cwd_data <- merge(x=cwd_data, y=plot_info[, c("Stand_name", "plot_ID")])
 #make sure it has 2127 entries/rows both before&after this merge!
 #uh-oh...we're missing one!!
 #lsty <- setdiff(x=unique(cwd_data$plot_ID), y=plot_info$plot_ID)
 #OK, figured it out, so don't need the above line anymore (but keeping in b/c it's a useful example)
-cwd_data <- merge(x=cwd_data, y=stand_info[, c("Stand_name", "transect_length_m")])
+#cwd_data <- merge(x=cwd_data, y=stand_info[, c("Stand_name", "transect_length_m")])
 #NOTE: not all plots have CWD (as determined by length(unique(cwd_data$plot_ID)),
 #but all stands do....so this should be OK for analysis.
 
 #AT THIS POINT, divesting cwd_data into a new df b/c I might need to repeat this anlysis w/ plots, and don't want things to get overly confusing!!
-cwd_data_stand <- cwd_data
-View(cwd_data_stand)
+#cwd_data_stand <- cwd_data
+#View(cwd_data_stand)
 #now, doin' the math of d^2/8L, which will eventually be summed for each stand to get final volume.
-cwd_data_stand$diamsq_over_8L <- cwd_data_stand$diam_m_sq / (8*cwd_data_stand$transect_length_m)
+#cwd_data_stand$diamsq_over_8L <- cwd_data_stand$diam_m_sq / (8*cwd_data_stand$transect_length_m)
 #next, aggregating by stand (basically summing/doing the 'sigma' part of the formula here)
-cwd_data_stand <- aggregate(formula=diamsq_over_8L ~ Stand_name, FUN=sum, data=cwd_data_stand)
+#cwd_data_stand <- aggregate(formula=diamsq_over_8L ~ Stand_name, FUN=sum, data=cwd_data_stand)
 #and finally, multiplying by the constant to get volume per area in m^3/m^2:
-cwd_data_stand$stand_vol_m2_m3 <- cwd_data_stand$diamsq_over_8L*9.869 #THIS COL NAMED WRONG BUT IT'S OK!!!
+#cwd_data_stand$stand_vol_m2_m3 <- cwd_data_stand$diamsq_over_8L*9.869 #THIS COL NAMED WRONG BUT IT'S OK!!!
 #annnd now, convert to cubic m per hectare, FROM cubic m per square m:
-cwd_data_stand$vol_m3_ha <- cwd_data_stand$stand_vol_m2_m3*10000
+#cwd_data_stand$vol_m3_ha <- cwd_data_stand$stand_vol_m2_m3*10000
 #gut check: are these values approx similar in scale to other reported values?
 #yes!
 #OK SO now looking back at all these steps, it probably WOULD HAVE been faster/more efficient to set up a for loop!!
 #live and learn: 1-2 step processes may be easier to just use a standalone func like aggregate, but longer ones benefit from looping!
 #altho, at least I wasn't repeating any steps manually...the functions did the work for me...so not a total fail!
 
-### next step: calculate average + SE volume by tx & forest type
+##############################################
 
-#first substep=attach those vars to df
-cwd_data_stand <- merge(cwd_data_stand, stand_info[, c("Stand_name", "Treatment", "forest_type")])
-
-
-#next step = calc mean per tx type & forest type.
-#again, here is maybe the place for a loop....but is it actually faster b/c only repeating a couple times?? IDK
-#well, it definitely would be a more ORGANIZED output in a loop, but it's late and I'm tired! and I know how to do a loop!! maybe I'll redo this tomorrow instead.
-mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="unharvested"])
-mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="regeneration"])
-mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="removal"])
-
-#install.packages("plotrix") #to use easy standard error function
-library(plotrix)
-
-std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="unharvested"])
-std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="regeneration"])
-std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="removal"])
-
-#and now for forest type:
-mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="NH"])
-mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="RNH"])
-
-std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="NH"])
-std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="RNH"])
-
-#OK, that is enough for tonight!!!!
-#when I revisit this, next steps will include:
-#calculating biomass of CWD (seems a bit trickier, but hopefully i can steer in right direction...)
-#and calculating/comparing CWD among tx & site groups (using ANOVA or LMM!)
-
+## ALSO, MOVED THE PER-STAND CALCULATIONS DOWN BELOW TO FOLLOW NEW CODE! (BUT USING SAME VARS AS BEFORE)
 
 ### UPDATES 1/28/2022
 
@@ -449,24 +424,260 @@ cwd_data_calc$pisq_diamsq_over_8L <- pi * pi * cwd_data_calc$diam_m_sq / (8*cwd_
 #nowww is a time to use a loop... (or could still do it without, probably, lol)
 cwd_data_calc$vol_VRF_applied <- rep(0) #creating new col to store updated volume
 
+
 for(i in 1:nrow(cwd_data_calc)){
+  if(is.na(cwd_data_calc$decay_class[i])==FALSE){ 
+    #filtering out any piece w/o a decay class, so as to not mess up subsequent if statements
   if(cwd_data_calc$decay_class[i]==4){ #for CWD of DC 4,
     cwd_data_calc$vol_VRF_applied[i] <- 0.800*cwd_data_calc$pisq_diamsq_over_8L[i]
   #applying the VRF of 0.800 for these logs & storing that val in a new column!
   } else if(cwd_data_calc$decay_class[i]==5){
     cwd_data_calc$vol_VRF_applied[i] <- 0.412*cwd_data_calc$pisq_diamsq_over_8L[i]
     #applying the VRF of 0.412 for these logs & storing that val in a new column!
-    } else cwd_data_calc$vol_VRF_applied[i] <- cwd_data_calc$pisq_diamsq_over_8L
+    } else cwd_data_calc$vol_VRF_applied[i] <- cwd_data_calc$pisq_diamsq_over_8L[i]
     #and for all other logs (in DC 1, 2, and 3), keep vol the same!
+  }
 }
 
 #getting an error message...is it the NA values??
 #UPDATE: looks like it! It basically just stopped after encountering the first NA for DC!
 #SOLUTION = remove NAs??
 
-###STOPPED HERE AS OF 1/28, BELOW THE LINE NOT YET UPDATED!!
-#next, aggregating by stand (basically summing/doing the 'sigma' part of the formula here)
-cwd_data_calc <- aggregate(formula=diamsq_over_8L ~ Stand_name, FUN=sum, data=cwd_data_calc)
+###STOPPED HERE AS OF 1/28, BELOW THE LINE NOT YET UPDATED!! 
+#NEED TO DEBUG THE FOR LOOP ABOVE BY GETTING RID OF NAs FIRST 
 
-#annnd now, convert to cubic m per hectare, FROM cubic m per square m:
-cwd_data_calc$vol_m3_ha <- cwd_data_calc$stand_vol_m2_m3*10000
+## 1/31/22 update: fixed the for loop by adding a statement filtering out logs w/o a DC!
+# (looks like it's just one, an ash log in the plot CWEunh3...shame b/c it's a pretty big ash log!)
+# (and funny b/c I was just talking about Corinth today)
+
+#next, convert to cubic m per hectare, FROM cubic m per square m:
+cwd_data_calc$vol_m3_ha <- cwd_data_calc$vol_VRF_applied*10000
+
+#finally, aggregating by stand (basically summing/doing the 'sigma' part of the formula here)
+cwd_data_stand <- aggregate(formula=vol_m3_ha ~ Stand_name, FUN=sum, data=cwd_data_calc)
+
+View(cwd_data_stand)
+
+
+### next step: calculate average + SE volume by tx & forest type
+#THIS STEP CUT&PASTED FROM 1/28, MOVED TO HERE
+
+#first substep=attach those vars to df
+cwd_data_stand <- merge(cwd_data_stand, stand_info[, c("Stand_name", "Treatment", "forest_type")])
+
+
+#next step = calc mean per tx type & forest type.
+#again, here is maybe the place for a loop....but is it actually faster b/c only repeating a couple times?? IDK
+#well, it definitely would be a more ORGANIZED output in a loop, but it's late and I'm tired! and I know how to do a loop!! maybe I'll redo this tomorrow instead.
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="unharvested"])
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="regeneration"])
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="removal"])
+
+#install.packages("plotrix") #to use easy standard error function
+library(plotrix)
+
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="unharvested"])
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="regeneration"])
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="removal"])
+
+#and now for forest type:
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="NH"])
+mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="RNH"])
+
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="NH"])
+std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$forest_type=="RNH"])
+
+#OK, that is enough for tonight!!!!
+#when I revisit this, next steps will include:
+#calculating biomass of CWD (seems a bit trickier, but hopefully i can steer in right direction...)
+#and calculating/comparing CWD among tx & site groups (using ANOVA or LMM!)
+
+
+
+
+
+### CWD BIOMASS CALCULATION! ###
+
+# using methods & info from Harmon et al. 2008, which includes a table of density reduction factors per sp/DC
+
+#first step = find & import those tables!
+#SEEMS to be helpfully uploaded here: 
+# https://andrewsforest.oregonstate.edu/sites/default/files/lter/pubs/webdocs/reports/detritus/GTR_estimates_site/Templates/tables.shtml
+
+#basically, mass = density * volume...
+#the key is associating the CORRECT density val for each piece, based on sp & decay class...
+#Q: to use absolute or relative density??
+#A: use absolute; rel. density is just a proportion of the green wood/non-decayed density, not exactly helpful for my purposes!
+# OR, as in Russell et al. 2016, use initial density * decay class reduction factor (DCRF)
+#so...that is basically calculating the abs density on the spot, based on rel density.
+#they ALSO cite Harmon et al. 2011; is that more updated values?? (Let's take a look now!)
+
+#IMPORTANT Q: how to deal w/ CWD of unknown species?? b/c a LOT of ours is that...
+
+#IMPORTANT ANsWER; this 2011 Harmon citation includes avg density values for hardwood/softwood by DC!!
+# "Differences between standing and downed dead tree... etc Table 5 & 6)
+# or go off of Harmon et al. 2008 Fig. 2 values?
+
+#tables from Harmon et al. report in units of g/cm^3, so I'll need to convert units, too!
+
+cwddensityvals <- read.csv("appendix_CWD_DENSITY_PREDICTIONS_FINAL_table.csv", fileEncoding = "UTF-8-BOM")
+View(cwddensityvals)
+
+cwddensity_metadata <- read.csv("appendix_CWD_DENSITY_PREDICTIONS_FINAL_metadata.csv", fileEncoding = "UTF-8-BOM")
+View(cwddensity_metadata)
+
+#IMPORTANT TO REMEMBER, MY SPECIES CODES OFTEN DIFFER FROM FIA ONES!!!!!!!
+#refer to code I used to determine LANDIS species list to see how I converted between them...
+
+
+
+#NEXT STEP = GET THE SAME (FIA) SPECIES CODES ASSOCIATED W/ MY CWD TABLE
+
+#import species code list (or look @ my old code that did this??)
+#USING SOME CODE FROM LANDIS_specieslist_using_plotoccurrences_3Dec2021.R
+
+#first, loading in data
+#FIA_species_table <- read.csv("C:/Users/theha/Documents/layers_for_LANDIS/FIA/2021 Master Species FGver9-1_9_2021_final.csv")
+my_species_table <- read.csv("C:/Users/theha/OneDrive - University of Vermont/Ash project/EAB_project_2020_additional_data.csv", fileEncoding = "UTF-8-BOM")
+
+#need to associate w/ part of the metadata file from Harmon et al...
+#so first, subset it:
+cwddensity_splist <- cwddensity_metadata[33:293, 2:4]
+colnames(cwddensity_splist) <- cwddensity_splist[1,]
+cwddensity_splist <- cwddensity_splist[2:nrow(cwddensity_splist),]
+
+#NEXT, gonna create a "cleaner" data table for this specific set of species names/codes:
+
+mycwd_splist <- data.frame("my_spcode" = unique(cwd_data_calc$species))
+#next, merge w/ my own code list : common names:
+mycwd_splist <- merge(x=mycwd_splist, y=my_species_table[,c("spec_code", "genus", "species")], 
+                      all.x=TRUE, by.x="my_spcode", by.y="spec_code")
+
+
+#and NOW, try merging w/ FIA species names from metadata file:
+mycwd_splist <- merge(x=mycwd_splist, y=cwddensity_splist, 
+                      all.x=TRUE, by=c("genus", "species"))
+#YAYYY IT WORKED! Now just need to fill in the ones that didn't go over:
+mycwd_splist$code[(mycwd_splist$my_spcode=="UNK" | mycwd_splist$my_spcode=="unk")] <- "UNKN"
+mycwd_splist$code[mycwd_splist$my_spcode=="ACSP"] <- "ACER"
+mycwd_splist$code[mycwd_splist$my_spcode=="BESP"] <- "BESP"
+mycwd_splist$code[mycwd_splist$my_spcode=="PISP"] <- "PICE"
+mycwd_splist$code[mycwd_splist$my_spcode=="TSCA"] <- "TSCA"
+mycwd_splist$code[mycwd_splist$my_spcode=="UNKSW"] <- "SOFTW"
+
+### OKAY TWO THINGS I REALIZED LOOKING AT THIS:
+#1) MY SPECIES CODES WERE ACTUALLY THE EXACT SAME AS FIA'S IN PRETTY MUCH EVERY CASE HERE....
+#   AT LEAST FOR THE ONES USED IN THIS TABLE...SO THIS MERGING STEP IS PRETTY POINTLESS AND A WASTE OF TIME!
+
+#2) BUT, FILE my_species_table HAS ERRONEOUSLY CODED BETULA ALLEGHENSIS (yellow birch) AS BETULA LENTA (sweet birch)...
+#   WHAT ARE THE IMPLICATIONS OF THIS???
+#   IF I'M REMEMBERING CORRECTLY, I USED COMMON NAME (instead of genus/sp) TO ASSOCIATE THESE TABLES BEFORE,
+#   SO IT SHOULD HAVE WORKED OUT OK FOR WHAT I USED THIS TABLE FOR IN THE PAST.
+#   BUT I SHOULD REALLY DOUBLE CHECK ON THAT LATER, JUST DON'T HAVE ENERGY TO DO SO NOW.
+
+#ANYWAY, getting back to the actual code, no need to do most of what's above...
+#but may as well keep what I have so far??
+
+#NEED TO DOUBLE CHECK THESE AGAINST THE ACTUAL DATA TABLE b/c there are some discrepancies w/ the metadata...
+#ok, looks good!
+
+#NEXT STEP=MERGE FIA CODE ONTO CWDDATACALC DATAFRAME!
+cwd_data_calc <- merge(x=cwd_data_calc, y=mycwd_splist[,c("my_spcode", "code")],
+                       all=TRUE, by.x="species", by.y="my_spcode")
+
+
+#NEXT, I'm gonna add a couple rows to the actual cwddensityvals table to account for unk species.
+#(drawing from Harmon et al. 2011, Table 4/5) to make sure the for loop can run smoothly!!
+
+#ADDING VALUES FOR UNKNOWN SPECIES & UNKNOWN SOFTWOODS:
+#first creating a vector of values for each species:
+unkvals <- data.frame(NA, NA, "UNKN", NA, 0.40, NA, NA, 0.33, NA, NA, 0.26, NA, NA, 0.15, NA, NA, 0.11, NA, NA)
+names(unkvals) <- names(cwddensityvals) #setting up an extra row for unknown species CWD
+
+unkswvals <- data.frame(NA, NA, "SOFTW", NA, .38, NA, NA, 0.34, NA, NA, .27, NA, NA, .15, NA, NA, 0.11, NA, NA)
+names(unkswvals) <- names(cwddensityvals) #setting up an extra row for unknown softwood CWD
+
+#now to combine them.....
+
+#testing123 <- rbind(cwddensityvals, unkvals, unkswvals)
+cwddensityvals <- rbind(cwddensityvals, unkvals, unkswvals)
+#woohoo it worked!
+
+#AND THEN will build a for loop to associate the correct density value with each piece of CWD :) 
+
+#new column to hold density val:
+cwd_data_calc$density_g_cm3 <- rep(0)
+colassign <- rep(0) #and intermediate var 
+
+for(i in 1:nrow(cwd_data_calc)){ #goin' by row in the CWD table,
+  if(is.na(cwd_data_calc$decay_class[i])==FALSE){ 
+    #filtering out any piece w/o a decay class, so as to not mess up subsequent if statements
+    for(j in 1:nrow(cwddensityvals)){ #now, iterating thru rows of the density table, AKA species
+      if(cwd_data_calc$code[i]==cwddensityvals$code[j]){ #matching up the species...
+         #NOW, finding the correct column to attach by decay class...doing some ~fun~ math:
+          colassign[i] <- (cwd_data_calc$decay_class[i]-1)*3+5 #math to choose the right column density val based on DC
+          #and the grand finale...attributing density val w/ correct sp & DC
+          cwd_data_calc$density_g_cm3[i] <- cwddensityvals[j,colassign[i]]
+      }
+    }
+  }
+}
+
+#WOOHOO, it worked :) 
+
+#NEXT = fix units & calculate biomass!!
+
+#GREAT NEWS!: target units for biomass are Mg (megagrams) per hectare.
+#so to get there, need to multiply calculated volume (in cubic meters per ha)
+#by a density in units of Mg per cubic meter.
+#BUT, we are currently in grams per cubic centimeter....but because both 
+#changes to the units are in the direction of 10^6, the conversion cancels out!
+#so, the number of grams per cubic centimeter is the SAME as the number of 
+#megagrams per cubic meter.
+#we love to see it!!!
+
+#OK, now can simply calculate biomass! (in Mg/ha)
+cwd_data_calc$biomass_Mg_ha <- cwd_data_calc$vol_m3_ha*cwd_data_calc$density_g_cm3
+
+#aggregate by stand: 
+cwd_biomass_stand <- aggregate(formula=biomass_Mg_ha ~ Stand_name, FUN=sum, data=cwd_data_calc)
+#and recombine w/ df cwd_data_stand:
+cwd_data_stand <- merge(x=cwd_data_stand[, c("Stand_name", "vol_m3_ha", "Treatment", "forest_type")],
+                        y=cwd_biomass_stand, by="Stand_name")
+
+#and just to save from repeating future work:
+#cwd_volume_stand <- cwd_data_stand[,c("Stand_name", "vol_m3_ha")]
+
+#annnnd finally, calculate mean & SE per tx/forest type!
+#ACTION ITEM: investigate how each sp/DC "uncertainty" value for density factors into calculating SE...
+
+mean(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$Treatment=="unharvested"])
+mean(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$Treatment=="regeneration"])
+mean(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$Treatment=="removal"])
+
+std.error(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$Treatment=="unharvested"])
+std.error(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$Treatment=="regeneration"])
+std.error(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$Treatment=="removal"])
+
+#and now for forest type:
+mean(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$forest_type=="NH"])
+mean(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$forest_type=="RNH"])
+
+std.error(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$forest_type=="NH"])
+std.error(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$forest_type=="RNH"])
+
+
+
+#ALRIGHT, done with these calculations!!!
+
+#steps for next time:
+#1) look up/figure out how the density uncertainty values factor into stand-level/
+#variable/level SE...
+#   a) first, look @ examples of this in Harmon et al. 2008 (appendix A?)
+#2) check for normality in the stand-level biomass & volume data...
+#   a) graph residuals (?)
+#   b) do the test I did with Maria
+#   c) basically, just look at what I did with Maria LOL
+#3) if all looks good, proceed w/ an ANOVA (since doing @ the stand level,
+# don't need to account for random effect of site/stand) for tx*forest type!
+#4) maybe--graph biomass by decay class (stacked) & tx/forest type?

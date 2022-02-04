@@ -681,3 +681,134 @@ std.error(cwd_data_stand$biomass_Mg_ha[cwd_data_stand$forest_type=="RNH"])
 #3) if all looks good, proceed w/ an ANOVA (since doing @ the stand level,
 # don't need to account for random effect of site/stand) for tx*forest type!
 #4) maybe--graph biomass by decay class (stacked) & tx/forest type?
+
+##############################################
+
+### 2/3/2022 return to CWD!
+
+#when it comes to standard error- need to ask Tony how to incorporate those 
+#density uncertainty values (& maybe also uncertainty for the vol. reduct. factors??)
+
+#meanwhile, I should save the cwd_data_stand as a table file prob, so don't 
+#need to re-run those calculations all the time??
+
+#but FIRST, gonna run some ANOVAs!
+
+cwd_vol_anova1 <- aov(vol_m3_ha ~ Treatment*forest_type, data=cwd_data_stand)
+summary(cwd_vol_anova1) #Treatment is signif, but nothing else! Sounds good to me
+
+#post hoc analysis w/ Tukey's test:
+tukey1 <- TukeyHSD(cwd_vol_anova1)
+tukey1
+
+tuke2 <- TukeyHSD(cwd_vol_anova1, which="Treatment")
+summary(tuke2)
+tuke2 #once again, it's just unharvested vs. removal that's signif 
+#(unharvested vs regeneration soemwhat close, which also checks out
+#and is similar to results from PerMANOVA)
+
+cwd_biomass_anova1 <- aov(biomass_Mg_ha ~ Treatment*forest_type, data=cwd_data_stand)
+summary(cwd_biomass_anova1) #same story- just treatment is signif!
+
+tukey3 <- TukeyHSD(cwd_biomass_anova1)
+tukey3
+
+tukey4 <- TukeyHSD(cwd_biomass_anova1, which="Treatment")
+tukey4 #again, pretty much the same pattern....
+
+#forgot to check for normality first LOL (clairification: whether RESIDUALS are normal)
+#let's try it...
+plot(cwd_vol_anova1) #HMM, this looks a little weird!
+#qqnorm(y=cwd_vol_anova1$residuals) #looks a lil funky at the end?
+#(qqnorm is redundant w/ "plot" for anova)
+
+#remember, this is testing normality of the RESIDUALS
+shapiro.test(cwd_vol_anova1$residuals)
+
+#what about normality of the DATA itself?
+shapiro.test(cwd_data_stand$vol_m3_ha)
+qqnorm(cwd_data_stand$vol_m3_ha)
+
+#OK, now [testing normality] for biomass!
+plot(cwd_biomass_anova1)
+shapiro.test(cwd_biomass_anova1$residuals) #looks OK! (p-val above 0.05)
+#and just for fun, normality of the data itself:
+shapiro.test(cwd_data_stand$biomass_Mg_ha) #NOT normal...but that's ok?
+
+#slightly random...testing presence per decay class per tx?
+#cwd_dc_test <- merge(x=cwd_data_calc, y=plot_info_plus[,c("plot_ID", "Treatment")], by="plot_ID")
+#cwd_dc_test <- aggregate(diam_cm ~ Treatment*decay_class, data=cwd_dc_test, FUN = sum)
+#RESULT: all decay classes present in each treatment!
+
+##############################################
+
+### IDEA: do a PerMANOVA of CWD decay class by treatment/forest type???
+#maybe don't make things more complicated for myself than they need to be, though...
+#IF i do- first step would be creating a "wider" format of biomass per decay class (cols) & stand (rows)
+cwd_biomass_wider <- aggregate(biomass_Mg_ha ~ Stand_name*decay_class, data=cwd_data_calc, FUN=sum)
+cwd_biomass_wider <- pivot_wider(data=cwd_biomass_wider, id_cols=Stand_name, 
+                                 names_from=decay_class, values_from=biomass_Mg_ha)
+#now we have it in wide format, replace NAs with 0s...
+cwd_biomass_wider[is.na(cwd_biomass_wider)] <- 0
+#and finally remove first col...or just do it in the permanova code??
+
+#and finally, try a perMANOVA?
+cwd_biomass_perman1 <- adonis(cwd_biomass_wider[,2:6] ~ Treatment*forest_type, data=cwd_data_stand)
+cwd_biomass_perman1 #nothing significant--that makes it easy!!
+
+cwd_biomass_perman2 <- adonis(cwd_biomass_wider[,2:6] ~ Treatment, data=cwd_data_stand)
+cwd_biomass_perman2 #same story here!
+
+##############################################
+
+# graphing CWD biomass -------------------------------
+
+
+#first need to get data in the right config. w/ DC:
+cwd_data_calc <- merge(x=cwd_data_calc, y=plot_info_plus[,c("plot_ID", "Treatment", "forest_type")], by="plot_ID")
+cwd_dc_graph <- aggregate(biomass_Mg_ha ~ Stand_name*decay_class, data=cwd_data_calc, FUN = sum)
+cwd_dc_graph <- merge(x=cwd_dc_graph, y=stand_info[,c("Stand_name", "Treatment")], by="Stand_name")
+cwd_dc_graph <- aggregate(biomass_Mg_ha ~ Treatment*decay_class, data=cwd_dc_graph, FUN = sum)
+
+#SOMETHING IS STILL WRONG WITH THIS SOMEHOW!!
+#check on process above: 
+#sum(cwd_dc_graph$biomass_Mg_ha[cwd_dc_graph$Treatment=="unharvested"]) #wayy too high
+#but what DOES work:
+#sum(cwd_dc_graph$biomass_Mg_ha[cwd_dc_graph$Treatment=="regeneration"]/4)
+#need to divide each val by the # of stands in its Treatment category...
+cwd_dc_graph$mean_biomass <- rep(0)
+cwd_dc_graph$mean_biomass[cwd_dc_graph$Treatment=="unharvested"] <- cwd_dc_graph$biomass_Mg_ha[cwd_dc_graph$Treatment=="unharvested"]/22
+cwd_dc_graph$mean_biomass[cwd_dc_graph$Treatment=="removal"] <- cwd_dc_graph$biomass_Mg_ha[cwd_dc_graph$Treatment=="removal"]/19
+cwd_dc_graph$mean_biomass[cwd_dc_graph$Treatment=="regeneration"] <- cwd_dc_graph$biomass_Mg_ha[cwd_dc_graph$Treatment=="regeneration"]/4
+#OK, looks right now!!!
+
+#library(ggthemes)
+cwd_p1 <- ggplot(data=cwd_dc_graph, #well...THAT didn't work lol
+                 aes(x=as.factor(Treatment), y=mean_biomass, fill=as.factor(decay_class))) +
+          geom_bar(position="stack", stat="identity") + #creates a stacked chart 
+          theme_few() +
+           scale_fill_grey(name="Decay Class")
+          #still need to add labels too...
+          #AND maybe facet_wrap by forest type?? IDK yet
+          #and add error bars! 
+          #and maybe texture...
+cwd_p1  
+#but for now, this is a good BASIS of plotting to build on!!
+
+
+
+#############################################
+
+# standing dead wood (snags) (SWD) analysis! -------------------------------
+
+#first step = filter overstory data to just snags & compute BA!
+snag_data <- overstory_data[overstory_data$status=="snag",]
+snag_data$BA_sqm <- (snag_data$DBH_cm/200)*(snag_data$DBH_cm/200)*pi
+snag_data$BA_sqm_ha <- snag_data$BA_sqm/0.04 #dividing by the area of 1 plot, in ha
+
+#second step = compute BA & volume
+#LOOK FOR volume reduction factor for snags??? (or not needed b/c diam tape?)
+#OR a different volume equation for SDT (standing dead trees) that accounts for vol loss
+#especially at the top (e.g. not a perfect cylinder?)
+#and for biomass, see Harmon et al. 2011 for values??
+

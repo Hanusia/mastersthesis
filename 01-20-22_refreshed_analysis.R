@@ -702,7 +702,6 @@ tukey1 <- TukeyHSD(cwd_vol_anova1)
 tukey1
 
 tuke2 <- TukeyHSD(cwd_vol_anova1, which="Treatment")
-summary(tuke2)
 tuke2 #once again, it's just unharvested vs. removal that's signif 
 #(unharvested vs regeneration soemwhat close, which also checks out
 #and is similar to results from PerMANOVA)
@@ -718,7 +717,7 @@ tukey4 #again, pretty much the same pattern....
 
 #forgot to check for normality first LOL (clairification: whether RESIDUALS are normal)
 #let's try it...
-plot(cwd_vol_anova1) #HMM, this looks a little weird!
+#plot(cwd_vol_anova1) #HMM, this looks a little weird!
 #qqnorm(y=cwd_vol_anova1$residuals) #looks a lil funky at the end?
 #(qqnorm is redundant w/ "plot" for anova)
 
@@ -726,14 +725,14 @@ plot(cwd_vol_anova1) #HMM, this looks a little weird!
 shapiro.test(cwd_vol_anova1$residuals)
 
 #what about normality of the DATA itself?
-shapiro.test(cwd_data_stand$vol_m3_ha)
-qqnorm(cwd_data_stand$vol_m3_ha)
+#shapiro.test(cwd_data_stand$vol_m3_ha)
+#qqnorm(cwd_data_stand$vol_m3_ha)
 
 #OK, now [testing normality] for biomass!
-plot(cwd_biomass_anova1)
+#plot(cwd_biomass_anova1)
 shapiro.test(cwd_biomass_anova1$residuals) #looks OK! (p-val above 0.05)
 #and just for fun, normality of the data itself:
-shapiro.test(cwd_data_stand$biomass_Mg_ha) #NOT normal...but that's ok?
+#shapiro.test(cwd_data_stand$biomass_Mg_ha) #NOT normal...but that's ok!
 
 #slightly random...testing presence per decay class per tx?
 #cwd_dc_test <- merge(x=cwd_data_calc, y=plot_info_plus[,c("plot_ID", "Treatment")], by="plot_ID")
@@ -928,6 +927,183 @@ stand_dead_att <- data.frame("Group" = c(unique(snag_data_stand$Treatment), uniq
 #FIRST, FILL IN SNAG INFO:
 #actually...gonna take a break here, I need to eat lunch!!
 #but WHEN I GET BACK, will finish computing these stats!!! (w/ for loop to make it easier...)
-for(i in 1:3){
-  
+#and then save as a .csv...
+#and then also run some ANOVAs!
+#OK, I think my brain is tired from all the shoveling lol,
+#so this is definitely NOT the most efficient way to do this,
+#but whatever I'll just do it like this anyway.
+
+#adding a lil thingy for tx groups:
+tx_group <- c("unharvested", "regeneration", "removal")
+for(i in 1:3){ #i represents the STATISTIC (BA, vol, and biomass)
+  for(j in 1:3){ #j represents the TX GROUP
+  stand_dead_att[stand_dead_att$Group==tx_group[j], #selects row
+                 (i-1)*2+6] <- #selects col that aligns w/ the statistic in output df
+    mean(snag_data_stand[snag_data_stand$Treatment==tx_group[j], #subsetting by stand tx
+                         i+1]) #and cols 2-4 in this input df 
+  #another command to calculate STANDARD ERROR
+  stand_dead_att[stand_dead_att$Group==tx_group[j], #selects row
+                 (i)*2+5] <- #selects col that aligns w/ the statistic in output df
+    std.error(snag_data_stand[snag_data_stand$Treatment==tx_group[j], #subsetting by stand tx
+                         i+1]) #and cols 2-4 in this input df 
+  }
 }
+#OK, it worked...let's test it...
+mean(snag_data_stand$vol_m3_ha[snag_data_stand$Treatment=="removal"])
+std.error(snag_data_stand$biomass_Mg_ha[snag_data_stand$Treatment=="regeneration"])
+
+
+#OK, now to do the same thing w/ FOREST TYPES:
+ft_group <- c("NH", "RNH")
+for(i in 1:3){ #i represents the STATISTIC (BA, vol, and biomass)
+  for(j in 1:2){ #j represents the FOREST TYPE GROUP
+    stand_dead_att[stand_dead_att$Group==ft_group[j], #selects row
+                   (i-1)*2+6] <- #selects col that aligns w/ the statistic in output df
+      mean(snag_data_stand[snag_data_stand$forest_type==ft_group[j], #subsetting by stand tx
+                           i+1]) #and cols 2-4 in this input df 
+    #another command to calculate STANDARD ERROR
+    stand_dead_att[stand_dead_att$Group==ft_group[j], #selects row
+                   (i)*2+5] <- #selects col that aligns w/ the statistic in output df
+      std.error(snag_data_stand[snag_data_stand$forest_type==ft_group[j], #subsetting by stand tx
+                                i+1]) #and cols 2-4 in this input df 
+  }
+}
+
+#OK, now let's fill in the rest of the table w/ CWD attributes!
+#(basically need to rerun all code above to do this)
+#also need to reorder columns for the loop to work easily:
+cwd_data_stand2 <- cwd_data_stand[,c(1,2,5,3,4)]
+for(i in 1:2){ #i represents the STATISTIC (vol and biomass)
+  for(j in 1:3){ #j represents the TX GROUP
+    stand_dead_att[stand_dead_att$Group==tx_group[j], #selects row
+                   i*2] <- #selects col that aligns w/ the statistic in output df
+      mean(cwd_data_stand2[cwd_data_stand2$Treatment==tx_group[j], #subsetting by stand tx
+                           i+1]) #and cols 2-3 in this input df 
+    #another command to calculate STANDARD ERROR
+    stand_dead_att[stand_dead_att$Group==tx_group[j], #selects row
+                   i*2+1] <- #selects col that aligns w/ the statistic in output df
+      std.error(cwd_data_stand2[cwd_data_stand2$Treatment==tx_group[j], #subsetting by stand tx
+                                i+1]) #and cols 2-3 in this input df 
+  }
+}
+#cross-referenced against the table I already made, and it looks good!!!
+
+#now, ditto for forest types / CWD attributes:
+for(i in 1:2){ #i represents the STATISTIC (vol and biomass)
+  for(j in 1:2){ #j represents the FOREST TYPE GROUP
+    stand_dead_att[stand_dead_att$Group==ft_group[j], #selects row
+                   i*2] <- #selects col that aligns w/ the statistic in output df
+      mean(cwd_data_stand2[cwd_data_stand2$forest_type==ft_group[j], #subsetting by stand tx
+                           i+1]) #and cols 2-3 in this input df 
+    #another command to calculate STANDARD ERROR
+    stand_dead_att[stand_dead_att$Group==ft_group[j], #selects row
+                   i*2+1] <- #selects col that aligns w/ the statistic in output df
+      std.error(cwd_data_stand2[cwd_data_stand2$forest_type==ft_group[j], #subsetting by stand tx
+                                i+1]) #and cols 2-3 in this input df 
+  }
+}
+
+#ALRIGHT, IDK if that was faster lol but it is all together now!
+#save to file:
+write.csv(x=stand_dead_att,
+          file="stand_deadwood_attributes_4Feb2022.csv")
+
+# SNAG BA, volume, & biomass ANOVAS -------------------------------
+#NOW TO DO SOME ANOVAS & SAVE THE RESULTS! (will write & run snags FIRST, then rerun for CWD)
+## basically copied this code from CWD testing above:
+
+snag_BA_anova1 <- aov(BA_sqm_ha ~ Treatment*forest_type, data=snag_data_stand)
+summary(snag_BA_anova1) #treatment is not signif, but forest type is...interesting?
+
+tukey5 <- TukeyHSD(snag_BA_anova1)
+tukey5 #soo, basically just between the 2 forest types...not that surprising?
+
+snag_vol_anova1 <- aov(vol_m3_ha ~ Treatment*forest_type, data=snag_data_stand)
+summary(snag_vol_anova1) #Nothing is signif, but forest type is close!
+
+#just for fun- post hoc analysis w/ Tukey's test:
+tukey6 <- TukeyHSD(snag_vol_anova1)
+tukey6 
+
+snag_biomass_anova1 <- aov(biomass_Mg_ha ~ Treatment*forest_type, data=snag_data_stand)
+summary(snag_biomass_anova1) #Nothing is signif, but forest type is close!
+
+tukey7 <- TukeyHSD(snag_biomass_anova1)
+tukey7
+
+tukey8 <- TukeyHSD(snag_biomass_anova1, which="forest_type")
+tukey8 #again, pretty much the same pattern....
+
+#checking these results for normality!!
+plot(snag_BA_anova1)
+shapiro.test(snag_BA_anova1$residuals) #oookay, so BA residuals are NOT normal...
+#actually seems exponential?
+
+
+plot(snag_vol_anova1) #this Q-Q plot also looks exponential...
+shapiro.test(snag_vol_anova1$residuals) #again- resids NOT normal
+
+#OK, now [testing normality] for biomass!
+plot(snag_biomass_anova1) #same situation!
+shapiro.test(snag_biomass_anova1$residuals) #once again, not normal!
+
+#FIGURE OUT WHAT TO DO ABOUT THIS! (transform data?)
+#BUT FIRST, TRANSFER ALL THESE RESULTS TO MY RESULTS DOC(s)
+
+#also, saving these files just in case I need to pull them up again later!
+write.csv(x=cwd_data_stand, file="cwd_data_stand_4Feb2022.csv")
+write.csv(x=snag_data_stand, file="snag_data_stand_4Feb2022.csv")
+
+#referencing this webpage: https://rpubs.com/cwoods/anova
+#and I ALSO need to check if my variance is equal among groups (post-anova)??
+
+#this page says: "To test whether the error terms for each group have similar 
+#variance (homogeneity of variance, assmuption 2 above), we will use a plot of 
+#the fitted.values vs. the predicted values."
+#e.g.: 
+#anova2 <- cwd_vol_anova1
+#plot(anova2$residuals~anova2$fitted.values)
+#lines(lowess(anova2$fitted.values,anova2$residuals), col="blue")
+# "For this plot, you are looking for no patterns. If you see a cone where the 
+#vertical variation on one side of the figure is smaller than the vertical 
+#variation on the other side, the variation is not homogeneous and you need to
+#transform your data."
+
+#let's also try:
+#anova3<-cwd_biomass_anova1
+#plot(anova3$residuals~anova3$fitted.values)
+#lines(lowess(anova3$fitted.values,anova3$residuals), col="blue")
+#hmm...I will say, these do look uneven...but let's worry about snag results first??
+
+#TRYING A TRANSFORMATION W/ SNAG DATA:
+snag_BA_anova2 <- aov(sqrt(BA_sqm_ha) ~ Treatment*forest_type, data=snag_data_stand)
+plot(snag_BA_anova1) #for comparison:
+plot(snag_BA_anova2) #this is with sqrt transform. better, but still not great?
+shapiro.test(snag_BA_anova2$residuals) #again...better, but not great!
+summary(snag_BA_anova2) #now, forest type is even MORE signif than before!
+
+#let's try a log transform?
+snag_BA_anova3 <- aov(log(BA_sqm_ha) ~ Treatment*forest_type, data=snag_data_stand)
+plot(snag_BA_anova3) #this is with log transform. TBH looks a lot better
+shapiro.test(snag_BA_anova3$residuals) #we gucci!!
+summary(snag_BA_anova3) #now, forest type is even MORE signif than before!
+#WHY??
+
+#OK, log-transforming the other snag variables:
+snag_vol_anova2 <- aov(log(vol_m3_ha) ~ Treatment*forest_type, data=snag_data_stand)
+plot(snag_vol_anova2) #this is with log transform. TBH looks a lot better
+shapiro.test(snag_vol_anova2$residuals) #we gucci!!
+summary(snag_vol_anova2) #again... forest type is even MORE signif than before!
+
+snag_biomass_anova2 <- aov(log(biomass_Mg_ha) ~ Treatment*forest_type, data=snag_data_stand)
+plot(snag_biomass_anova2) #this is with log transform. TBH looks a lot better
+shapiro.test(snag_biomass_anova2$residuals) #we gucci!!
+summary(snag_biomass_anova2) #again... forest type is still only signif var!
+
+#OK, I think I'm done with this, but regardless data tables are saved
+#in case I need to revisit & tinker with my ANOVAs!
+
+##############################################
+
+#what's next: returning to sapling/understory analysis?
+#or calculating other stand-level attributes?

@@ -1,0 +1,33 @@
+Standing Dead Absolute Density Predictions Metadata (Appendix C)
+
+Fieldname       Definition                             Code/Units   Method
+genus           Sample genus
+species         Sample species
+code            Genus-species code
+
+den0            Green density (decay class “0”)        g/cm3
+
+den1            Density of decay class 1 snag          g/cm3
+unc1            Uncertainty of den1
+"cod1            Uncertainty code for den1 (A, B, C)    A            Species sampled"
+"cod1            Uncertainty code for den1 (A, B, C)    B            Genera sampled"
+"cod1            Uncertainty code for den1 (A, B, C)    C            Species and genus not sampled"
+
+den2            Density of decay class 2 snag          g/cm3
+unc2            Uncertainty of den2
+"cod2            Uncertainty code for den2 (A, B, C)    A            Species sampled"
+"cod2            Uncertainty code for den2 (A, B, C)    B            Genera sampled"
+"cod2            Uncertainty code for den2 (A, B, C)    C            Species and genus not sampled"
+
+den3            Density of decay class 3 snag          g/cm3
+unc3            Uncertainty of den3
+"cod3            Uncertainty code for den3 (A, B, C)    A            Species sampled"
+"cod3            Uncertainty code for den3 (A, B, C)    B            Genera sampled"
+"cod3            Uncertainty code for den3 (A, B, C)    C            Species and genus not sampled"
+
+den4            Density of decay class 4 snag          g/cm3
+unc4            Uncertainty of den4
+"cod4            Uncertainty code for den4 (A, B, C)    A            Species sampled"
+"cod4            Uncertainty code for den4 (A, B, C)    B            Genera sampled"
+"cod4            Uncertainty code for den4 (A, B, C)    C            Species and genus not sampled"
+

@@ -812,3 +812,122 @@ snag_data$BA_sqm_ha <- snag_data$BA_sqm/0.04 #dividing by the area of 1 plot, in
 #especially at the top (e.g. not a perfect cylinder?)
 #and for biomass, see Harmon et al. 2011 for values??
 
+### alright, back to this on Friday, Feb. 4th!
+#Tony emailed me back to say he prefers using snag volume calculation from 
+#Tyrell and Crow 1994 to account for shape of dif decay classes!
+#  According to their scheme vs. my DC definitions:
+#  decay class 1(crown present) = paraboloid, VRF = 0.75
+# Decay class 2&3 = halfway between paraboloid/cylinder, VRF=0.5
+# Decay class 4&5 = cylinder, VRF=1
+# Vol formula = BA * height * VRF
+
+#attaching these VRFs as a column:
+snag_data$snag_VRF <- rep(0)
+snag_data$snag_VRF[snag_data$decay_class==1] <- 0.5 #paraboloid
+snag_data$snag_VRF[snag_data$decay_class==2 | snag_data$decay_class==3] <- 0.75 #in between
+snag_data$snag_VRF[snag_data$decay_class==4 | snag_data$decay_class==5] <- 1 #cylinder
+sum(snag_data$snag_VRF==0) #8 NA values b/c no DC, so they won't be factored into vol.
+sum(is.na(snag_data$DBH_cm)) #none w/o a diam...
+sum(is.na(snag_data$height_m)) #1 w/o a height...
+
+snag_data$vol_m3_ha <- snag_data$BA_sqm_ha * snag_data$height_m * snag_data$snag_VRF
+#got volume calculated!
+
+#now to calculate biomass (again, following what I did for CWD):
+
+#first, need to figure out what sp I have/fill in any not in the density table for SDTs
+unique(snag_data$species)
+
+
+#and also need to import that density table for SDTs! (per species, decay class)
+snag_dens_vals <- read.csv("Harmon2011_AppendixC_standing_dead_tree_density_values.csv")
+snag_dens_metadata <- read.csv("Harmon_2011_AppendixC_metadata.csv")
+View(snag_dens_vals)
+
+#test which of these codes aren't in the dataset w/ my new negatory operator?
+'%!in%' = Negate('%in%')
+unique(snag_data$species[(snag_data$species) %!in% snag_dens_vals$Code]) 
+#RESULT: UNK and PISP (ALSO NEED TO UPDATE ACSP TO ACER!!!)
+
+#fixing this:
+snag_data$Code <- snag_data$species
+snag_data$Code[snag_data$Code=="ACSP"] <- "ACER"
+snag_data$Code[snag_data$Code=="PISP"] <- "PICE"
+#check again: 
+unique(snag_data$Code[(snag_data$Code) %!in% snag_dens_vals$Code]) 
+#so, now just need to add UNK values to the snag_dens_vals table using rbind (as above)
+#first creating a vector of values for the unkown "species" (from Harmon et al. 2011 Table 4):
+snagunkvals <- data.frame(NA, NA, "UNK", NA, 0.40, NA, NA, 0.38, NA, NA, 0.35, NA, NA, 0.25, NA, NA)
+names(snagunkvals) <- names(snag_dens_vals) #setting up an extra row for unknown species snags
+#now to combine them.....
+#testing123 <- rbind(snag_dens_vals, snagunkvals)
+snag_dens_vals <- rbind(snag_dens_vals, snagunkvals) #yay it worked!
+
+#IMPORTANT NOTE: snag_dens_vals only goes through DC 4, 
+#so I need to reassign all my DC5 snags to DC4!
+snag_data$decay_class[snag_data$decay_class==5] <- 4
+#summary(snag_data$decay_class)
+#IN RETROSPECT, could have just dealt with this in the for loop...
+#but I'm OK with how I handled it here!!
+
+#NEXT STEP = create a for loop to associate correct density value w/ each piece
+#new column to hold density val:
+snag_data$density_g_cm3 <- rep(0)
+colassign2 <- rep(0) #and intermediate var 
+
+for(i in 1:nrow(snag_data)){ #goin' by row in the snag data table,
+  if(is.na(snag_data$decay_class[i])==FALSE){ 
+    #filtering out any snag w/o a decay class, so as to not mess up subsequent if statements
+    for(j in 1:nrow(snag_dens_vals)){ #now, iterating thru rows of the density table, AKA species
+      if(snag_data$Code[i]==snag_dens_vals$Code[j]){ #matching up the species...
+        #NOW, finding the correct column to attach by decay class...doing some ~fun~ math:
+        colassign2[i] <- (snag_data$decay_class[i]-1)*3+5 #math to choose the right column density val based on DC
+        #and the grand finale...attributing density val w/ correct sp & DC
+        snag_data$density_g_cm3[i] <- snag_dens_vals[j,colassign2[i]]
+      }
+    }
+  }
+}
+#looks like it worked, yay!!
+
+#OK, now can simply calculate biomass! (in Mg/ha)
+#REMEMBER, the units conveniently translate, so no unit coversion needed...
+snag_data$biomass_Mg_ha <- snag_data$vol_m3_ha*snag_data$density_g_cm3
+
+#aggregate by stand: 
+snag_data <- merge(snag_data, plot_info_plus[,c("plot_ID", "Stand_name")], by="plot_ID")
+snag_data_stand <- aggregate(formula=cbind(BA_sqm_ha, vol_m3_ha, biomass_Mg_ha) ~ Stand_name,
+                             data=snag_data, FUN=sum)
+View(snag_data_stand)
+
+snag_data_stand <- merge(snag_data_stand, stand_info[,c("Stand_name", "Treatment", "forest_type")],
+                         by="Stand_name")
+
+#let's just confirm this looks right...
+#sum(snag_data$biomass_Mg_ha[snag_data$Stand_name=="Camel's Hump SP stand 2-2-4"])
+#looks good!
+
+#next step = calculate mean & SD values!
+#maybe just easier to go ahead and put in a table for this one (and all of them?!):
+stand_dead_att <- data.frame("Group" = c(unique(snag_data_stand$Treatment), unique(snag_data_stand$forest_type)),
+                             "CWD_vol_mean" = rep(0),
+                             "CWD_vol_SE" = rep(0),
+                             "CWD_biomass_mean" = rep(0),
+                             "CWD_biomass_SE" = rep(0),
+                             "snag_BA_mean" = rep(0),
+                             "snag_BA_SE" = rep(0),
+                             "snag_vol_mean" = rep(0),
+                             "snag_vol_SE" = rep(0),
+                             "snag_biomass_mean" = rep(0),
+                             "snag_biomass_SE" = rep(0)
+)
+
+#might make more sense to transpose this anyway...?
+#BUT will keep it as-is for now!
+
+#FIRST, FILL IN SNAG INFO:
+#actually...gonna take a break here, I need to eat lunch!!
+#but WHEN I GET BACK, will finish computing these stats!!! (w/ for loop to make it easier...)
+for(i in 1:3){
+  
+}

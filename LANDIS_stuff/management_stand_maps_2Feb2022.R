@@ -299,3 +299,127 @@ writeRaster(x=MA_parcels_mask,
 #means they  have some values that are the same across (for example) VT vs MA!
 #so, will have to go the for loop route (or accomplish the same thing w/ another method).
 #will still need to figure out how to handle GMNF vs VT where they overlap...
+
+#idea: ADD the max value of GMNF stands to VT stands,
+#and then add the max value of GMNF+VT stands to MA stands
+#(so they are all unique #s)
+
+GMNF_parcels_mask <- rast("C:/Users/theha/Documents/layers_for_LANDIS/Properties_Stands/GMNF_parcels_masked_3Feb2022.tif")
+VT_parcels_mask <- rast("C:/Users/theha/Documents/layers_for_LANDIS/Properties_Stands/VT_parcels_masked_3Feb2022.tif")
+MA_parcels_mask <- rast("C:/Users/theha/Documents/layers_for_LANDIS/Properties_Stands/MA_parcels_masked_3Feb2022.tif")
+
+#finding out TOTAL max val 
+VT_max <- max(values(VT_parcels_mask))
+GMNF_max <- max(values(GMNF_parcels_mask))
+MA_max <- max(values(MA_parcels_mask))
+MA_max + GMNF_max + VT_max
+#OK, it's over a million...so will need to add stand val in the TEN MILLIONS spot, I guess?
+#at least that still fits in a 4-bit unsigned integer!
+
+#testing before transformation--overlapping/same values, what we are trying to fix!
+#BUT need to exclude zeros from this!!!
+sum((GMNF_parcels_mask[GMNF_parcels_mask!=0]) %in% (VT_parcels_mask[VT_parcels_mask!=0]))
+
+#ANYWAY, I think we can make this work regardless......
+#"math" wasn't working, maybe try an ifel statement instead? (to exclude zeros)
+VT_parcels_mask <- ifel(test=VT_parcels_mask==0,
+                        yes=VT_parcels_mask,
+                        no=VT_parcels_mask+GMNF_max
+                        )
+
+
+#testing...
+plot(VT_parcels_mask)
+VT_parcels_mask
+sum((GMNF_parcels_mask[GMNF_parcels_mask!=0]) %in% (VT_parcels_mask[VT_parcels_mask!=0]))
+#looks good!!
+
+#now to do the same thing with MA- prelim tests first:
+sum((GMNF_parcels_mask[GMNF_parcels_mask!=0]) %in% (MA_parcels_mask[MA_parcels_mask!=0]))
+sum((VT_parcels_mask[VT_parcels_mask!=0]) %in% (MA_parcels_mask[MA_parcels_mask!=0]))
+plot(MA_parcels_mask)
+
+#now do the same thing w/ an ifel statement:
+MA_parcels_mask <- ifel(test=MA_parcels_mask==0,
+                        yes=MA_parcels_mask,
+                        no=MA_parcels_mask+GMNF_max+VT_max
+)
+#and evaluate again post-reclassification:
+sum((GMNF_parcels_mask[GMNF_parcels_mask!=0]) %in% (MA_parcels_mask[MA_parcels_mask!=0]))
+sum((VT_parcels_mask[VT_parcels_mask!=0]) %in% (MA_parcels_mask[MA_parcels_mask!=0]))
+plot(MA_parcels_mask)
+min(MA_parcels_mask[MA_parcels_mask!=0])
+VT_max + GMNF_max
+#OK, everything looks great!! all are now unique values (except 0).
+
+#NOW, time to combine them!
+#will start w/ GMNF & VT because there is some overlap there...
+VT_GMNF_merge <- ifel(test=GMNF_parcels_mask==0,
+                      yes=VT_parcels_mask, #if there's a val for GMNF, it overrides
+                      no=GMNF_parcels_mask) #otherwise, default to VT val (incl zeros)
+
+VT_GMNF_merge
+plot(VT_GMNF_merge) #well, THAT doesn't look right...
+#trying it flipped instead?
+#WHY isn't this working??
+
+#maybe try w/ MA first to see if THAT one works??
+MA_VT_merge <- MA_parcels_mask + VT_parcels_mask
+MA_VT_merge #max val is a bit greater than max of MA_parcels_mask, 
+MA_parcels_mask #so there are a few vals that got added together (@ the border?)
+plot(MA_VT_merge) #but...how many of those?
+#creating a negation function (to mean NOT in):
+'%!in%' = Negate('%in%')
+#will this work?? TBD lol!
+sum(unique(MA_VT_merge) %!in% unique(MA_parcels_mask) & unique(MA_VT_merge) %!in% unique(VT_parcels_mask))
+#update: answer was 1, so looks like it's just one pixel whose value got overlapped...
+#I can live with that!!
+#but, OK- now that we have this merged raster, can we try adding in GMNF stands??
+
+compareGeom(MA_VT_merge, GMNF_parcels_mask)
+#GMNF_states_merge <- ifel(GMNF_parcels_mask==0,
+#                          MA_VT_merge,
+#                          GMNF_parcels_mask)
+#plot(GMNF_states_merge)    
+#WHY DOES THIS KEEP HAPPENING?!?!
+#it keeps masking out the rest of Bennington co. in VT as well...
+#maybe this is getting assigned the value 1 in GMNF stands?
+#and that explains why there were so many 1s in that raster??
+click(GMNF_parcels_mask) #I think this is what is happening!
+#so basically, one stand (called number 1) might get covered up by this...
+#and I will have to live with it!
+#OK I THINK THIS IS BECAUSE I REASSIGNED VALUES TO GMNF AND MA YESTERDAY
+#AND ADDED 1 TO ALL CELLS, INCLUDING ZERO VALS?!
+#let's try this again...
+GMNF_states_merge <- ifel(GMNF_parcels_mask<=1, #now, "covering" if GMNF is 0 or 1
+                          MA_VT_merge, #with MA/VT values
+                          GMNF_parcels_mask) #but GMNF overrides if it's over 1!
+plot(GMNF_states_merge)  
+click(GMNF_states_merge) #alright, I think we're good! Those values just look so small...
+
+#NOW LET'S TRY AGAIN w/ IFEL to connect w/ management areas!!
+plot(mgmtareas)
+
+stands_mgmt_combined <- GMNF_states_merge+mgmtareas*10000000 #adding mgmt area in the 10-millionths place?
+stands_mgmt_combined
+plot(stands_mgmt_combined)
+#I think this is OK! mgmt area represented by the 10-millionths place,
+#and after combining nrow(unique
+#(GMNF_states_merge)) vs nrow(unique(stands_mgmt_combined)),
+#it definitely added *a fair amount* of "split up" stands where they didn't fall into
+#the same management areas, so there are some new "fringe stands"
+#but honestly, roads alone could have contributed a lot to this!!
+
+nrow(values(mgmtareas)==6)
+nrow(values(stands_mgmt_combined)>=60000000) #these 2 #s are equal, yay!
+stands_mgmt_combined
+#OK, I think we are good here?!
+#just need to SAVE this stand map raster!
+writeRaster(x=stands_mgmt_combined,
+            filename="C:/Users/theha/Documents/layers_for_LANDIS/Properties_Stands/stands_classified_4Feb2022.tif",
+            datatype="INT4U" #forgot this the first time LOL! (and it DID default to floating point before, important to take note!)
+)
+
+compareGeom(mgmtareas, stands_mgmt_combined)
+#now I want to look at this in Arc!
+#looks GREAT! :) 

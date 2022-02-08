@@ -1107,3 +1107,165 @@ summary(snag_biomass_anova2) #again... forest type is still only signif var!
 
 #what's next: returning to sapling/understory analysis?
 #or calculating other stand-level attributes?
+
+#back at it on Monday, Feb. 7th: going to start with other (easy) stand-level
+#attributes!
+
+#First up, TPA and QMD
+trees_per_ha <- rep(0) 
+#summarizing by # of live trees per plot
+trees_per_ha <- overstory_data[overstory_data$status=="live",] %>%
+  group_by(plot_ID) %>%
+  summarize(num_trees = length(plot_ID))
+
+#dividing the "count" per plot by the size of a plot (in ha)
+trees_per_ha$per_ha <- trees_per_ha$num_trees/0.04
+
+#next to summarize by stand:
+trees_per_ha <- merge(x=trees_per_ha, 
+                      y=plot_info_plus[,c("plot_ID", "Stand_name", "num_plots", "Treatment", "forest_type")],
+                      by="plot_ID", all=TRUE)
+trees_per_ha <- aggregate(per_ha ~ Stand_name, 
+                          data=trees_per_ha, FUN=sum)
+#(re-merge because the aggregate erased other columns LOL)
+trees_per_ha <- merge(x=trees_per_ha, 
+                      y=stand_info[,c("Stand_name", "num_plots", "Treatment", "forest_type")],
+                      by="Stand_name", all=TRUE)
+#correcting for the number of plots per stand
+trees_per_ha$per_ha_stand <- trees_per_ha$per_ha/trees_per_ha$num_plots
+
+#next, need to pull in the averages & add to that table I made last time:
+deadwood_table <- read.csv("stand_deadwood_attributes_4Feb2022.csv")
+View(deadwood_table)
+stand_attributes <- deadwood_table
+stand_attributes$TPH_mean <- rep(0)
+stand_attributes$TPH_SE <- rep(0)
+
+#honestly....might not do a for loop for this b/c I'm tired lol
+#maybe I'll just do it AFTER calculating QMD!
+#and then I'll also need to ANOVA it...
+
+TPH_anova1 <- aov(per_ha_stand ~ Treatment, data=trees_per_ha)
+#plot(TPH_anova1)
+#shapiro.test(TPH_anova1$residuals) #looks good!
+summary(TPH_anova1)
+
+#need to look @ both together...
+TPH_anova2 <- aov(per_ha_stand ~ Treatment*forest_type, data=trees_per_ha)
+plot(TPH_anova2)
+shapiro.test(TPH_anova2$residuals) #looks good!
+summary(TPH_anova2) 
+#both treatment AND forest type signif, but not their interaction!
+#Interesting...
+
+#now to do a post hoc test:
+TPHtukey1 <- TukeyHSD(TPH_anova2)
+TPHtukey1 #all pairwise individual interactions are signif
+#EXCEPT for removal vs. regeneration
+
+#OK, now to calculate QMD: 
+#source for formula = 
+#https://www-fs-fed-us.ezproxy.uvm.edu/pnw/olympia/silv/publications/opt/436_CurtisMarshall2000.pdf
+
+#need to summarize by # live trees again, then append that back to overstory_data
+#and divide each squared diam by it 
+#use number PER STAND i guess???
+
+# QUESTIONS: should I be calculating QMD (and TPH) as a statistic PER STAND
+# and then averaging the stand-level values for analysis,
+# or should I be calculating this as a statistic PER GROUP 
+# (e.g. QMD using the entire group of trees in "unharvested" plots)?
+#am currently doing the former and I think that's right, but want to check on this!
+
+live_trees <- overstory_data[overstory_data$status=="live",]
+live_trees <- merge(x=live_trees, y=plot_info_plus[, c("plot_ID", "Stand_name")],
+                    all.x=TRUE, by="plot_ID") #getting stand_name associated 
+
+num_trees <- live_trees #using num_trees to calculate n for QMD formula
+num_trees <- num_trees %>%
+            group_by(Stand_name) %>%
+            summarize(n_stand = length(Stand_name))
+
+live_trees$diam_cm_sq <- live_trees$DBH_cm^2
+live_trees <- aggregate(diam_cm_sq ~ Stand_name, data=live_trees, FUN=sum)
+#summarizing squared diameters per stand!
+
+live_trees <- merge(live_trees, num_trees) #adding on the n value per stand
+#calculating the remainder of QMD formula, putting all the pieces together
+live_trees$QMD_cm <- sqrt(live_trees$diam_cm_sq/live_trees$n_stand)
+
+#OK, now re-aggregating w/ variables:
+live_trees <- merge(live_trees, stand_info[,c("Stand_name", "Treatment", "forest_type")])
+#checkin' it out...
+boxplot(live_trees$QMD_cm ~ live_trees$Treatment)
+boxplot(live_trees$QMD_cm ~ live_trees$forest_type)
+
+#ANOVAs for QMD:
+QMD_anova1 <- aov(QMD_cm ~ Treatment*forest_type, data=live_trees)
+plot(QMD_anova1)
+shapiro.test(QMD_anova1$residuals) #seems OK......
+summary(QMD_anova1) #only forest type is signif??
+#post hoc test:
+QMD_tukey1 <- TukeyHSD(QMD_anova1)
+QMD_tukey1 #OK same result of course b/c only 2 forest types LOL
+
+#OK, now I need to figure out the loop or SOMETHING for filling out the table!
+stand_attributes$QMD_mean <- rep(0)
+stand_attributes$QMD_SE <- rep(0)
+
+#LOOPS COPIED AND MODIFIED FROM ABOVE!!!
+
+#first need to get things in the same dataframe:
+live_trees <- merge(live_trees, trees_per_ha[,c("Stand_name", "per_ha_stand")])
+#also need to reorder columns for the loop to work easily:
+live_trees2 <- live_trees[,c(1,7,4,5,6)]
+
+for(i in 1:2){ #i represents the STATISTIC (TPH and QMD)
+  for(j in 1:3){ #j represents the TX GROUP
+    stand_attributes[stand_attributes$Group==tx_group[j], #selects row
+                   11+i*2] <- #selects col that aligns w/ the statistic in output df
+      mean(live_trees2[live_trees2$Treatment==tx_group[j], #subsetting by stand tx
+                           i+1]) #and cols 2-3 in this input df 
+    #another command to calculate STANDARD ERROR
+    stand_attributes[stand_attributes$Group==tx_group[j], #selects row
+                   i*2+12] <- #selects col that aligns w/ the statistic in output df
+      std.error(live_trees2[live_trees2$Treatment==tx_group[j], #subsetting by stand tx
+                                i+1]) #and cols 2-3 in this input df 
+  }
+}
+#doinga lil check...
+#mean(live_trees$QMD_cm[live_trees$Treatment=="unharvested"])
+
+#now, ditto for forest types / CWD attributes:
+for(i in 1:2){ #i represents the STATISTIC (TPH and QMD)
+  for(j in 1:2){ #j represents the FOREST TYPE GROUP
+    stand_attributes[stand_attributes$Group==ft_group[j], #selects row
+                   i*2+11] <- #selects col that aligns w/ the statistic in output df
+      mean(live_trees2[live_trees2$forest_type==ft_group[j], #subsetting by stand tx
+                           i+1]) #and cols 2-3 in this input df 
+    #another command to calculate STANDARD ERROR
+    stand_attributes[stand_attributes$Group==ft_group[j], #selects row
+                   i*2+12] <- #selects col that aligns w/ the statistic in output df
+      std.error(live_trees2[live_trees2$forest_type==ft_group[j], #subsetting by stand tx
+                                i+1]) #and cols 2-3 in this input df 
+  }
+}
+#again- checking...
+#std.error(live_trees$per_ha_stand[live_trees$forest_type=="RNH"])
+
+#looks good! Now to export this table (gonna transpose it first):
+#but FIRST-first gotta remove that annoying extra column... (and col names, to add back in next line)
+stand_attributes2 <- stand_attributes[,3:length(stand_attributes)]
+stand_attributes2 <- t(stand_attributes2)
+colnames(stand_attributes2) <- stand_attributes$Group
+write.csv(x=stand_attributes2, file="stand_attributes_7Feb2022.csv",
+          row.names=TRUE, col.names=TRUE)
+#alright, looks good!!
+#that's all for this bit I think!
+#just in case:
+write.csv(x=live_trees, file="live_stand_TPH_QMD_7Feb2022.csv",
+          row.names=FALSE, col.names=TRUE)
+
+#I guess I still need to calculate BA for the group...
+#not that it's hard LOL I'll just think about it next time
+#(along with ash % BA harvested? will need to look back for that one)

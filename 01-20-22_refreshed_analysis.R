@@ -1269,3 +1269,318 @@ write.csv(x=live_trees, file="live_stand_TPH_QMD_7Feb2022.csv",
 #I guess I still need to calculate BA for the group...
 #not that it's hard LOL I'll just think about it next time
 #(along with ash % BA harvested? will need to look back for that one)
+
+
+
+### I'm back on Feb. 15th to do the rest of those things!! ###
+
+# Basal area calculations & analysis (stand-level) (total & ash BA) -------------------------------
+
+#First, gonna look at overall BA (for LIVE trees)
+live_trees2 <- overstory_data[overstory_data$status=="live",]
+View(live_trees2)
+#BA = pi*r^2, converting DBH in cm to radius in m
+live_trees2$BA_sqm <- pi*(live_trees2$DBH_cm/200)^2 
+live_trees2 <- merge(live_trees2, plot_info_plus[,c("plot_ID", "Stand_name")], all.x = TRUE)
+live_trees2 <- aggregate(formula=BA_sqm ~ Stand_name, FUN=sum, data=live_trees2)
+live_trees2 <- merge(live_trees2, stand_info[,c("Stand_name", "num_plots")])
+#calculating PER HECTARE BA based on # plots in each stand
+live_trees2$BA_sqm_ha <- live_trees2$BA_sqm/(0.04*live_trees2$num_plots) 
+#oops, forgot to attach explanatory variables....
+live_trees2 <- merge(live_trees2, stand_info[, c("Stand_name", "Treatment", "forest_type")])
+
+anova_liveBAstand <- aov(formula=BA_sqm_ha ~ Treatment*forest_type, data=live_trees2)
+#take a look at it first...
+plot(anova_liveBAstand)
+shapiro.test(anova_liveBAstand$residuals) #looks OK to me!
+#now to look @ results:
+summary(anova_liveBAstand) 
+#treatment is very signif; forest type is almost
+TukeyHSD(anova_liveBAstand) #removal vs regen not dif, but both dif from unharv.
+#That all makes sense!! Now I want to look @ ASH-specific BA remaining/BA removed,
+#and then the PROPORTION removed or proportion remaining...
+
+#But just gonna do calculations quickly first! 
+
+#don't have it in me to do another for loop so I'm just gonna copy + paste 
+#these values (total BA mean / SE) for the table, I think:
+#OR, maybe read in the table & just append a few rows to it??
+
+stand_att_table <- read.csv("stand_attributes_7Feb2022.csv")
+
+#GOING TO THE BATHROOM, BUT WHEN I GET BACK, RENAME X COLUMN
+#AND THEN USE RBIND TO ADD TO THIS!
+
+#ACTUALLY, gonna do the ash stuff first!
+#just to get peace of mind/validate my division between removal and regen
+#categories of harvested sites......
+
+#you know what, just gonna focus on WHITE ASH for this b/c only one site had black ash.
+#(Or should I just go ahead and include black ash??)
+live_ash <- overstory_data[(overstory_data$status=="live" & 
+                              (overstory_data$species=="FRAM" | overstory_data$species=="FRNI")),]
+#ok doing it both ways for now LOL
+live_white_ash <- overstory_data[(overstory_data$status=="live" & overstory_data$species=="FRAM"),]
+
+#let's just look at white ash for now: 
+live_white_ash$BA_sqm <- pi*(live_white_ash$DBH_cm/200)^2 
+live_white_ash <- merge(live_white_ash, plot_info_plus[,c("plot_ID", "Stand_name")], all.x = TRUE)
+live_white_ash <- aggregate(formula=BA_sqm ~ Stand_name, FUN=sum, data=live_white_ash)
+live_white_ash <- merge(live_white_ash, stand_info[,c("Stand_name", "num_plots")])
+#calculating PER HECTARE BA based on # plots in each stand
+live_white_ash$BA_sqm_ha <- live_white_ash$BA_sqm/(0.04*live_white_ash$num_plots) 
+#oops, forgot to attach explanatory variables....
+live_white_ash <- merge(live_white_ash, stand_info[, c("Stand_name", "Treatment", "forest_type")])
+
+anova_livewhiteash <- aov(formula=BA_sqm_ha ~ Treatment*forest_type, data=live_white_ash)
+#take a look at it first...
+plot(anova_livewhiteash)
+shapiro.test(anova_livewhiteash$residuals) #looks OK to me!
+#now for the (first) moment of truth...
+summary(anova_livewhiteash) #Treatment is only signif var; makes sense...
+TukeyHSD(anova_livewhiteash) #but removal vs regen is not signif dif...
+#Hmm, OK, this maybe (hopefully!!) will make more sense in terms of separating them
+#by BA or proportion of ash REMOVED, not what's LEFT. (!?)
+
+#need to go back into the archives for this.....maybe better to do it after lab meeting??
+#NEXT STEP WHEN I COME BACK = GO BACK TO THE "ARCHIVES" FOR CODE THAT SPINS UP ASH DBH FROM STUMP HEIGHT,
+#AND RE-CALCULATE ALL THAT SO I CAN USE IT IN ANALYSES NEXT
+
+#ALSO DON'T FORGET I NEED TO RECORD RESULTS IN RESULTS DOC!!!
+
+
+### BELOW CODE COPIED / MAYBE MODIFIED FROM SCRIPT 12-14-20_FEMC_conference_prep.R ###
+
+#merging the overstory df w/ the plot_info df on the basis of the plot_ID column
+overstory_plus <- merge(x=overstory_data,y=plot_info,by="plot_ID")
+
+#converting stump height & diam to DBH- using James Westfall paper from USFS
+#IMPORTANT: these values are specific to white ash; dif species have dif constants!!
+#IMPORTANT QUESTION: can I use measurements in cm for this?! I don't see why not...
+#altho ACTUALLY we'd have to convert stump height-dbh relation to all meters or all feet.
+#variables for this formula: dbhi = di * (4.5/hi)^B0 + B1(4.5-h) + Ei
+#dbhi = estimated DBH for tree 'i'
+#di = stump diameter (in.) for tree i;
+#hi = stump height (ft.) for tree i;
+#B0 & B1 = estimated fixed-effects parameters; 
+#(for white ash, B0 = -0.1074 & B1 = 0.0685)
+#Ei = random error for tree i
+#IN THE BELOW MODEL, I'm gonna convert things to use METRIC, not imperial, units!
+
+overstory_plus$ASH_stump_DBH <- rep(NA)
+overstory_plus$BA_sqm <- rep(NA)
+
+#calculating BA for live trees & stumps using standard conversion from DBH to BA
+#overstory_plus$BA_sqft <- overstory_plus$DBH_cm*overstory_plus$DBH_cm*0.005454
+
+#BUT SINCE WE WANNA DO IT USING METRIC UNITS:
+#RIGHT NOW THIS IS ONLY DOING IT CORRECTLY FOR LIVE TREES, NOT USING THE CORRECT DATA FOR STUMPS!!
+overstory_plus$BA_sqm <- overstory_plus$DBH_cm*overstory_plus$DBH_cm*pi/40000
+
+#only calculating the stump DBH w/ these constants for ash
+for(i in 1:nrow(overstory_plus)){
+  if(overstory_plus$species[i]=="FRAM"){
+    overstory_plus$ASH_stump_DBH[i] <- 
+      (overstory_plus$DBH_cm[i]*((1.3716/overstory_plus$height_m[i])^-0.1074) +
+         0.0685*(1.3716-overstory_plus$height_m[i]) + 0)
+    # and then converting that to BA, for ASH stumps only
+    overstory_plus$BA_sqm[i] <- 
+      overstory_plus$ASH_stump_DBH[i]*overstory_plus$ASH_stump_DBH[i]*pi/40000 
+  }
+}
+#Honestly it's nice to see how far I've come b/c I could do what this loop does
+#MUCH more efficiently now!!!
+
+View (overstory_plus)
+#WAIT A MINUTE......don't we want ONLY stumps of DC 1 or 2 in there???
+#That's what I'm going with for now...
+#Let's simplify + cut down this dataframe:
+cut_white_ash <- overstory_plus[(overstory_plus$species=="FRAM" & 
+                                   overstory_plus$status=="stump" &
+                                   overstory_plus$decay_class<3),]
+View(cut_white_ash)
+
+cut_white_ash <- aggregate(formula= BA_sqm ~ Stand_name, data=cut_white_ash, FUN=sum)
+names(cut_white_ash)[2] <- "stump_BA_sqm"
+
+all_white_ash <- merge(x=live_white_ash, y=cut_white_ash, by="Stand_name", all=TRUE)
+View(all_white_ash)
+#calculating BA in sqm per HECTARE for CUT ash
+all_white_ash$cut_BA_sqm_ha <- all_white_ash$stump_BA_sqm/(0.04*all_white_ash$num_plots)
+names(all_white_ash)[4] <- "live_BA_sqm_ha" #renaming this column for clarity!!
+#need to reassign zeroes!!
+all_white_ash[is.na(all_white_ash)] <- 0
+
+#looks like there is ZERO so-called "cut ash" in ANY of the unharvested stands...
+#which does make sense, but...still!!
+
+#now adding a sum total ash BA column for simplicity's sake...
+all_white_ash$total_ash_BA <- all_white_ash$live_BA_sqm_ha + all_white_ash$cut_BA_sqm_ha
+
+#OK, now for some ANOVAs!!!
+#moment of truth LOL:
+#doing an ANOVA first, but could also do a t-test to compare JUST regen vs removal??
+anova_cutAshBA <- aov(cut_BA_sqm_ha ~ Treatment*forest_type, data=all_white_ash)
+plot(anova_cutAshBA)
+shapiro.test(anova_cutAshBA$residuals) 
+#ok so residuals are NOT normally distributed.
+#honestly, this makes a lot of sense b/c it's basically just zeroes across the board
+#for the whole "unharvested" treatment type.
+#SO, let's look at it first out of curiosity, but it's not really valid...
+#we are probably better off just doing a T-test with regen vs removal...
+summary(anova_cutAshBA)
+TukeyHSD(anova_cutAshBA) #seeing here that removal vs regen IS signif 
+#(along with unharvested vs removal as expected), but NOT regen vs unharvested...
+#interesting, but ultimately NOT useful b/c our assumptions for ANOVA are not met!
+
+#OK let's do a t-test of this instead:
+#looking ONLY @ harvested stands (by excluding unharvested to just compare regen vs removal)
+treatment_cutash_compare <- t.test(cut_BA_sqm_ha ~ Treatment, 
+                                   data=all_white_ash[all_white_ash$Treatment!="unharvested",])
+treatment_cutash_compare
+#YES, there's a signif dif in cut ash BA per ha between regen & removal groups!
+#(thank God LOL)
+
+#now let's also look @ the proportion: 
+all_white_ash$proportion_cut <- all_white_ash$cut_BA_sqm_ha / all_white_ash$total_ash_BA
+#once again, the mean for basically all the unharvested plots is zero, 
+#so let's just compare regen vs removal groups!
+treatment_proportion_compare <- t.test(proportion_cut ~ Treatment, 
+                                   data=all_white_ash[all_white_ash$Treatment!="unharvested",])
+treatment_proportion_compare #once again, YES we are significant!!
+#about 35% vs about 65% difference. (Makes sense to me!)
+
+#OK feeling better now that this is all settled!!
+
+#NOW, just need to calculate means & SEs for these groupings & add them to the table above.
+library(plotrix)
+
+names(stand_att_table)[1] <- "Statistic" #renaming weirdly named "X" column
+
+#need to add rows w/ 6 columns to work...
+BA_attributes <- data.frame(NA, 0, 0, 0, 0, 0)
+names(BA_attributes) <- names(stand_att_table)
+BA_attributes$Statistic <- as.character(BA_attributes$Statistic) 
+#making first column a character type
+
+#dataframes for this = live_trees2 and all_white_ash
+
+#total BA mean + SE:
+BA_attributes[1, ]<- c("all_live_BA_mean", 
+                      mean(live_trees2$BA_sqm_ha[live_trees2$Treatment=="unharvested"]),
+                      mean(live_trees2$BA_sqm_ha[live_trees2$Treatment=="regeneration"]),
+                      mean(live_trees2$BA_sqm_ha[live_trees2$Treatment=="removal"]),
+                      mean(live_trees2$BA_sqm_ha[live_trees2$forest_type=="NH"]),
+                      mean(live_trees2$BA_sqm_ha[live_trees2$forest_type=="RNH"])
+)
+
+BA_attributes[2, ]<- c("all_live_BA_SE", 
+                       std.error(live_trees2$BA_sqm_ha[live_trees2$Treatment=="unharvested"]),
+                       std.error(live_trees2$BA_sqm_ha[live_trees2$Treatment=="regeneration"]),
+                       std.error(live_trees2$BA_sqm_ha[live_trees2$Treatment=="removal"]),
+                       std.error(live_trees2$BA_sqm_ha[live_trees2$forest_type=="NH"]),
+                       std.error(live_trees2$BA_sqm_ha[live_trees2$forest_type=="RNH"])
+)
+
+
+#now doing the same for LIVE (white) ASH BA:
+BA_attributes[3,]<- c("ash_live_BA_mean", 
+                      mean(all_white_ash$live_BA_sqm_ha[all_white_ash$Treatment=="unharvested"]),
+                      mean(all_white_ash$live_BA_sqm_ha[all_white_ash$Treatment=="regeneration"]),
+                      mean(all_white_ash$live_BA_sqm_ha[all_white_ash$Treatment=="removal"]),
+                      mean(all_white_ash$live_BA_sqm_ha[all_white_ash$forest_type=="NH"]),
+                      mean(all_white_ash$live_BA_sqm_ha[all_white_ash$forest_type=="RNH"])
+)
+
+BA_attributes[4, ]<- c("ash_live_BA_SE", 
+                       std.error(all_white_ash$live_BA_sqm_ha[all_white_ash$Treatment=="unharvested"]),
+                       std.error(all_white_ash$live_BA_sqm_ha[all_white_ash$Treatment=="regeneration"]),
+                       std.error(all_white_ash$live_BA_sqm_ha[all_white_ash$Treatment=="removal"]),
+                       std.error(all_white_ash$live_BA_sqm_ha[all_white_ash$forest_type=="NH"]),
+                       std.error(all_white_ash$live_BA_sqm_ha[all_white_ash$forest_type=="RNH"])
+)
+
+
+#next for CUT (white) ash BA:
+BA_attributes[5,]<- c("ash_cut_BA_mean", 
+                      mean(all_white_ash$cut_BA_sqm_ha[all_white_ash$Treatment=="unharvested"]),
+                      mean(all_white_ash$cut_BA_sqm_ha[all_white_ash$Treatment=="regeneration"]),
+                      mean(all_white_ash$cut_BA_sqm_ha[all_white_ash$Treatment=="removal"]),
+                      mean(all_white_ash$cut_BA_sqm_ha[all_white_ash$forest_type=="NH"]),
+                      mean(all_white_ash$cut_BA_sqm_ha[all_white_ash$forest_type=="RNH"])
+)
+
+BA_attributes[6, ]<- c("ash_cut_BA_SE", 
+                       std.error(all_white_ash$cut_BA_sqm_ha[all_white_ash$Treatment=="unharvested"]),
+                       std.error(all_white_ash$cut_BA_sqm_ha[all_white_ash$Treatment=="regeneration"]),
+                       std.error(all_white_ash$cut_BA_sqm_ha[all_white_ash$Treatment=="removal"]),
+                       std.error(all_white_ash$cut_BA_sqm_ha[all_white_ash$forest_type=="NH"]),
+                       std.error(all_white_ash$cut_BA_sqm_ha[all_white_ash$forest_type=="RNH"])
+)
+
+#and finally for PROPORTION of white ash BA cut:
+BA_attributes[7,]<- c("ash_cut_prop_mean", 
+                      mean(all_white_ash$proportion_cut[all_white_ash$Treatment=="unharvested"]),
+                      mean(all_white_ash$proportion_cut[all_white_ash$Treatment=="regeneration"]),
+                      mean(all_white_ash$proportion_cut[all_white_ash$Treatment=="removal"]),
+                      mean(all_white_ash$proportion_cut[all_white_ash$forest_type=="NH"]),
+                      mean(all_white_ash$proportion_cut[all_white_ash$forest_type=="RNH"])
+)
+
+BA_attributes[8, ]<- c("ash_cut_prop_SE", 
+                       std.error(all_white_ash$proportion_cut[all_white_ash$Treatment=="unharvested"]),
+                       std.error(all_white_ash$proportion_cut[all_white_ash$Treatment=="regeneration"]),
+                       std.error(all_white_ash$proportion_cut[all_white_ash$Treatment=="removal"]),
+                       std.error(all_white_ash$proportion_cut[all_white_ash$forest_type=="NH"]),
+                       std.error(all_white_ash$proportion_cut[all_white_ash$forest_type=="RNH"])
+)
+
+#now need to rbind w/ stand_att_table:
+
+stand_att_table <- rbind(stand_att_table, BA_attributes)
+#wheee it's all there!!
+#now to re-save this table:
+
+write.csv(x=stand_att_table, file="stand_attributes_15Feb2022.csv", row.names=FALSE)
+
+
+#OK, now MAYBE re-do those 2 t-tests as ANOVAs instead??
+
+#just gonna save what I have so far in my results doc before I finish this up!!!
+
+#ALRIGHTY, ANOVAs revisited: 
+
+#looking ONLY @ regen vs removal (crossed w/ forest type):
+anova_cutAshBA_harveststands <- aov(cut_BA_sqm_ha ~ Treatment*forest_type, 
+                                    data=all_white_ash[all_white_ash$Treatment!="unharvested",])
+plot(anova_cutAshBA_harveststands) 
+#hmm this looks a little weird...
+shapiro.test(anova_cutAshBA_harveststands$residuals) 
+#but Shapiro test is OK
+summary(anova_cutAshBA_harveststands) 
+#OK, when we're doing ANOVA, dif is only slightly signif...
+#I wonder why that is??
+
+TukeyHSD(anova_cutAshBA_harveststands)
+#didn't really need to do a Tukey test for this LOL
+
+
+#now let's try this with PROPORTION of ash cut...
+anova_proportionashcut_harveststands <- aov(proportion_cut ~ Treatment*forest_type, 
+                                            data=all_white_ash[all_white_ash$Treatment!="unharvested",])
+plot(anova_proportionashcut_harveststands)
+shapiro.test(anova_proportionashcut_harveststands$residuals) 
+#OK this is NOT normal...
+#but for curiosity's sake, let's take a look anyway:
+summary(anova_proportionashcut_harveststands)
+#so here, treatment is still signif, but again no interaction w/ forest type etc.
+
+
+#done with overstory stuff fully, I think!!!
+#unless I end up wanting to do some figures for this part...
+
+#ANYWAY, next time I work on this (later this week!) 
+#I will be moving (back) to UNDERSTORY LIENAR MODELING!!!
+
+# understory composition, linear model analysis revisited... -------------------------------
+

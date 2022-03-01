@@ -423,3 +423,58 @@ writeRaster(x=stands_mgmt_combined,
 compareGeom(mgmtareas, stands_mgmt_combined)
 #now I want to look at this in Arc!
 #looks GREAT! :) 
+
+### UPDATE 22 FEB 2022 ###
+
+# updating files w/ correct data type! -------------------------------
+
+#need to convert from 32-bit (4-byte) unsigned integer to 32-bit signed integer.
+#using the raster package in R because terra package doesn't have that type for some reason.
+#code below copied/modified from the script I made to test this process 
+#using the Biomass Harvest ext example files.
+
+library(raster)
+#input file to be changed (stand map that I created earlier this month)
+StandMap <- raster("C:/Users/theha/Documents/layers_for_LANDIS/Properties_Stands/stands_classified_4Feb2022.tif")
+#now let's take a look at it:
+dataType(StandMap) #correct! (currently IN4U)
+
+#now, reassigning the dataType to INT4S:
+dataType(StandMap) <- "INT4S"
+#testing again to see if this worked:
+dataType(StandMap)
+#great!
+
+#now, write to file:
+writeRaster(x=StandMap,
+            filename="C:/Users/theha/Documents/layers_for_LANDIS/Properties_Stands/stands_classified_INT4S_22Feb2022.tif",
+            datatype="INT4S")
+
+#and now to just repeat this exact process w/ management area map:
+MgmtMap <- raster("C:/Users/theha/Documents/layers_for_LANDIS/Properties_Stands/mgmt_areas_masked_2Feb2022.tif")
+#now let's take a look at it:
+dataType(MgmtMap) #correct! (currently IN4U)
+
+#now, reassigning the dataType to INT4S:
+dataType(MgmtMap) <- "INT4S"
+#testing again to see if this worked:
+dataType(MgmtMap)
+#great!
+
+#now, write to file:
+writeRaster(x=MgmtMap,
+            filename="C:/Users/theha/Documents/layers_for_LANDIS/Properties_Stands/mgmt_areas_masked_INT4S_22Feb2022.tif",
+            datatype="INT4S")
+
+
+#and because why not, let's also just check the data type for the ecoregions map:
+EcoregionsMap <- raster("C:/Users/theha/Documents/layers_for_LANDIS/Jane_from_GEE/Hanusia_soilmu_a_Merge_colors_25Aug2021_add100_utm18N.tif")
+dataType(EcoregionsMap) #this one is 2-bit unsigned...maybe we should convert it just in case???
+#I don't think they actually NEED to match up, but couldn't hurt right?
+dataType(EcoregionsMap) <- "INT4S"
+dataType(EcoregionsMap)
+
+#and rewrite to file:
+writeRaster(x=EcoregionsMap,
+            filename="C:/Users/theha/Documents/layers_for_LANDIS/Jane_from_GEE/ecoregions_map_final_INT4S_22Feb2022.tif",
+            datatype="INT4S")

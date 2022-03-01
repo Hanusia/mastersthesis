@@ -1,0 +1,231 @@
+"","plot_ID","Stand_name","State","Ownership_cat","Treatment","EAB_present","forest_type","tally","ACRU","ACSA","BEAL","FAGR","FRAM"
+"1","ASF114unh1","Algonquin State Forest stand 1-14","CT","public_state","unharvested","yes","NH",14,0,3,0,0,0
+"2","ASF114unh2","Algonquin State Forest stand 1-14","CT","public_state","unharvested","yes","NH",5,0,4,0,0,0
+"3","ASF114unh3","Algonquin State Forest stand 1-14","CT","public_state","unharvested","yes","NH",5,0,1,0,4,0
+"4","ASF114unh4","Algonquin State Forest stand 1-14","CT","public_state","unharvested","yes","NH",3,0,0,0,3,0
+"5","BRSPunh1","Balance Rock State Park","MA","public_state","unharvested","yes","RNH",9,1,3,0,1,0
+"6","BRSPunh2","Balance Rock State Park","MA","public_state","unharvested","yes","RNH",7,0,4,0,0,2
+"7","BRSPunh3","Balance Rock State Park","MA","public_state","unharvested","yes","RNH",5,1,1,0,0,0
+"8","BRSPunh4","Balance Rock State Park","MA","public_state","unharvested","yes","RNH",1,0,0,0,0,0
+"9","CH138gap1","Camel's Hump SP stand 1-3-8","VT","public_state","removal","yes","NH",12,0,6,0,0,0
+"10","CH138gap2","Camel's Hump SP stand 1-3-8","VT","public_state","removal","yes","NH",9,0,1,2,2,0
+"11","CH138gap3","Camel's Hump SP stand 1-3-8","VT","public_state","removal","yes","NH",64,0,39,2,0,3
+"12","CH138mat1","Camel's Hump SP stand 1-3-8","VT","public_state","removal","yes","NH",24,1,23,0,0,0
+"13","CH138mat2","Camel's Hump SP stand 1-3-8","VT","public_state","removal","yes","NH",16,0,16,0,0,0
+"14","CH138mat3","Camel's Hump SP stand 1-3-8","VT","public_state","removal","yes","NH",44,0,33,0,0,5
+"15","CH138mat4","Camel's Hump SP stand 1-3-8","VT","public_state","removal","yes","NH",36,0,18,1,0,5
+"16","CH145unh1","Camel's Hump SP stand 1-4-5","VT","public_state","unharvested","yes","NH",45,20,25,0,0,0
+"17","CH145unh2","Camel's Hump SP stand 1-4-5","VT","public_state","unharvested","yes","NH",43,0,42,0,0,0
+"18","CH145unh3","Camel's Hump SP stand 1-4-5","VT","public_state","unharvested","yes","NH",17,0,16,0,0,0
+"19","CH145unh4","Camel's Hump SP stand 1-4-5","VT","public_state","unharvested","yes","NH",26,0,21,0,0,0
+"20","CH2214unh1","Camel's Hump SP stand 2-2-14","VT","public_state","unharvested","yes","NH",13,1,12,0,0,0
+"21","CH2214unh2","Camel's Hump SP stand 2-2-14","VT","public_state","unharvested","yes","NH",10,0,9,0,0,0
+"22","CH2214unh3","Camel's Hump SP stand 2-2-14","VT","public_state","unharvested","yes","NH",127,96,24,0,0,0
+"23","CH2214unh4","Camel's Hump SP stand 2-2-14","VT","public_state","unharvested","yes","NH",187,0,187,0,0,0
+"24","CH224gap1","Camel's Hump SP stand 2-2-4","VT","public_state","removal","yes","NH",25,0,20,0,0,1
+"25","CH224gap2","Camel's Hump SP stand 2-2-4","VT","public_state","removal","yes","NH",13,0,11,0,0,2
+"26","CH224gap3","Camel's Hump SP stand 2-2-4","VT","public_state","removal","yes","NH",60,0,40,1,2,4
+"27","CH224mat1","Camel's Hump SP stand 2-2-4","VT","public_state","removal","yes","NH",42,0,41,1,0,0
+"28","CH224mat2","Camel's Hump SP stand 2-2-4","VT","public_state","removal","yes","NH",61,0,57,1,0,1
+"29","CH224mat3","Camel's Hump SP stand 2-2-4","VT","public_state","removal","yes","NH",23,0,15,0,0,5
+"30","CH231unh1","Camel's Hump SP stand 2-3-1","VT","public_state","unharvested","yes","NH",44,0,40,0,0,0
+"31","CH231unh2","Camel's Hump SP stand 2-3-1","VT","public_state","unharvested","yes","NH",83,0,81,0,0,0
+"32","CH231unh3","Camel's Hump SP stand 2-3-1","VT","public_state","unharvested","yes","NH",15,2,11,0,0,0
+"33","CH231unh4","Camel's Hump SP stand 2-3-1","VT","public_state","unharvested","yes","NH",4,1,1,0,0,0
+"34","CMSF11unh1","Cardigan Mountain State Forest comp 1 stand 1","NH","public_state","unharvested","yes","NH",11,3,6,1,0,0
+"35","CMSF11unh2","Cardigan Mountain State Forest comp 1 stand 1","NH","public_state","unharvested","yes","NH",18,0,11,0,0,1
+"36","CMSF11unh3","Cardigan Mountain State Forest comp 1 stand 1","NH","public_state","unharvested","yes","NH",10,0,4,0,2,0
+"37","CMSF11unh4","Cardigan Mountain State Forest comp 1 stand 1","NH","public_state","unharvested","yes","NH",12,4,2,0,0,0
+"38","CMSF62unh1","Cardigan Mountain State Forest comp 6 stand 2","NH","public_state","unharvested","yes","NH",0,0,0,0,0,0
+"39","CMSF62unh2","Cardigan Mountain State Forest comp 6 stand 2","NH","public_state","unharvested","yes","NH",4,3,0,0,0,0
+"40","CMSF62unh3","Cardigan Mountain State Forest comp 6 stand 2","NH","public_state","unharvested","yes","NH",8,0,6,0,0,0
+"41","CMSF62unh4","Cardigan Mountain State Forest comp 6 stand 2","NH","public_state","unharvested","yes","NH",5,5,0,0,0,0
+"42","CWEunh1","Clements Woodlot East","VT","private","unharvested","yes","RNH",3,0,1,0,2,0
+"43","CWEunh2","Clements Woodlot East","VT","private","unharvested","yes","RNH",21,0,18,0,0,0
+"44","CWEunh3","Clements Woodlot East","VT","private","unharvested","yes","RNH",21,0,21,0,0,0
+"45","CWEunh4","Clements Woodlot East","VT","private","unharvested","yes","RNH",21,0,16,0,0,0
+"46","DHSPgap1","Dennis Hill State Park stand 1","CT","public_state","removal","yes","NH",3,1,1,0,0,1
+"47","DHSPgap2","Dennis Hill State Park stand 1","CT","public_state","removal","yes","NH",2,0,0,0,0,0
+"48","DHSPgap3","Dennis Hill State Park stand 1","CT","public_state","removal","yes","NH",1,0,1,0,0,0
+"49","DHSPmat1","Dennis Hill State Park stand 1","CT","public_state","removal","yes","NH",2,1,0,0,0,1
+"50","DHSPmat2","Dennis Hill State Park stand 1","CT","public_state","removal","yes","NH",2,1,0,0,0,0
+"51","DHSPmat3","Dennis Hill State Park stand 1","CT","public_state","removal","yes","NH",10,0,0,0,0,0
+"52","GMAgap1","Alpaca stand 66-30","VT","public_national","regeneration","yes","NH",1,0,0,0,0,0
+"53","GMAgap2","Alpaca stand 66-30","VT","public_national","regeneration","yes","NH",6,4,0,0,0,0
+"54","GMAmat1","Alpaca stand 66-30","VT","public_national","regeneration","yes","NH",6,1,3,1,0,0
+"55","GMAmat2","Alpaca stand 66-30","VT","public_national","regeneration","yes","NH",5,3,0,0,0,2
+"56","GMCBgap1","Cook Brook stand 62-6","VT","public_national","removal","yes","NH",28,0,1,3,0,2
+"57","GMCBgap2","Cook Brook stand 62-6","VT","public_national","removal","yes","NH",29,0,19,2,0,5
+"58","GMCBgap3","Cook Brook stand 62-6","VT","public_national","removal","yes","NH",90,0,7,13,0,20
+"59","GMCBmat1","Cook Brook stand 62-6","VT","public_national","removal","yes","NH",21,0,4,0,0,17
+"60","GMCBmat2","Cook Brook stand 62-6","VT","public_national","removal","yes","NH",29,0,13,0,0,12
+"61","GMCBmat3","Cook Brook stand 62-6","VT","public_national","removal","yes","NH",24,0,8,1,0,9
+"62","GMMTgap1","Mad Tom stand 58-14","VT","public_national","removal","yes","NH",43,2,17,1,1,2
+"63","GMMTgap2","Mad Tom stand 58-14","VT","public_national","removal","yes","NH",10,0,3,0,0,0
+"64","GMMTgap3","Mad Tom stand 58-14","VT","public_national","removal","yes","NH",1,0,1,0,0,0
+"65","GMMTmat1","Mad Tom stand 58-14","VT","public_national","removal","yes","NH",5,0,4,0,0,1
+"66","GMMTmat2","Mad Tom stand 58-14","VT","public_national","removal","yes","NH",12,0,3,0,1,0
+"67","GMMTmat3","Mad Tom stand 58-14","VT","public_national","removal","yes","NH",15,0,6,0,0,0
+"68","GMRB5unh1","Roaring Brook stand 125-5","VT","public_national","unharvested","yes","NH",21,0,12,0,0,1
+"69","GMRB5unh2","Roaring Brook stand 125-5","VT","public_national","unharvested","yes","NH",5,0,2,0,0,0
+"70","GMRB5unh3","Roaring Brook stand 125-5","VT","public_national","unharvested","yes","NH",19,0,18,0,0,0
+"71","GMRB5unh4","Roaring Brook stand 125-5","VT","public_national","unharvested","yes","NH",19,0,17,0,0,0
+"72","GMRB6unh1","Roaring Brook stand 125-6","VT","public_national","unharvested","yes","NH",9,4,0,0,0,0
+"73","GMRB6unh2","Roaring Brook stand 125-6","VT","public_national","unharvested","yes","NH",11,6,0,0,0,2
+"74","GMRB6unh3","Roaring Brook stand 125-6","VT","public_national","unharvested","yes","NH",9,0,0,0,0,9
+"75","GMRB6unh4","Roaring Brook stand 125-6","VT","public_national","unharvested","yes","NH",6,0,2,0,0,0
+"76","GMSSgap1","Sunnyside stand 63-49","VT","public_national","removal","yes","NH",8,2,1,1,0,1
+"77","GMSSgap2","Sunnyside stand 63-49","VT","public_national","removal","yes","NH",13,0,11,0,0,0
+"78","GMSSgap3","Sunnyside stand 63-49","VT","public_national","removal","yes","NH",17,1,1,0,0,0
+"79","GMSSmat1","Sunnyside stand 63-49","VT","public_national","removal","yes","NH",12,0,0,0,0,0
+"80","GMSSmat2","Sunnyside stand 63-49","VT","public_national","removal","yes","NH",5,3,0,0,0,0
+"81","GMSSmat3","Sunnyside stand 63-49","VT","public_national","removal","yes","NH",12,1,10,0,0,0
+"82","GSF396gap1","Groton State Forest stand 3-9-6","VT","public_state","regeneration","yes","NH",91,0,0,1,0,0
+"83","GSF396gap2","Groton State Forest stand 3-9-6","VT","public_state","regeneration","yes","NH",40,0,33,0,0,1
+"84","GSF396mat1","Groton State Forest stand 3-9-6","VT","public_state","regeneration","yes","NH",21,17,0,0,0,0
+"85","GSF396mat2","Groton State Forest stand 3-9-6","VT","public_state","regeneration","yes","NH",25,0,22,0,0,0
+"86","GSF396mat3","Groton State Forest stand 3-9-6","VT","public_state","regeneration","yes","NH",34,1,31,0,2,0
+"87","GSF396mat4","Groton State Forest stand 3-9-6","VT","public_state","regeneration","yes","NH",23,1,20,0,0,0
+"88","GSF396mat5","Groton State Forest stand 3-9-6","VT","public_state","regeneration","yes","NH",20,1,7,0,0,4
+"89","HMSPunh1","Haystack Mountain State Park","CT","public_state","unharvested","yes","NH",5,2,1,0,0,0
+"90","HMSPunh2","Haystack Mountain State Park","CT","public_state","unharvested","yes","NH",44,0,0,0,0,3
+"91","HMSPunh3","Haystack Mountain State Park","CT","public_state","unharvested","yes","NH",7,0,2,0,0,0
+"92","HMSPunh4","Haystack Mountain State Park","CT","public_state","unharvested","yes","NH",1,0,1,0,0,0
+"93","HRgap1","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",21,5,7,0,0,0
+"94","HRgap2","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",16,2,10,0,1,0
+"95","HRgap3","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",86,8,78,0,0,0
+"96","HRmat1","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",76,1,65,0,0,0
+"97","HRmat2","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",41,3,38,0,0,0
+"98","HRmat3","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",40,2,9,0,0,0
+"99","HRunh1","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",25,13,12,0,0,0
+"100","HRunh2","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",35,4,26,0,1,4
+"101","HRunh3","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",37,0,17,0,2,0
+"102","HRunh4","Hill Roberts property","VT","private_nonprofit","unharvested","yes","NH",76,6,70,0,0,0
+"103","HSF161gap1","Housatonic State Forest stand 16-1","CT","public_state","removal","yes","NH",0,0,0,0,0,0
+"104","HSF161gap2","Housatonic State Forest stand 16-1","CT","public_state","removal","yes","NH",0,0,0,0,0,0
+"105","HSF161gap3","Housatonic State Forest stand 16-1","CT","public_state","removal","yes","NH",17,0,0,0,0,3
+"106","HSF161mat1","Housatonic State Forest stand 16-1","CT","public_state","removal","yes","NH",28,0,18,0,0,7
+"107","HSF161mat2","Housatonic State Forest stand 16-1","CT","public_state","removal","yes","NH",9,0,8,0,0,0
+"108","HSF161mat3","Housatonic State Forest stand 16-1","CT","public_state","removal","yes","NH",18,0,0,0,0,2
+"109","HSP118unh1","Holbrook State Park stand 1-1-8","VT","public_state","unharvested","no","NH",5,0,5,0,0,0
+"110","HSP118unh2","Holbrook State Park stand 1-1-8","VT","public_state","unharvested","no","NH",54,0,46,0,1,6
+"111","HSP118unh3","Holbrook State Park stand 1-1-8","VT","public_state","unharvested","no","NH",82,0,76,1,0,0
+"112","HSP118unh4","Holbrook State Park stand 1-1-8","VT","public_state","unharvested","no","NH",8,0,0,0,0,0
+"113","JMP1mat1","Jason Mills property stand 1","VT","private","removal","yes","RNH",11,0,11,0,0,0
+"114","JMP1mat2","Jason Mills property stand 1","VT","private","removal","yes","RNH",11,0,5,0,0,0
+"115","JMP1mat3","Jason Mills property stand 1","VT","private","removal","yes","RNH",35,2,22,0,0,5
+"116","JMP1mat4","Jason Mills property stand 1","VT","private","removal","yes","RNH",45,0,42,0,0,0
+"117","JMP3unh1","Jason Mills property stand 3","VT","private","unharvested","yes","RNH",6,0,6,0,0,0
+"118","JMP3unh2","Jason Mills property stand 3","VT","private","unharvested","yes","RNH",19,2,16,0,0,0
+"119","JMP3unh3","Jason Mills property stand 3","VT","private","unharvested","yes","RNH",16,0,9,1,0,3
+"120","JMP3unh4","Jason Mills property stand 3","VT","private","unharvested","yes","RNH",36,1,35,0,0,0
+"121","JMP7mat1","Jason Mills property stand 7","VT","private","removal","yes","RNH",84,0,83,0,0,1
+"122","JMP7mat2","Jason Mills property stand 7","VT","private","removal","yes","RNH",53,2,46,0,0,3
+"123","JMP7mat3","Jason Mills property stand 7","VT","private","removal","yes","RNH",26,0,25,0,0,1
+"124","JMP7mat4","Jason Mills property stand 7","VT","private","removal","yes","RNH",133,0,132,0,0,0
+"125","JNPunh1","Joe Nelson property","VT","private","unharvested","no","RNH",2,0,1,0,0,1
+"126","JNPunh2","Joe Nelson property","VT","private","unharvested","no","RNH",2,0,1,0,0,1
+"127","JNPunh3","Joe Nelson property","VT","private","unharvested","no","RNH",4,0,0,0,0,3
+"128","JNPunh4","Joe Nelson property","VT","private","unharvested","no","RNH",0,0,0,0,0,0
+"129","KMSFunh1","Kearsarge Mountain State Forest comp 4 stand 26","NH","public_state","unharvested","yes","NH",14,0,13,0,0,0
+"130","KMSFunh2","Kearsarge Mountain State Forest comp 4 stand 26","NH","public_state","unharvested","yes","NH",9,0,0,3,0,0
+"131","KMSFunh3","Kearsarge Mountain State Forest comp 4 stand 26","NH","public_state","unharvested","yes","NH",5,0,2,0,0,0
+"132","KMSFunh4","Kearsarge Mountain State Forest comp 4 stand 26","NH","public_state","unharvested","yes","NH",3,0,2,0,0,0
+"133","MP1314gap1","Mud Pond 2013-14","VT","private_nonprofit","regeneration","no","RNH",4,0,4,0,0,0
+"134","MP1314gap2","Mud Pond 2013-14","VT","private_nonprofit","regeneration","no","RNH",82,0,81,0,0,1
+"135","MP1314gap3","Mud Pond 2013-14","VT","private_nonprofit","regeneration","no","RNH",24,0,14,0,0,10
+"136","MP1314mat1","Mud Pond 2013-14","VT","private_nonprofit","regeneration","no","RNH",167,0,167,0,0,0
+"137","MP1314mat2","Mud Pond 2013-14","VT","private_nonprofit","regeneration","no","RNH",168,0,168,0,0,0
+"138","MP1314mat3","Mud Pond 2013-14","VT","private_nonprofit","regeneration","no","RNH",125,0,121,0,0,0
+"139","MP19gap1","Mud Pond 2019","VT","private_nonprofit","removal","no","RNH",14,6,7,0,0,0
+"140","MP19gap2","Mud Pond 2019","VT","private_nonprofit","removal","no","RNH",25,0,8,0,0,12
+"141","MP19gap3","Mud Pond 2019","VT","private_nonprofit","removal","no","RNH",29,4,15,0,1,0
+"142","MP19gap4 ","Mud Pond 2019","VT","private_nonprofit","removal","no","RNH",51,2,48,0,0,0
+"143","MP19mat1","Mud Pond 2019","VT","private_nonprofit","removal","no","RNH",47,5,37,0,0,0
+"144","MP19mat2","Mud Pond 2019","VT","private_nonprofit","removal","no","RNH",20,6,13,0,0,0
+"145","MP19mat3","Mud Pond 2019","VT","private_nonprofit","removal","no","RNH",58,0,58,0,0,0
+"146","MPunh1","Mud Pond unharvested","VT","private_nonprofit","unharvested","no","RNH",160,2,157,0,0,0
+"147","MPunh2","Mud Pond unharvested","VT","private_nonprofit","unharvested","no","RNH",227,1,222,0,0,0
+"148","MPunh3","Mud Pond unharvested","VT","private_nonprofit","unharvested","no","RNH",119,1,117,1,0,0
+"149","MPunh4","Mud Pond unharvested","VT","private_nonprofit","unharvested","no","RNH",80,0,78,0,0,0
+"150","MSF3111unh1","Mathewson State Forest stand 3-1-11","VT","public_state","unharvested","no","NH",90,3,77,1,0,4
+"151","MSF3111unh2","Mathewson State Forest stand 3-1-11","VT","public_state","unharvested","no","NH",258,0,258,0,0,0
+"152","MSF3111unh3","Mathewson State Forest stand 3-1-11","VT","public_state","unharvested","no","NH",110,0,109,0,0,0
+"153","MSF3111unh4","Mathewson State Forest stand 3-1-11","VT","public_state","unharvested","no","NH",62,4,55,0,2,0
+"154","OMSFCRgap1","County Rd ash salvage","MA","public_state","removal","yes","NH",9,0,7,0,0,1
+"155","OMSFCRgap2","County Rd ash salvage","MA","public_state","removal","yes","NH",5,0,1,0,0,0
+"156","OMSFCRgap3","County Rd ash salvage","MA","public_state","removal","yes","NH",30,2,1,0,0,1
+"157","OMSFCRmat1","County Rd ash salvage","MA","public_state","removal","yes","NH",5,1,1,0,0,2
+"158","OMSFCRmat2","County Rd ash salvage","MA","public_state","removal","yes","NH",8,0,7,1,0,0
+"159","OMSFCRmat3","County Rd ash salvage","MA","public_state","removal","yes","NH",28,0,0,0,0,9
+"160","OMSFHRgap1","Heaphy Richardson Lot","MA","public_state","removal","yes","NH",17,5,0,3,1,7
+"161","OMSFHRgap2","Heaphy Richardson Lot","MA","public_state","removal","yes","NH",10,8,0,1,0,0
+"162","OMSFHRgap3","Heaphy Richardson Lot","MA","public_state","removal","yes","NH",10,4,0,2,0,2
+"163","OMSFHRmat1","Heaphy Richardson Lot","MA","public_state","removal","yes","NH",47,44,0,0,1,2
+"164","OMSFHRmat2","Heaphy Richardson Lot","MA","public_state","removal","yes","NH",17,15,0,0,1,0
+"165","OMSFHRmat3","Heaphy Richardson Lot","MA","public_state","removal","yes","NH",16,7,0,3,4,0
+"166","OMSFSCHgap1","Schoolhouse Lot BB stand","MA","public_state","removal","yes","NH",9,0,0,0,0,0
+"167","OMSFSCHgap2","Schoolhouse Lot BB stand","MA","public_state","removal","yes","NH",11,0,0,0,0,0
+"168","OMSFSCHgap3","Schoolhouse Lot BB stand","MA","public_state","removal","yes","NH",11,0,0,0,0,3
+"169","OMSFSCHmat1","Schoolhouse Lot BB stand","MA","public_state","removal","yes","NH",0,0,0,0,0,0
+"170","OMSFSCHmat2","Schoolhouse Lot BB stand","MA","public_state","removal","yes","NH",1,0,0,0,0,0
+"171","OMSFSCHmat3","Schoolhouse Lot BB stand","MA","public_state","removal","yes","NH",0,0,0,0,0,0
+"172","OMSFSH14gap1","Sherlock Lot 2014","MA","public_state","removal","yes","NH",14,0,0,0,1,0
+"173","OMSFSH14gap2","Sherlock Lot 2014","MA","public_state","removal","yes","NH",16,6,0,0,0,0
+"174","OMSFSH14gap3","Sherlock Lot 2014","MA","public_state","removal","yes","NH",9,0,1,0,1,0
+"175","OMSFSH14mat1","Sherlock Lot 2014","MA","public_state","removal","yes","NH",10,1,0,0,1,0
+"176","OMSFSH14mat2","Sherlock Lot 2014","MA","public_state","removal","yes","NH",5,2,0,0,0,0
+"177","OMSFSH14mat3","Sherlock Lot 2014","MA","public_state","removal","yes","NH",3,1,0,2,0,0
+"178","OMSFSH17gap1","Sherlock Lot 2017","MA","public_state","removal","yes","NH",11,1,0,1,3,0
+"179","OMSFSH17gap2","Sherlock Lot 2017","MA","public_state","removal","yes","NH",11,4,0,0,7,0
+"180","OMSFSH17gap3","Sherlock Lot 2017","MA","public_state","removal","yes","NH",7,5,0,0,1,0
+"181","OMSFSH17mat1","Sherlock Lot 2017","MA","public_state","removal","yes","NH",21,4,4,0,1,0
+"182","OMSFSH17mat2","Sherlock Lot 2017","MA","public_state","removal","yes","NH",14,11,0,0,2,0
+"183","OMSFSH17mat3","Sherlock Lot 2017","MA","public_state","removal","yes","NH",5,2,0,0,1,0
+"184","OSFCD1gap1","Clam Dam unit 1","MA","public_state","removal","yes","NH",1,0,0,0,0,0
+"185","OSFCD1gap2","Clam Dam unit 1","MA","public_state","removal","yes","NH",6,2,0,0,0,0
+"186","OSFCD1gap3","Clam Dam unit 1","MA","public_state","removal","yes","NH",16,0,0,8,0,0
+"187","OSFCD1mat1","Clam Dam unit 1","MA","public_state","removal","yes","NH",3,1,1,0,0,0
+"188","OSFCD1mat2","Clam Dam unit 1","MA","public_state","removal","yes","NH",12,3,3,0,0,1
+"189","OSFCD1mat3","Clam Dam unit 1","MA","public_state","removal","yes","NH",1,0,0,0,0,0
+"190","OSFCD3unh1","Clam Dam unit 3","MA","public_state","unharvested","yes","NH",3,0,3,0,0,0
+"191","OSFCD3unh2","Clam Dam unit 3","MA","public_state","unharvested","yes","NH",8,0,7,0,0,0
+"192","OSFCD3unh3","Clam Dam unit 3","MA","public_state","unharvested","yes","NH",1,0,1,0,0,0
+"193","OSFCD3unh4","Clam Dam unit 3","MA","public_state","unharvested","yes","NH",3,0,1,0,0,0
+"194","PSFPMHgap1","Potter Mtn Rd. Hancock Unit","MA","public_state","removal","yes","NH",17,0,3,1,0,0
+"195","PSFPMHgap2","Potter Mtn Rd. Hancock Unit","MA","public_state","removal","yes","NH",25,0,6,6,0,0
+"196","PSFPMHgap3","Potter Mtn Rd. Hancock Unit","MA","public_state","removal","yes","NH",29,0,6,1,4,6
+"197","PSFPMHmat1","Potter Mtn Rd. Hancock Unit","MA","public_state","removal","yes","NH",21,0,10,1,0,0
+"198","PSFPMHmat2","Potter Mtn Rd. Hancock Unit","MA","public_state","removal","yes","NH",7,0,7,0,0,0
+"199","PSFPMHmat3","Potter Mtn Rd. Hancock Unit","MA","public_state","removal","yes","NH",27,0,14,3,0,0
+"200","SSF1gap1","Shaker State Forest","NH","public_state","removal","yes","NH",3,0,0,0,0,0
+"201","SSF1gap2","Shaker State Forest","NH","public_state","removal","yes","NH",1,1,0,0,0,0
+"202","SSF1gap3","Shaker State Forest","NH","public_state","removal","yes","NH",2,0,0,0,1,0
+"203","SSF1mat1","Shaker State Forest","NH","public_state","removal","yes","NH",2,2,0,0,0,0
+"204","SSF1mat2","Shaker State Forest","NH","public_state","removal","yes","NH",1,0,1,0,0,0
+"205","SSF1mat3","Shaker State Forest","NH","public_state","removal","yes","NH",3,0,3,0,0,0
+"206","SSF1mat4","Shaker State Forest","NH","public_state","removal","yes","NH",1,1,0,0,0,0
+"207","SSFYL2gap1","York Lake stand 2","MA","public_state","removal","yes","RNH",8,0,0,0,0,0
+"208","SSFYL2gap2","York Lake stand 2","MA","public_state","removal","yes","RNH",8,3,0,0,0,1
+"209","SSFYL2gap3","York Lake stand 2","MA","public_state","removal","yes","RNH",8,0,0,0,0,0
+"210","SSFYL2mat1","York Lake stand 2","MA","public_state","removal","yes","RNH",4,1,0,0,0,0
+"211","SSFYL2mat2","York Lake stand 2","MA","public_state","removal","yes","RNH",12,0,2,2,0,0
+"212","SSFYL2mat3","York Lake stand 2","MA","public_state","removal","yes","RNH",4,1,0,0,0,0
+"213","SWunh1","Stoner Woodlot","VT","private","unharvested","no","RNH",50,0,49,0,0,0
+"214","SWunh2","Stoner Woodlot","VT","private","unharvested","no","RNH",52,0,51,0,0,1
+"215","SWunh3","Stoner Woodlot","VT","private","unharvested","no","RNH",74,0,74,0,0,0
+"216","SWunh4","Stoner Woodlot","VT","private","unharvested","no","RNH",8,0,7,0,0,1
+"217","TNCLPgap1","Long Pond harvested","VT","private_nonprofit","regeneration","no","RNH",18,0,14,0,0,0
+"218","TNCLPgap2","Long Pond harvested","VT","private_nonprofit","regeneration","no","RNH",34,1,31,0,0,2
+"219","TNCLPgap3","Long Pond harvested","VT","private_nonprofit","regeneration","no","RNH",38,1,32,0,0,0
+"220","TNCLPmat1","Long Pond harvested","VT","private_nonprofit","regeneration","no","RNH",86,0,86,0,0,0
+"221","TNCLPmat2","Long Pond harvested","VT","private_nonprofit","regeneration","no","RNH",93,0,92,0,0,0
+"222","TNCLPmat3","Long Pond harvested","VT","private_nonprofit","regeneration","no","RNH",12,0,10,0,0,0
+"223","TNCLPunh1","Long Pond unharvested","VT","private_nonprofit","unharvested","no","RNH",101,0,95,0,0,1
+"224","TNCLPunh2","Long Pond unharvested","VT","private_nonprofit","unharvested","no","RNH",22,0,21,0,0,1
+"225","TNCLPunh3","Long Pond unharvested","VT","private_nonprofit","unharvested","no","RNH",8,0,7,0,0,0
+"226","TNCLPunh4","Long Pond unharvested","VT","private_nonprofit","unharvested","no","RNH",22,0,21,0,0,1
+"227","TSF49unh1","Tunxis State Forest stand 49","CT","public_state","unharvested","yes","RNH",2,0,0,0,0,0
+"228","TSF49unh2","Tunxis State Forest stand 49","CT","public_state","unharvested","yes","RNH",17,0,15,0,0,2
+"229","TSF49unh3","Tunxis State Forest stand 49","CT","public_state","unharvested","yes","RNH",0,0,0,0,0,0
+"230","TSF49unh4","Tunxis State Forest stand 49","CT","public_state","unharvested","yes","RNH",0,0,0,0,0,0

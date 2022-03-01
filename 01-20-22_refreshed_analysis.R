@@ -1627,27 +1627,27 @@ seedlings_plus <- merge(x=voi_plot, y=seedlings_per_plot, all.x=TRUE, by="plot_I
 #now to replace NAs with 0s:
 seedlings_plus[is.na(seedlings_plus)] <- 0
 
-#and finally, create another DF where they're in seedlings PER SQUARE METER:
-seedlings_plus_sqm <- seedlings_plus
-seedlings_plus_sqm[,8:13] <- seedlings_plus_sqm[,8:13]/3
+#NOTE: no longer making this PER SQ METER because negative binomial dist
+#needs INTEGER values!!!
 
-#now do a linear model:
+#now doing some linear models:
 
 library(nlme)
 library(lme4)
 
-model8 <- lme(fixed=tally ~ Treatment + forest_type, 
-              data = seedlings_plus_sqm, 
-              random = ~ 1 | Stand_name)
-anova(model8)
-summary(model8)                                                                   
+#COMMENTING OUT THIS MODEL B/C IT'S NOT NEEDED/RELEVANT ANYMORE!!
+#model8 <- lme(fixed=tally ~ Treatment + forest_type, 
+#              data = seedlings_plus_sqm, 
+#              random = ~ 1 | Stand_name)
+#anova(model8)
+#summary(model8)                                                                   
 #no signif relationship w/ ALL species (maybe expected)
 
 #Q: HOW to interpret results??
 #and also HOW to ensure assumptions are being met?
 #(re: normality ETC.)
 
-plot(model8)
+#plot(model8)
 #OK that definitely does NOT look symmetrical etc!! LOL
 
 #Q: need to find something that fits to a negative binomial
@@ -1696,32 +1696,34 @@ summary(nbtest3_allseedlings) #looks like nothing is signif here...
 
 #now let's try with individual species???
 
-#ok I think we need to pivot this again to use the loop effectively.....
-seedlings_plus_long <- pivot_longer(data=seedlings_plus,
-                                        cols=c("tally", "ACSA", "FRAM", "FAGR", "ACRU", "BEAL"),
-                                        names_to = "species")
+### NOTE: COMMENTING OUT MANY OF THE STEPS BELOW THIS LINE B/C I HADN'T SET LEVEL OF COMPARISON YET!! ###
 
-major_species <- c("ACSA", "FRAM", "FAGR", "BEAL", "ACRU")
+#ok I think we need to pivot this again to use the loop effectively.....
+#seedlings_plus_long <- pivot_longer(data=seedlings_plus,
+#                                        cols=c("tally", "ACSA", "FRAM", "FAGR", "ACRU", "BEAL"),
+#                                        names_to = "species")
+
+#major_species <- c("ACSA", "FRAM", "FAGR", "BEAL", "ACRU")
 
 #nbglmm_seedling_results <- data.frame("species"=rep(NA),
 #                                      "results"=rep(NA)
 #                                     )
 
-for (i in 1:5){
-  loop_df <- seedlings_plus_long[seedlings_plus_long$species==major_species[i],]
-  #looking @ one species at a time...
-  loop_model <- glmer.nb(formula= value ~ Treatment*forest_type + #fixed effects
-                    (1 | Stand_name), data = loop_df) #random effect, & temp data frame
+#for (i in 1:5){
+#  loop_df <- seedlings_plus_long[seedlings_plus_long$species==major_species[i],]
+#  #looking @ one species at a time...
+#  loop_model <- glmer.nb(formula= value ~ Treatment*forest_type + #fixed effects
+#                    (1 | Stand_name), data = loop_df) #random effect, & temp data frame
   #add species & corresponding results (summary(model)) to the dataframe:
   #nbglmm_seedling_results$species[i] <- major_species[i]
   #nbglmm_seedling_results$results[i] <- summary(loop_model)
   
   #ACTUALLY, let's just look at them for now...
-  print(major_species[i])
-  print(summary(loop_model))
-  print("")
-  print("")
-}
+#  print(major_species[i])
+#  print(summary(loop_model))
+#  print("")
+#  print("")
+#}
 
 #I think I can't store the entire summary() funct output in the df...
 #need to fix that & then try re-running the loop?
@@ -1729,33 +1731,33 @@ for (i in 1:5){
 #OR, maybe just wait 'til I talk to Tony re: which stats to report,
 #and just look @outputs in the meantime?
 
-
 #let's do 1 or 2 manually:
 #first, w/ interaction:
-nbtest1_ACSA <- glmer.nb(formula=ACSA ~ Treatment*forest_type + 
+#nbtest1_ACSA <- glmer.nb(formula=ACSA ~ Treatment*forest_type + 
                                    #for this funct, formula includes both fixed (above) & random (below) effects
-                                   (1 | Stand_name), data= seedlings_plus
-)
+#                                   (1 | Stand_name), data= seedlings_plus
+#)
 #next, w/o interaction: 
-nbtest2_ACSA <- glmer.nb(formula=ACSA ~ Treatment + forest_type + 
+#nbtest2_ACSA <- glmer.nb(formula=ACSA ~ Treatment + forest_type + 
                            #for this funct, formula includes both fixed (above) & random (below) effects
-                           (1 | Stand_name), data= seedlings_plus
-)
+#                           (1 | Stand_name), data= seedlings_plus
+#)
 #and finally, w/ just treatment: 
-nbtest3_ACSA <- glmer.nb(formula=ACSA ~ Treatment + 
+#nbtest3_ACSA <- glmer.nb(formula=ACSA ~ Treatment + 
                            #for this funct, formula includes both fixed (above) & random (below) effects
-                           (1 | Stand_name), data= seedlings_plus
-)
+#                           (1 | Stand_name), data= seedlings_plus
+#)
 
  #& now to look at the outputs:
-summary(nbtest1_ACSA)
-summary(nbtest2_ACSA)
-summary(nbtest3_ACSA)
+#summary(nbtest1_ACSA)
+#summary(nbtest2_ACSA)
+#summary(nbtest3_ACSA)
 #conclusion: Model 3 has the smallest BIC & AIC (by a small amount, but still!)
 #so...should I just stick with looking only @ treatment (and site as the random effect)
 #for seedling & sapling data going forward?!
 #ANOTHER THING TO ASK TONY!!
 
+### OK, COMMENTING OUT THE ACTIVE CODE WAS ABOVE THIS LINE, BELOW GETS BACK ON TRACK! ###
 
 ### POTENTIALLY IMPORTANT UPDATE BELOW!!! ###
 #Q for the model: how to change which factor they are "comparing" others against
@@ -1780,39 +1782,64 @@ nbtest5_ACSA <- glmer.nb(formula=ACSA ~ Treatment*forest_type +
 summary(nbtest5_ACSA)
 #still nothing important w/ forest type...so I feel confident discarding this?
 #OR just include it to PROVE there is no interaction/important effect??
+#update 2/28: still include it if the model can tolerate it;
+#otherwise, can remove forest type if the model is having issues to simplify
+#(e.g. 'failing to converge')
 
 #ok I guess one issue w/ this approach is it's not directly comparing
 #regen vs removal treatment...just comparing both against unharvested reference??
-
 
 #getting back to this Friday 2/18. Need to flesh out some of these results
 #So I can add something more informed to my abstract re: regen!!
 #gonna finish with seedlings, do same thing w/ saplings, and then
 #plot them to take a closer look.
 #let's do the rest of the species lol!
+
+## update 2/28/2022: doing this w/ all species of seedlings too!! ##
+nbtest4_allspecies <- glmer.nb(formula=tally ~ Treatment*forest_type + 
+                           (1 | Stand_name), data= seedlings_plus
+)
+summary(nbtest4_allspecies)
+### as before, nothing signif w/ all species seedlings...not surprised!
+
+#OK now back to individ. species:
 nbtest1_FRAM <- glmer.nb(formula=FRAM ~ Treatment*forest_type + 
                            (1 | Stand_name), data= seedlings_plus
 )
 summary(nbtest1_FRAM)
 
-nbtest1_FAGR <- glmer.nb(formula=FAGR ~ Treatment*forest_type + 
-                           (1 | Stand_name), data= seedlings_plus
-)
-summary(nbtest1_FAGR)
+#nbtest1_FAGR <- glmer.nb(formula=FAGR ~ Treatment*forest_type + 
+#                           (1 | Stand_name), data= seedlings_plus
+#)
+#summary(nbtest1_FAGR)
 
 #FAGR still failed to convergew/ this model type, 
 #so let's try it w/o forest type...
 
-nbtest2_FAGR <- glmer.nb(formula=FAGR ~ Treatment + 
-                           (1 | Stand_name), data= seedlings_plus
-)
-summary(nbtest2_FAGR) #OK this one didn't converge either!! Gonna skip it for now...
+#nbtest2_FAGR <- glmer.nb(formula=FAGR ~ Treatment + 
+#                           (1 | Stand_name), data= seedlings_plus)
+ #OK this one didn't converge either!! 
+
+#update when revisiting on 2/28/2022: maybe try it without the random effect too?!
+#nbtest3_FAGR <- glmer.nb(formula=FAGR ~ Treatment, data= seedlings_plus)
+#can't do it this way b/c there's no random effect in the treatment!
+#sooo, let's just try a regular (non-mixed) linear model but w/ neg binomial dist?
+
+#gonna try using glm.nb function in the MASS package
+#seems basically like it's similar to glmer.nb but w/o random (mixed) effects!
+library(MASS)
+#let's try with both fixed variables FIRST...
+nbtest4_FAGR <- glm.nb(FAGR ~ Treatment*forest_type, data=seedlings_plus)
+summary(nbtest4_FAGR)
+#ALRIGHT- so tried this as a GLM w/ NB dist (NOT a mixed model/no random effect)
+#and it worked when excluding the random effect (site)!
+#but result was not signif, OK good to know!
 
 
-nbtest1_BEAL <- glmer.nb(formula=BEAL ~ Treatment*forest_type + 
-                           (1 | Stand_name), data= seedlings_plus
-)
-summary(nbtest1_BEAL) #OK, BEAL is also not converging....
+#nbtest1_BEAL <- glmer.nb(formula=BEAL ~ Treatment*forest_type + 
+#                           (1 | Stand_name), data= seedlings_plus
+#)
+#summary(nbtest1_BEAL) #OK, BEAL is also not converging....
 
 #let's try again w/o forest type?
 nbtest2_BEAL <- glmer.nb(formula=BEAL ~ Treatment + 
@@ -1828,92 +1855,7 @@ summary(nbtest1_ACRU) #ACRU was not signif on treatment itself,
 #but WAS signif w/ an interaction with forest type...interesting!!!
 
 
-#NOW TO DO THE SAME WITH SAPLINGS!!!! (SEE BELOW)
-
-
-
-## BELOW THIS LINE: NOT UPDATED/JUST COPIED FROM LAST SCRIPT ###
-
-
-#next steps = plot this (similar/use code from p2 in my figures_workingdoc slideshow, but w/ plots instead of stands),
-#next step 2 = figure out * which * treatments/differences are impactful for BEAL (Tukey test??),
-#next step 3 = do the same thing for SAPLINGS!!!
-
-
-#next step 1: plotting seedling densities
-
-facet_labels <- c("all seedlings", "sugar maple", "white ash", "American beech", "red maple", "yellow birch")
-#reordering levels of the species variable as a factor:
-seedlings_plus_sqm_long$species <- factor(seedlings_plus_sqm_long$species, levels=unique(seedlings_plus_sqm_long$species),
-                                          labels=facet_labels)
-
-p2 <- ggplot(data=seedlings_plus_sqm_long, 
-             aes(x=treatment_type, y=value, fill=treatment_type)) +
-  geom_boxplot() + theme_few() + 
-  scale_fill_manual(values=wes_palette("Chevalier1")) +
-  labs (x="Harvest treatment",
-        y= "Number of seedlings per square meter")+
-  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
-  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
-  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
-                   labels=c("not harvested", "removal focus", "regeneration focus", "other")) + #and this argument renames the labels
-  theme(axis.text.x = element_text(angle=25, vjust=.7))
-print(p2)
-p2+ theme(legend.position = "none")
-
-
-
-#now to make it look better:
-#want to add borders all the way around each plot -> done by changing theme
-#want to fix labels for each species -> done by adding labels to the factor variable in the dataframe itself!
-#want to fix x-axis labels for treatment types/categories --> done
-#figure out what to do w/ all those outliers??
-#and then maybe do a comparison w/ bar graph vs. boxplot?
-#add indicator of significance for BEAL -> actually nevermind, guess it's not signif?
-
-#changed up by graphing log transform of response var!
-#***NEED THAT TRANSFORMATION TO BE REFLECTED IN THE GRAPH/AXIS LABELS TOO!!!
-p3 <- ggplot(data=seedlings_plus_sqm_long, 
-             aes(x=treatment_type , y=log(value+1))) +
-  geom_boxplot() + theme_few() + 
-  labs (x="Harvest treatment",
-        y= "Number of seedlings per square meter")+
-  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
-  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
-  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
-                   labels=c("unharvested", "removal", "regeneration", "other")) + #and this argument renames the labels
-  theme(axis.text.x = element_text(angle=25, vjust=.7))
-print(p3)
-
-#THIS ISN'T WORKING- WILL NEED TO TROUBLESHOOT
-p4 <- ggplot(data=seedlings_plus_sqm_long, 
-             aes(x=treatment_type, y=value)) +
-  geom_bar(stat='identity') + theme_few() + 
-  labs (x="Harvest treatment",
-        y= "Number of seedlings per square meter")+
-  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
-  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
-  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
-                   labels=c("unharvested", "removal", "regeneration", "other")) + #and this argument renames the labels
-  theme(axis.text.x = element_text(angle=25, vjust=.7))
-print(p4)
-#ACTION ITEM: need to add error bars to this!
-
-#testing significance of specific pairs of data:
-#first need to pull in the actual model: 
-test_df <- seedlings_plus_sqm_long[seedlings_plus_sqm_long$species==major_species[4],]
-test_model <- lme(fixed=value ~ treatment_type + forest_type, 
-                  data = seedlings_plus_sqm_long[seedlings_plus_sqm_long$species=="yellow birch",], 
-                  random = ~ 1 | Stand_name)
-anova(test_model)
-tukey1 <- TukeyHSD(test_model)
-#looks like this only works for ANOVAs anyway......
-#but we don't really need it b/c none of the relationships are signif anyway...
-
-
-
-## ABOVE THIS LINE: NOT UPDATED/JUST COPIED FROM LAST SCRIPT ###
-
+#NOW TO DO THE SAME WITH SAPLINGS!!!! 
 
 # SAPLINGS generalized linear mixed models -------------------------------
 
@@ -2015,10 +1957,11 @@ View(all_saplings_plot)
 
 #FIRST WILL DO FOR ALL SAPLINGS ACROSS SPECIES, OUTSIDE OF A LOOP:
 
-nbmod_allsaplings_1 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
-                         (1 | Stand_name), 
-                         data = all_saplings_plot[all_saplings_plot$species=="all",])
-summary(nbmod_allsaplings_1)
+#nbmod_allsaplings_1 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+#                         (1 | Stand_name), 
+#                         data = all_saplings_plot[all_saplings_plot$species=="all",])
+#summary(nbmod_allsaplings_1)
+
 #OKAY HOLD ON A MINUTE!! need to relevel these so unharvested is the baseline,
 #but this is an INTERESTING result when compared to regen treatment!
 #(both removal & unharvested tx have signif less overall saplings...)
@@ -2031,7 +1974,7 @@ nbmod_allsaplings_2 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_ty
                                 data = all_saplings_plot[all_saplings_plot$species=="all",])
 summary(nbmod_allsaplings_2)
 
-#OK now let's try out this loop to iterate thru all the species:
+#OK now let's try out this loop to ITERATE thru all the species:
 sp_models <- list()
 for (i in 1:5){
   loop_df <- all_saplings_plot[all_saplings_plot$species==major_species[i],]
@@ -2047,6 +1990,165 @@ for (i in 1:5){
 
 View(sp_models)
 
+#OK. This loop worked really well, BUT unfortunately there were some errors.
+#SO I think it makes most sense to go through species one by one / manually instead
+#So I can actually see where the errors are & address them!!
+
+nbmod_ACSAsaplings1 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                         (1 | Stand_name), 
+                         data = all_saplings_plot[all_saplings_plot$species=="ACSA",])
+summary(nbmod_ACSAsaplings1)
+
+
+nbmod_FRAMsaplings1 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[all_saplings_plot$species=="FRAM",])
+#message "boundary (singular) fit: see ?isSingular" 
+#looked this up, basic msg is my mixed model might be more complicated than the data necessitates!
+isSingular(nbmod_FRAMsaplings1) #true...not sure how much info that gives us LOL
+summary(nbmod_FRAMsaplings1)
+
+
+#leaving FRAM model alone for now but will ask Tony about it and/or 
+#read help pages in greater depth!
+#moving on to other species in the meantime:
+
+nbmod_FAGRsaplings1 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[all_saplings_plot$species=="FAGR",])
+summary(nbmod_FAGRsaplings1)
+
+
+nbmod_BEALsaplings1 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[all_saplings_plot$species=="BEAL",])
+summary(nbmod_BEALsaplings1)
+
+
+nbmod_ACRUsaplings1 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[all_saplings_plot$species=="ACRU",])
+#got SEVERAL warning messages from this one (see workflow doc for deets)
+#seems like some of my variables might be too correlated w/ each other? (collinearity)
+#disucssion @ this link: https://stats.stackexchange.com/questions/164457/r-glmer-warnings-model-fails-to-converge-model-is-nearly-unidentifiable
+summary(nbmod_ACRUsaplings1)
+#more discussion of warnings that came up after this summary here: https://stackoverflow.com/questions/38997371/glmer-warning-variance-covariance-matrix-is-not-positive-definite-or-cont
+
+
+### also need to plot anova() for each of these models to get F STATISTICS!!!
+#seedlings first I GUESS
+anova(nbtest4_allspecies)
+anova(nbtest5_ACSA)
+anova(nbtest1_FRAM)
+anova(nbtest4_FAGR)
+anova(nbtest2_BEAL)
+anova(nbtest1_ACRU)
+
+#and do the same for saplings...
+anova(nbmod_allsaplings_2)
+anova(nbmod_ACSAsaplings1)
+anova(nbmod_FRAMsaplings1)
+anova(nbmod_FAGRsaplings1)
+anova(nbmod_BEALsaplings1)
+anova(nbmod_ACRUsaplings1)
+
+# saving seedling & sapling dataframes to file! -------------------------------
+
+#for when I need to quickly re-open these dataframes w/o rerunning all the code to generate them!
+#i.e. for plotting...
+
+write.csv(x=seedlings_plus, file="seedlings_per_plot_28Feb2022.csv")
+write.csv(x=all_saplings_plot, file = "saplings_per_plot_28Feb2022.csv")
+
+# seedlings plotting! (cut & pasted from above) -------------------------------
+
+
+
+
+## BELOW THIS LINE: NOT UPDATED/JUST COPIED FROM LAST SCRIPT ###
+
+
+#next steps = plot this (similar/use code from p2 in my figures_workingdoc slideshow, but w/ plots instead of stands),
+#next step 2 = figure out * which * treatments/differences are impactful for BEAL (Tukey test??),
+#next step 3 = do the same thing for SAPLINGS!!!
+
+
+#next step 1: plotting seedling densities
+
+facet_labels <- c("all seedlings", "sugar maple", "white ash", "American beech", "red maple", "yellow birch")
+#reordering levels of the species variable as a factor:
+seedlings_plus_sqm_long$species <- factor(seedlings_plus_sqm_long$species, levels=unique(seedlings_plus_sqm_long$species),
+                                          labels=facet_labels)
+
+p2 <- ggplot(data=seedlings_plus_sqm_long, 
+             aes(x=treatment_type, y=value, fill=treatment_type)) +
+  geom_boxplot() + theme_few() + 
+  scale_fill_manual(values=wes_palette("Chevalier1")) +
+  labs (x="Harvest treatment",
+        y= "Number of seedlings per square meter")+
+  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
+  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
+                   labels=c("not harvested", "removal focus", "regeneration focus", "other")) + #and this argument renames the labels
+  theme(axis.text.x = element_text(angle=25, vjust=.7))
+print(p2)
+p2+ theme(legend.position = "none")
+
+
+
+#now to make it look better:
+#want to add borders all the way around each plot -> done by changing theme
+#want to fix labels for each species -> done by adding labels to the factor variable in the dataframe itself!
+#want to fix x-axis labels for treatment types/categories --> done
+#figure out what to do w/ all those outliers??
+#and then maybe do a comparison w/ bar graph vs. boxplot?
+#add indicator of significance for BEAL -> actually nevermind, guess it's not signif?
+
+#changed up by graphing log transform of response var!
+#***NEED THAT TRANSFORMATION TO BE REFLECTED IN THE GRAPH/AXIS LABELS TOO!!!
+p3 <- ggplot(data=seedlings_plus_sqm_long, 
+             aes(x=treatment_type , y=log(value+1))) +
+  geom_boxplot() + theme_few() + 
+  labs (x="Harvest treatment",
+        y= "Number of seedlings per square meter")+
+  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
+  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
+                   labels=c("unharvested", "removal", "regeneration", "other")) + #and this argument renames the labels
+  theme(axis.text.x = element_text(angle=25, vjust=.7))
+print(p3)
+
+#THIS ISN'T WORKING- WILL NEED TO TROUBLESHOOT
+p4 <- ggplot(data=seedlings_plus_sqm_long, 
+             aes(x=treatment_type, y=value)) +
+  geom_bar(stat='identity') + theme_few() + 
+  labs (x="Harvest treatment",
+        y= "Number of seedlings per square meter")+
+  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
+  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
+                   labels=c("unharvested", "removal", "regeneration", "other")) + #and this argument renames the labels
+  theme(axis.text.x = element_text(angle=25, vjust=.7))
+print(p4)
+#ACTION ITEM: need to add error bars to this!
+
+#testing significance of specific pairs of data:
+#first need to pull in the actual model: 
+test_df <- seedlings_plus_sqm_long[seedlings_plus_sqm_long$species==major_species[4],]
+test_model <- lme(fixed=value ~ treatment_type + forest_type, 
+                  data = seedlings_plus_sqm_long[seedlings_plus_sqm_long$species=="yellow birch",], 
+                  random = ~ 1 | Stand_name)
+anova(test_model)
+tukey1 <- TukeyHSD(test_model)
+#looks like this only works for ANOVAs anyway......
+#but we don't really need it b/c none of the relationships are signif anyway...
+
+
+
+## ABOVE THIS LINE: NOT UPDATED/JUST COPIED FROM LAST SCRIPT ###
+
+
+# saplings plotting -------------------------------
 #OK SETTING THAT ALL ASIDE FOR NOW, LET'S LOOK AT SOME FIGURES!
 ### again, below is copied/modified from last script! ###
 #OK, I think for now I just need to plot these & deal with the post hoc analyses later!

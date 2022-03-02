@@ -478,3 +478,26 @@ dataType(EcoregionsMap)
 writeRaster(x=EcoregionsMap,
             filename="C:/Users/theha/Documents/layers_for_LANDIS/Jane_from_GEE/ecoregions_map_final_INT4S_22Feb2022.tif",
             datatype="INT4S")
+
+
+## 3/2 quick calculation, trying to find total number of ACTIVE cells
+
+library(raster)
+ecoregions <- raster("C:/Users/theha/Documents/layers_for_LANDIS/Jane_from_GEE/ecoregions_map_final_INT4S_22Feb2022.tif")
+
+table(getValues(ecoregions))
+cellvalues <- table(getValues(ecoregions))
+cellvalues[1] #this is the number of cells with zeroes
+sum(cellvalues) #this is the total number of cells in my extent rectangle
+sum(cellvalues) - cellvalues[1] #finding the number of active (un-masked) cells in my study area
+#which ended up being aroud 8 million... 
+#seems a little high to Jane, so she's gonna look at it herself
+plot(ecoregions)
+
+MgmtMap <- raster("C:/Users/theha/Documents/layers_for_LANDIS/Properties_Stands/mgmt_areas_masked_INT4S_22Feb2022.tif")
+mgmtcellvalues <- table(getValues(MgmtMap))
+View(mgmtcellvalues)
+sum(mgmtcellvalues)
+sum(mgmtcellvalues) - mgmtcellvalues[1]
+#w/ the urban areas etc. masked out, then there's actually
+#around 6 million active cells.

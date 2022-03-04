@@ -23,6 +23,7 @@ library(patchwork)
 library(ggthemes)
 library(wesanderson)
 library(plotrix) #to use standard error function!
+library(lme4)
 
 # Ground cover class analysis w/ PerMANOVA -------------------------------
 #Honestly IDK why I am starting with this, but it feels right, so I'm just gonna go with it!!
@@ -2244,3 +2245,30 @@ test3_emmeans
 pairs(test3_emmeans) #well now, this is ONLY looking at interactions!!
 #Maybe I should meet with Maria??? But regardless, I think I need
 #a breather from this stuff LOL!
+
+#OK, Tony responded to me so gonna try this one more way!!
+#by releveling & re-running the model to just get all the dif pairwise interactions.
+
+#let's test it out first with our case study, yellow birch seedlings!
+summary(nbtest2_BEAL) #currently, with unharvested as reference level:
+#And now let's try again, re-releveled:
+seedlings_plus2 <- seedlings_plus
+seedlings_plus2$Treatment <- relevel(seedlings_plus2$Treatment, ref="regeneration")
+nbtest3_BEAL <- glmer.nb(formula=BEAL ~ Treatment + 
+                           (1 | Stand_name), data= seedlings_plus2)
+summary(nbtest3_BEAL)
+#and let's try it the third way, just to be extra thorough!!
+seedlings_plus2$Treatment <- relevel(seedlings_plus2$Treatment, ref="removal")
+nbtest4_BEAL <- glmer.nb(formula=BEAL ~ Treatment + 
+                           (1 | Stand_name), data= seedlings_plus2)
+summary(nbtest4_BEAL)
+#OK, I think we are gucci with this! Now just need to apply it across the board to all the models...
+
+#There MUST be a way to do this more efficiently with all my models!!
+#Maybe now is the time for that for loop, since I have each individual model figured out...
+
+View(sp_models)
+glimpse(summary(nbtest4_BEAL))
+
+#OK, not gonna get to this today (or at least not right now!) 
+#So gonna get back to it first thing next time!! :) 

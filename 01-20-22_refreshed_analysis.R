@@ -22,6 +22,7 @@ library(patchwork)
 #library(batman) #Why did I have this one?? guess we'll see if I end up needing it...
 library(ggthemes)
 library(wesanderson)
+library(plotrix) #to use standard error function!
 
 # Ground cover class analysis w/ PerMANOVA -------------------------------
 #Honestly IDK why I am starting with this, but it feels right, so I'm just gonna go with it!!
@@ -472,9 +473,6 @@ cwd_data_stand <- merge(cwd_data_stand, stand_info[, c("Stand_name", "Treatment"
 mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="unharvested"])
 mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="regeneration"])
 mean(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="removal"])
-
-#install.packages("plotrix") #to use easy standard error function
-library(plotrix)
 
 std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="unharvested"])
 std.error(cwd_data_stand$vol_m3_ha[cwd_data_stand$Treatment=="regeneration"])
@@ -2062,17 +2060,6 @@ write.csv(x=all_saplings_plot, file = "saplings_per_plot_28Feb2022.csv")
 
 # seedlings plotting! (cut & pasted from above) -------------------------------
 
-
-
-
-## BELOW THIS LINE: NOT UPDATED/JUST COPIED FROM LAST SCRIPT ###
-
-
-#next steps = plot this (similar/use code from p2 in my figures_workingdoc slideshow, but w/ plots instead of stands),
-#next step 2 = figure out * which * treatments/differences are impactful for BEAL (Tukey test??),
-#next step 3 = do the same thing for SAPLINGS!!!
-
-
 #next step 1: plotting seedling densities
 
 facet_labels <- c("all seedlings", "sugar maple", "white ash", "American beech", "red maple", "yellow birch")
@@ -2081,130 +2068,179 @@ seedlings_plus_sqm_long$species <- factor(seedlings_plus_sqm_long$species, level
                                           labels=facet_labels)
 
 p2 <- ggplot(data=seedlings_plus_sqm_long, 
-             aes(x=treatment_type, y=value, fill=treatment_type)) +
-  geom_boxplot() + theme_few() + 
+             aes(x=Treatment, y=value, fill=Treatment)) +
+  geom_bar(stat="summary", fun.y="mean") + theme_few() + 
   scale_fill_manual(values=wes_palette("Chevalier1")) +
   labs (x="Harvest treatment",
-        y= "Number of seedlings per square meter")+
+        y= "Seedlings per square meter")+
   #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
   facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
-  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
-                   labels=c("not harvested", "removal focus", "regeneration focus", "other")) + #and this argument renames the labels
-  theme(axis.text.x = element_text(angle=25, vjust=.7))
+  #scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
+  #                 labels=c("not harvested", "removal focus", "regeneration focus", "other")) + #and this argument renames the labels
+  theme(axis.text.x = element_text(angle=25, vjust=.7), legend.position="none")
 print(p2)
-p2+ theme(legend.position = "none")
 
+## ABOVE GGPLOT CODE MODIFIED FROM LAST RESULTS WORKING DOC
 
+## SEEMS LIKE THE EASIEST/MOST STRAIGHTFORWARD WAY TO PLOT THE MEAN IS TO SUMMARIZE DATA BY THE MEAN
+#AND THEN PLOT FROM THAT TABLE
+#SO, LET'S DO THAT NOW!
 
-#now to make it look better:
-#want to add borders all the way around each plot -> done by changing theme
-#want to fix labels for each species -> done by adding labels to the factor variable in the dataframe itself!
-#want to fix x-axis labels for treatment types/categories --> done
-#figure out what to do w/ all those outliers??
-#and then maybe do a comparison w/ bar graph vs. boxplot?
-#add indicator of significance for BEAL -> actually nevermind, guess it's not signif?
+#update from p2 above: gonna use total seedlings per plot, NOT per sqm, since that's what my linear models use
 
-#changed up by graphing log transform of response var!
-#***NEED THAT TRANSFORMATION TO BE REFLECTED IN THE GRAPH/AXIS LABELS TOO!!!
-p3 <- ggplot(data=seedlings_plus_sqm_long, 
-             aes(x=treatment_type , y=log(value+1))) +
-  geom_boxplot() + theme_few() + 
-  labs (x="Harvest treatment",
-        y= "Number of seedlings per square meter")+
-  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
+seedlings_plus_long <- pivot_longer(data=seedlings_plus,
+                                    cols=c("tally", "ACSA", "FRAM", "FAGR", "ACRU", "BEAL"),
+                                    names_to = "species")
+
+## TRYING OUT A FUNCTION FROM http://www.sthda.com/english/wiki/ggplot2-error-bars-quick-start-guide-r-software-and-data-visualization#barplot-with-error-bars
+
+#+++++++++++++++++++++++++
+# Function to calculate the mean and the standard ERROR
+# for each group
+#+++++++++++++++++++++++++
+# data : a data frame
+# varname : the name of a column containing the variable to be summarized
+# groupnames : vector of column names to be used as grouping variables
+data_summary <- function(data, varname, groupnames){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      se = std.error(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+seedlings_summary <- data_summary(data=seedlings_plus_long,
+                                  varname="value",
+                                  groupnames=c("species", "Treatment"))
+
+View(seedlings_summary)
+
+#whoo, seems like it worked!!
+#now let's try graphing again w/ the new summary dataframe:
+
+#first, reordering levels of the species variable as a factor:
+facet_labels <- c("all seedlings", "sugar maple", "white ash", "American beech", "red maple", "yellow birch")
+facet_varnames <- c("tally", "ACSA", "FRAM", "FAGR", "ACRU", "BEAL")
+
+seedlings_summary <- seedlings_summary %>% 
+  mutate(species = factor(seedlings_summary$species, levels=facet_varnames,
+                          labels=facet_labels)) %>% arrange(species)
+
+p3 <- ggplot(data=seedlings_summary, 
+             aes(x=Treatment, y=value, fill=Treatment)) +
+  geom_bar(stat="identity") + theme_few() + 
+  scale_fill_manual(values=wes_palette("Chevalier1")) +
+  labs (x="Harvest treatment", y= "Seedlings per plot") +
   facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
-  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
-                   labels=c("unharvested", "removal", "regeneration", "other")) + #and this argument renames the labels
-  theme(axis.text.x = element_text(angle=25, vjust=.7))
+  theme(axis.text.x = element_text(angle=25, vjust=.9, hjust=.8), legend.position="none")
 print(p3)
 
-#THIS ISN'T WORKING- WILL NEED TO TROUBLESHOOT
-p4 <- ggplot(data=seedlings_plus_sqm_long, 
-             aes(x=treatment_type, y=value)) +
-  geom_bar(stat='identity') + theme_few() + 
-  labs (x="Harvest treatment",
-        y= "Number of seedlings per square meter")+
-  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
-  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
-  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
-                   labels=c("unharvested", "removal", "regeneration", "other")) + #and this argument renames the labels
-  theme(axis.text.x = element_text(angle=25, vjust=.7))
+#OK, now let's add some error bars!
+p4 <- p3 + geom_errorbar(aes(ymin=value-se, ymax=value+se), width=.1)
 print(p4)
-#ACTION ITEM: need to add error bars to this!
 
-#testing significance of specific pairs of data:
-#first need to pull in the actual model: 
-test_df <- seedlings_plus_sqm_long[seedlings_plus_sqm_long$species==major_species[4],]
-test_model <- lme(fixed=value ~ treatment_type + forest_type, 
-                  data = seedlings_plus_sqm_long[seedlings_plus_sqm_long$species=="yellow birch",], 
-                  random = ~ 1 | Stand_name)
-anova(test_model)
-tukey1 <- TukeyHSD(test_model)
-#looks like this only works for ANOVAs anyway......
-#but we don't really need it b/c none of the relationships are signif anyway...
+#and what about adding letters to indicate signif difs??
+#seems like this funct could work??
+#??multcompLetters4
 
+#I'm sure there's a way to do it more effectively,
+#But I might just try to do manually instead....
+#by adding a column to my seedlings_summary dataframe
+#w/ letters in it that I can then plot.
 
+#first reorder by species- testing it out:
+#first have to reorder the columns, I think:
 
-## ABOVE THIS LINE: NOT UPDATED/JUST COPIED FROM LAST SCRIPT ###
+#ok, adding a new column w/ letters, now that I HAVE reordered rows using dplyr... rows...
+seedlings_summary$letters <- c("", "", "", #all species
+                              "a", "", "b", #ACSA
+                              "a", "", "b", #FRAM
+                              "", "", "",  #FAGR
+                              "", "", "", #ACRU
+                              "a", "", "b") #BEAL
 
+#now, let's try re-plotting w/ the letters added above:
+p4 <- p4 + geom_text(aes(label = seedlings_summary$letters, y=value+se), vjust=-0.5)
+print(p4)
+#OK, finally this looks right!! I just also need to adjust the y-axes so the labels fit!
+p4 <- p4 + scale_y_continuous(expand=expansion(mult=c(0.05, .2)))
+print(p4)
+#HALLELUJAH THIS FINALLY WORKED OMG!!!!!!!!!!!!!
+#WHY DID THIS TAKE ME SO LONG TO FIGURE OUT
+#BUT NO MATTER, I FINALLY DID!!!
 
 # saplings plotting -------------------------------
-#OK SETTING THAT ALL ASIDE FOR NOW, LET'S LOOK AT SOME FIGURES!
-### again, below is copied/modified from last script! ###
-#OK, I think for now I just need to plot these & deal with the post hoc analyses later!
 
-facet_labels2 <- c("all saplings", "sugar maple", "white ash", "American beech", "red maple", "yellow birch")
-#reordering levels of the species variable as a factor:
-all_saplings_plot$species <- factor(all_saplings_plot$species, levels=unique(all_saplings_plot$species),
-                                    labels=facet_labels2)
+#OK now I just need to do the same thing as above for saplings!!!
 
-saplings_p1 <- ggplot(data=all_saplings_plot, 
-             aes(x=Treatment, y=all_saplings_tally,
-                 fill=Treatment)) +
-  #scale_fill_manual(values=wes_palette("Chevalier1")) +
-  geom_bar(stat="identity") + 
-  #theme_few() + 
-  labs (x="Harvest treatment",
-        y= "Average number of saplings per plot")+
-  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
-  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") 
- # scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
- #                  labels=c("not harvested", "removal focus", "regeneration focus", "other")) + #and this argument renames the labels
-#  theme(axis.text.x = element_text(angle=35, vjust=.8, hjust=.8)) #play around w/ this some more...
-print(saplings_p1)
-###THIS IS NOT WORKING! NEED TO CALCULATE MEAN VALUE INSTEAD!!
-#p5 + theme(legend.position="none")
-#something with stat IDENTITY???
+#first, use the summarize_data function to do what it says: 
+saplings_summary <- data_summary(data=all_saplings_plot,
+                                 varname="all_saplings_tally",
+                                 groupnames=c("species", "Treatment"))
+View(saplings_summary)
+colnames(saplings_summary)[3] <- "value"
+#actually don't need this step since all_saplings_plot is ready as-is:
+#saplings_summary <- saplings_summary %>% 
+#  mutate(species = factor(saplings_summary$species, levels=facet_varnames,
+#                          labels=facet_labels)) %>% arrange(species)
 
-plot()
-
-#MAYBE: just create a "group means" dataset instead??
-
-
-p6 <- ggplot(data=all_saplings_plot, 
-             aes(x=treatment_type, y=all_saplings_sqm,
-                 fill=treatment_type)
-) +
-  #scale_fill_manual(values=wes_palette("Chevalier1")) +
-  geom_boxplot(aes(group=forest_type)) + theme_few() + 
-  labs (x="Harvest treatment",
-        y= "Number of saplings per square meter")+
-  #geom_text(x=.5, y=.3, label=lm_eqn("PRSE"), parse=TRUE)
+p5 <- ggplot(data=saplings_summary, 
+             aes(x=Treatment, y=value, fill=Treatment)) +
+  geom_bar(stat="identity") + theme_few() + 
+  scale_fill_manual(values=wes_palette("Chevalier1")) +
+  labs (x="Harvest treatment", y= "Saplings per plot") +
   facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
-  scale_x_discrete(limits=c("na", "thinning_focus", "regen_focus", "other"), #this argument (limits) re-orders the x-axis
-                   labels=c("not harvested", "removal focus", "regeneration focus", "other")) + #and this argument renames the labels
-  theme(axis.text.x = element_text(angle=35, vjust=.8, hjust=.8)) #play around w/ this some more...
+  theme(axis.text.x = element_text(angle=25, vjust=.9, hjust=.8), legend.position="none")
+print(p5)
+
+#OK, now let's add some error bars!
+p6 <- p5 + geom_errorbar(aes(ymin=value-se, ymax=value+se), width=.1)
 print(p6)
-#this isn't working....
+
+#and letters to show significance--first need to add a column to the DF:
+saplings_summary$letters <- c("a", "b", "", #all species
+                              "", "", "", #ACSA
+                              "a", "b", "b", #FRAM
+                              "", "", "",  #FAGR
+                              "", "", "", #ACRU
+                              "a", "b", "") #BEAL
+p6 <- p6 + geom_text(aes(label = saplings_summary$letters, y=value+se), vjust=-0.5) +
+  #also adding the "padding" to the axis so letter labels show up
+   scale_y_continuous(expand=expansion(mult=c(0.05, .2)))
+print(p6)
+
+#OK, understory plots are looking good!!! main remaining questions are:
+#a) colors--need to just go ahead and make a decision so I can be consistent throughout!!
+#b) how to deal w/ letters-- since each harvest tx only comparing against unharvested level, not against each other, how to deal?
 
 
 
+### other shit
 
+#gonna test out using emmeans package to do pairwise comparisions between levels in the factor from GLMMs...
+install.packages("emmeans")
+library(emmeans)
 
+anova(nbtest2_BEAL)
+test1_emmmeans <- emmeans(nbtest2_BEAL, specs="Treatment")
+pairs(test1_emmmeans)
+#OK, actually this does seem to help me!!! maybe??
 
+#let's try Tukey's test:
+TukeyHSD(nbtest2_BEAL)
 
+test2_emmeans <- emmeans(nbtest5_ACSA, specs="Treatment")
+#this seems less useful b/c of interactions...
+#HELP!!!!!!!!!
+test2_emmeans
+pairs(test2_emmeans)
 
-
-
-
-
+test3_emmeans <- emmeans(nbtest5_ACSA, specs = ~ Treatment + forest_type)
+test3_emmeans
+pairs(test3_emmeans) #well now, this is ONLY looking at interactions!!
+#Maybe I should meet with Maria??? But regardless, I think I need
+#a breather from this stuff LOL!

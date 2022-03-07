@@ -24,6 +24,7 @@ library(ggthemes)
 library(wesanderson)
 library(plotrix) #to use standard error function!
 library(lme4)
+library(MASS)
 
 # Ground cover class analysis w/ PerMANOVA -------------------------------
 #Honestly IDK why I am starting with this, but it feels right, so I'm just gonna go with it!!
@@ -2158,11 +2159,11 @@ print(p4)
 
 #ok, adding a new column w/ letters, now that I HAVE reordered rows using dplyr... rows...
 seedlings_summary$letters <- c("", "", "", #all species
-                              "a", "", "b", #ACSA
-                              "a", "", "b", #FRAM
+                              "a", "ab", "b", #ACSA
+                              "a", "ab", "b", #FRAM
                               "", "", "",  #FAGR
                               "", "", "", #ACRU
-                              "a", "", "b") #BEAL
+                              "a", "ab", "b") #BEAL
 
 #now, let's try re-plotting w/ the letters added above:
 p4 <- p4 + geom_text(aes(label = seedlings_summary$letters, y=value+se), vjust=-0.5)
@@ -2203,12 +2204,12 @@ p6 <- p5 + geom_errorbar(aes(ymin=value-se, ymax=value+se), width=.1)
 print(p6)
 
 #and letters to show significance--first need to add a column to the DF:
-saplings_summary$letters <- c("a", "b", "", #all species
+saplings_summary$letters <- c("a", "b", "a", #all species
                               "", "", "", #ACSA
                               "a", "b", "b", #FRAM
                               "", "", "",  #FAGR
                               "", "", "", #ACRU
-                              "a", "b", "") #BEAL
+                              "a", "b", "ab") #BEAL
 p6 <- p6 + geom_text(aes(label = saplings_summary$letters, y=value+se), vjust=-0.5) +
   #also adding the "padding" to the axis so letter labels show up
    scale_y_continuous(expand=expansion(mult=c(0.05, .2)))
@@ -2272,3 +2273,112 @@ glimpse(summary(nbtest4_BEAL))
 
 #OK, not gonna get to this today (or at least not right now!) 
 #So gonna get back to it first thing next time!! :) 
+#see workflow doc for my to-do list!
+
+# Back at this Monday morning:
+#releveling the (MAIN) dataframe to compare vs. regeneration
+seedlings_plus$Treatment <- relevel(seedlings_plus$Treatment, ref="regeneration")
+
+#Ok, now re-running each model w/ its newly re-leveled treatment factor!
+#to see whether comp vs regen (or really, just removal vs regen) is signif for any sp/understory
+allseed_vsregen <- glmer.nb(formula=tally ~ Treatment*forest_type + 
+                              (1 | Stand_name), data= seedlings_plus)
+summary(allseed_vsregen) #none signif
+
+ACSAseed_vsregen <- glmer.nb(formula=ACSA ~ Treatment*forest_type + 
+                               (1 | Stand_name), data= seedlings_plus)
+summary(ACSAseed_vsregen) #none addt'l
+
+FRAMseed_vsregen <- glmer.nb(formula=FRAM ~ Treatment*forest_type + 
+                               (1 | Stand_name), data= seedlings_plus)
+summary(FRAMseed_vsregen) #none
+
+FAGRseed_vsregen <- glm.nb(FAGR ~ Treatment*forest_type, data=seedlings_plus)
+summary(FAGRseed_vsregen) #still nothin!
+
+BEALseed_vsregen <- glmer.nb(formula=BEAL ~ Treatment + 
+                               (1 | Stand_name), data= seedlings_plus)
+summary(BEALseed_vsregen) #ditto
+
+ACRUseed_vsregen <- glmer.nb(formula=ACRU ~ Treatment*forest_type + 
+                               (1 | Stand_name), data= seedlings_plus)
+summary(ACRUseed_vsregen) #same
+
+#RESULT: regen tx not signif dif from ANY other treatment level for seedlings!
+#now, going to update that w/ the letters in my figure for seedlings vs treatment (p4)
+
+#and now, doing the exact same thing as above, for saplings!
+#first releveling the saplings dataframe:
+all_saplings_plot$Treatment <- relevel(all_saplings_plot$Treatment, ref="regeneration")
+
+#then rerunning the sapling models:
+allsap_vsregen <- glmer.nb(formula=(all_saplings_tally ~ Treatment*forest_type + 
+           (1 | Stand_name)), 
+         data = all_saplings_plot[all_saplings_plot$species=="all saplings",])
+summary(allsap_vsregen) #ok this one IS signif dif from both removal and unharvested!!
+#why am i getting this error? : Error: Invalid grouping factor specification, Stand_name
+#happens for the orig model too after I releveled the factors...maybe I'll try re-releveling vs removal??
+#all_saplings_plot$Treatment <- relevel(all_saplings_plot$Treatment, ref="removal")
+#allsap_vsremoval <- glmer.nb(formula=(all_saplings_tally ~ Treatment*forest_type + 
+#                                      (1 | Stand_name)), 
+#                           data = all_saplings_plot[all_saplings_plot$species=="all",])
+#ok, this didn't work; what about just regular back to re-leveling vs unharvested??
+#all_saplings_plot$Treatment <- relevel(all_saplings_plot$Treatment, ref="unharvested")
+#does this have to do something with factor status??
+#all_saplings_plot$Stand_name <- factor(all_saplings_plot$Stand_name)
+
+#UPDATE: realized this is b/c we modified all_saplings_plot dataframe while plotting
+#w/ new names/labels for each species, so need to subset species correctly!
+
+#now let's try again w/ each individ species; just need to remember to change subsetting label
+ACSAsap_vsregen <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                              (1 | Stand_name), 
+                            data = all_saplings_plot[all_saplings_plot$species=="sugar maple",])
+summary(ACSAsap_vsregen)
+
+FRAMsap_vsregen <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                              (1 | Stand_name), 
+                            data = all_saplings_plot[all_saplings_plot$species=="white ash",])
+summary(FRAMsap_vsregen) #IS signif vs unharvested (as expected), not vs removal
+
+FAGRsap_vsregen  <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                             (1 | Stand_name), 
+                             data = all_saplings_plot[all_saplings_plot$species=="American beech",])
+summary(FAGRsap_vsregen) #just signif for RNH vs NH, not involving regen/tx factor
+
+
+BEALsap_vsregen <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[all_saplings_plot$species=="yellow birch",])
+summary(BEALsap_vsregen) #signif vs unharvested (as expected), NOT vs removal (but it was close!!)
+
+
+ACRUsap_vsregen <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[all_saplings_plot$species=="red maple",])
+summary(ACRUsap_vsregen) #nothin' signif here, other than the model weirdness LOL
+
+#OK, now updating letter labels/significance markers for saplings graph- p6!
+
+
+
+
+
+#now, going to put all the models in a list:
+
+View(sp_models)
+summary(sp_models[[1]])
+
+sp_models <- list(nbtest4_allspecies, 
+                  nbtest5_ACSA,
+                  nbtest1_FRAM, 
+                  nbtest4_FAGR, 
+                  nbtest2_BEAL, 
+                  nbtest1_ACRU,
+                  nbmod_allsaplings_2,
+                  nbmod_ACSAsaplings1,
+                  nbmod_FRAMsaplings1, 
+                  nbmod_FAGRsaplings1, 
+                  nbmod_BEALsaplings1, 
+                  nbmod_ACRUsaplings1
+)

@@ -2368,38 +2368,45 @@ saplings_summary2 <- data_summary(data=all_saplings_plot_v2,
                                  varname="saplings_per_ha",
                                  groupnames=c("species", "Treatment"))
 View(saplings_summary2)
-#colnames(saplings_summary)[3] <- "value"
+colnames(saplings_summary2)[3] <- "value" #for ease of coding/using same code as previous plots
 facet_labels2 <- c("all saplings", "sugar maple", "white ash", "American beech", "red maple", "yellow birch")
 facet_varnames2 <- c("all", "ACSA", "FRAM", "FAGR", "ACRU", "BEAL")
 saplings_summary2 <- saplings_summary2 %>% 
   mutate(species = factor(saplings_summary2$species, levels=facet_varnames2,
                          labels=facet_labels2)) %>% arrange(species)
+#also releveling factors for treatment var here so unharvested comes first...
+saplings_summary2$Treatment <- factor(saplings_summary2$Treatment)
+saplings_summary2$Treatment <- relevel(saplings_summary2$Treatment, ref="unharvested")
+#and trying to make unharvested the first bar...update using ARRANGE function instead of order()
+saplings_summary2 <- saplings_summary2 %>% arrange(species, Treatment)
 
-p5 <- ggplot(data=saplings_summary, 
+p8 <- ggplot(data=saplings_summary2, 
              aes(x=Treatment, y=value, fill=Treatment)) +
   geom_bar(stat="identity") + theme_few() + 
-  scale_fill_manual(values=wes_palette("Chevalier1")) +
-  labs (x="Harvest treatment", y= "Saplings per plot") +
-  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
+  scale_fill_manual(values=wes_palette("Cavalcanti1")) +
+  labs (x="Harvest treatment", y= "Saplings per hectare") +
+  facet_wrap(~ species, nrow=1, ncol=6, scales="fixed") +
   theme(axis.text.x = element_text(angle=25, vjust=.9, hjust=.8), legend.position="none")
-print(p5)
+print(p8)
 
 #OK, now let's add some error bars!
-p6 <- p5 + geom_errorbar(aes(ymin=value-se, ymax=value+se), width=.1)
-print(p6)
+p8 <- p8 + geom_errorbar(aes(ymin=value-se, ymax=value+se), width=.1)
 
+#ok, now we ALSO need to reorder based on species (so this letters col makes sense):
+saplings_summary2 <- saplings_summary2[order(saplings_summary2$species, decreasing=FALSE),]
+#looks perfect!
 #and letters to show significance--first need to add a column to the DF:
-saplings_summary$letters <- c("a", "b", "a", #all species
+saplings_summary2$letters <- c("a", "b", "a", #all species
                               "", "", "", #ACSA
                               "a", "b", "b", #FRAM
                               "", "", "",  #FAGR
                               "", "", "", #ACRU
                               "a", "b", "ab") #BEAL
-p6 <- p6 + geom_text(aes(label = saplings_summary$letters, y=value+se), vjust=-0.5) +
+p8 + geom_text(aes(label = letters, y=value+se), vjust=-0.5) +
   #also adding the "padding" to the axis so letter labels show up
-  scale_y_continuous(expand=expansion(mult=c(0.05, .2)))
-print(p6)
+  scale_y_continuous(expand=expansion(mult=c(0.05, .1)))
 
+#alright I think this looks good?!
 
 
 

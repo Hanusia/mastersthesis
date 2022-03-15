@@ -18,13 +18,15 @@ cwd_data <- read.csv("CWD_EAB_project_2020_cleaned_data.csv", fileEncoding = "UT
 
 library(tidyverse) #includes tidyr, dplyr, tibble!
 library(ggplot2)
-library(patchwork)
 #library(batman) #Why did I have this one?? guess we'll see if I end up needing it...
 library(ggthemes)
 library(wesanderson)
 library(plotrix) #to use standard error function!
 library(lme4)
 library(MASS)
+library(vegan) #use this for adonis function to run permanova
+library(ggbreak) #to create axis breaks
+library(patchwork) #to 'patch' together plots as needed
 
 # Ground cover class analysis w/ PerMANOVA -------------------------------
 #Honestly IDK why I am starting with this, but it feels right, so I'm just gonna go with it!!
@@ -2060,7 +2062,7 @@ anova(nbmod_ACRUsaplings1)
 write.csv(x=seedlings_plus, file="seedlings_per_plot_28Feb2022.csv")
 write.csv(x=all_saplings_plot, file = "saplings_per_plot_28Feb2022.csv")
 
-# seedlings plotting! (cut & pasted from above) -------------------------------
+# seedlings and saplings mixed-model plotting -------------------------------
 
 #next step 1: plotting seedling densities
 
@@ -2175,7 +2177,6 @@ print(p4)
 #WHY DID THIS TAKE ME SO LONG TO FIGURE OUT
 #BUT NO MATTER, I FINALLY DID!!!
 
-# saplings plotting -------------------------------
 
 #OK now I just need to do the same thing as above for saplings!!!
 
@@ -2219,33 +2220,219 @@ print(p6)
 #a) colors--need to just go ahead and make a decision so I can be consistent throughout!!
 #b) how to deal w/ letters-- since each harvest tx only comparing against unharvested level, not against each other, how to deal?
 
+#UPDATE 3/13/2022: Tony recommends having a consistent/fixed y-axis for each plot,
+#using breaks as needed to make the smaller ones more "visible."
+
+#to do this more effectively, I think instead of using facet_wrap I should use patchwork.
+#via this stackexchange answer: https://stackoverflow.com/questions/60337130/manual-breaks-of-facet-wrap-in-ggplot2
+#"Try defining each facet manually by filtering the data and then "patch" the plot up using patchwork package"
+
+#and perhaps, using the ggbreaks package? https://cran.r-project.org/web/packages/ggbreak/vignettes/ggbreak.html
+
+#DON'T FORGET THAT I ALSO NEED TO UPDATE UNITS FOR SEEDLINGS & SAPLINGS!!!
+#AND BASICALLY NEED TO DO THAT IN THE MAIN DATAFRAME FIRST BEFORE SUMMARIZING
+#BUT JUST GONNA TEST OUT THIS AXIS BREAK FEATURE FIRST
+View(seedlings_summary)
+
+#for SEEDLINGS, just need to divide the value by 3 to get seedlings/square meter,
+#SO just gonna do that in ggplot itself
+#seedlings_plus_long$seedlings_per_sqm <- seedlings_plus_long$value/3
+#b/c right now the 'value' is seedlings per plot, and 
+
+#trying this again, first for SEEDLINGS:
+#NOTE dividing average value by 3, to get seedlings per square meter (instead of per plot)
+#SO, that now tops our 
+p7 <- ggplot(data=seedlings_summary, 
+             aes(x=Treatment, y=value/3, fill=Treatment)) +
+  geom_bar(stat="identity") + theme_few() + 
+  scale_fill_manual(values=wes_palette("Cavalcanti1")) +
+  labs (x="Harvest treatment", y= "Seedlings per square meter") +
+  facet_wrap(~ species, nrow=1, ncol=6, scales="fixed") +
+#  scale_y_break(breaks=c(6.3, 9)) +
+  theme(axis.text.x = element_text(angle=25, vjust=.9, hjust=.8), legend.position="none")
+print(p7)
+p7 + geom_errorbar(aes(ymin=(value/3)-(se/3), ymax=(value/3)+(se/3)), width=.1) +
+  geom_text(aes(label = letters, y=(value/3)+(se/3)), vjust=-0.5)
+#  scale_y_continuous(expand=expansion(mult=c(0.05, .2))) #don't need this w/ fixed scale
+#alright, this seems to be working OK....
+#and b) will also need to manually change/add axis ticks/break points!
+#WHEN I COME BACK: adjust colors + plot w/ error bars & letters to see the whole picture!
+#alright, the break is actually blanking out the letters that are indicating significance...
+#so there just isn't a good place to put breaks...
+#MAYBE: just send Tony these versions (do the same for saplings)
+#and see what he thinks??
+
+#update: Tony thinks this looks OK; I will do same for saplings!
+
+#first things first = REDO saplings model for "all species" w/o the 'dead' saplings 
+#USING some code from the permanova below to quickly aggregate by all species/plot, removing dead saplings
+smallsaplings_all <- aggregate(total_sum ~ plot_ID*species, data = small_sapling_data, FUN=sum)
+View(smallsaplings_all)
+
+#IMPORTANT QUESTION: seems like I ended up including DEAD saplings in my TOTAL saplings count;
+#should I remove those and re-do the (all sp) mixed models? (wouldn't affect sp-specific ones, just the overall)
+#COME BACK TO THIS LATER
+
+#action item = find code I wrote somewhere before re: removing species w/ "dead" in their name
+#FOUND that code in "11-19-21_LANDIS_initialcommunities_prep_myplots.R"
+### below code is copied & modified from that script: ###
+throwaway <- grep(pattern="\\w+-dead", x=smallsaplings_all$species, value=TRUE, fixed=FALSE, perl=TRUE)
+# I HAD TO FIDDLE WITH THIS SO MUCH BUT THIS VERSION OF IT FINALLY WORKED!!!!
+head(throwaway)
+#length(unique(throwaway))
+#unique(throwaway)
+#actually NOT throwaway b/c I'm actually using it now to subset...
+#and getting rid of dead sapling "species"
+smallsaplings_all <- smallsaplings_all[!(smallsaplings_all$species %in% throwaway),]
+#OK let's check what else is left...
+unique(smallsaplings_all$species)
+#weird ones to fix = ?, ACPA, "ACPE " (with a space), UNK, VIAC
+#MAYBE: check ALL sp codes to make sure I know what they all stand for??
+
+#but also, maybe do this after large saplings are incorporated?
+#OK, gonna merge them next, then deal w/ weird species names!
+
+#now to do the same thing w/ large saplings:
+#large_sapling_data$total_sum <- large_sapling_data$class_1 + large_sapling_data$class_2 + large_sapling_data$class_3
+largesaplings_all <- aggregate(total_sum ~ plot_ID*species, data = large_sapling_data, FUN=sum)
+#View(largesaplings_all)
+#removing dead sp:
+throwaway2 <- grep(pattern="\\w+-dead", x=largesaplings_all$species, value=TRUE, fixed=FALSE, perl=TRUE)
+largesaplings_all <- largesaplings_all[!(largesaplings_all$species %in% throwaway2),]
+#OK let's check what else is left...
+unique(largesaplings_all$species)
+
+#OK, next step is to rename sapling tally columns, then merge small + large:
+names(smallsaplings_all)[3] <- "small_saplings_tally"
+names(largesaplings_all)[3] <- "large_saplings_tally"
+#next, aggregate by just plot:
+smallsaplings_all <- aggregate(small_saplings_tally ~ plot_ID, data=smallsaplings_all, FUN = sum)
+largesaplings_all <- aggregate(large_saplings_tally ~ plot_ID, data=largesaplings_all, FUN = sum)
+
+saplings_all <- merge(x=smallsaplings_all, y=largesaplings_all, by="plot_ID", all=TRUE)
+#merging based on a VECTOR of shared column names...should also result in 977 entries:
+#and it did!
+#replace NAs with 0s so addition works better
+saplings_all[is.na(saplings_all)] <- 0
+saplings_all$total_saplings <- saplings_all$small_saplings_tally + saplings_all$large_saplings_tally
+#saplings_all <- saplings_all[,c("plot_ID", "total_saplings")] #actually, want to keep these so we can divide by area?!
+saplings_all <- merge(saplings_all, plot_info_plus[,c("plot_ID", "Treatment", "forest_type", "Stand_name")],
+                      all=TRUE, by="plot_ID")
+
+#now to re-run the model! (again, JUST all_sp for saplings)
+saplings_all$Treatment <- factor(saplings_all$Treatment)
+saplings_all$Treatment <- relevel(saplings_all$Treatment, ref="unharvested")
+saplings_allspnotdead <- glmer.nb(formula=(total_saplings ~ Treatment*forest_type + 
+                                      (1 | Stand_name)), 
+                           data = saplings_all)
+summary(saplings_allspnotdead) #regen signif dif from unharvested (also an interaction)
+
+saplings_all$Treatment <- relevel(saplings_all$Treatment, ref="regeneration")
+saplings_allspnotdead_vsregen <- glmer.nb(formula=(total_saplings ~ Treatment*forest_type + 
+                                             (1 | Stand_name)), 
+                                  data = saplings_all)
+summary(saplings_allspnotdead_vsregen) #and both unharvested + removal signif dif from regen
+#so, result = qualitatively the same as before! (the numbers are just different.)
+
+#now, we move onto re-plotting, and need to translate these tallies to per-hectare values:
+#based on what I did before, basically added the total tally of saplings (large + small)
+#per plot, and divided that by the added area they were sampled in per plot (in ha this time)
+
+#area of large sapling subplot = .004 ha (x3 per plot)
+#area of small sapling subplot = 5 sqm --> .0005 ha (x3 per plot)
+#so, total area of sapling sampling per plot = .004*3+.0005*3= .0135 ha
+.004*3+.0005*3
+
+#SO, to get saplings per ha, divide the tally values in the main dataframe by .0135
+#and that dataframe(for which we still need to update the all_species values!) is:
+#OK now I just need to do the same thing as above for saplings!!!
+all_saplings_plot_v2 <- read.csv("saplings_per_plot_28Feb2022.csv")
+#let's experiment w/ just replacing the values from one dataframe to the other:
+#all_saplings_plot_allsp <- all_saplings_plot[all_saplings_plot$species=="all saplings",]
+#View(all_saplings_plot_allsp)
+#all_saplings_plot_allsp$small_saplings_tally <- saplings_all$small_saplings_tally
+#all_saplings_plot_allsp$large_saplings_tally <- saplings_all$large_saplings_tally
+#seems to have worked... so let's do it to the actual main dataframe 
+all_saplings_plot_v2$small_saplings_tally[all_saplings_plot$species=="all"] <- saplings_all$small_saplings_tally
+all_saplings_plot_v2$large_saplings_tally[all_saplings_plot$species=="all"] <- saplings_all$large_saplings_tally
+all_saplings_plot_v2$all_saplings_tally[all_saplings_plot$species=="all"] <- saplings_all$total_saplings
+#DAMN IT...I THINK I ACCIDENTALLY ERASED THE OTHER VALUES :( 
+#JK I think there are just a lot of zeroes!!
+#alright I THINK we are good now...
+#now to create PER HA value:
+all_saplings_plot_v2$saplings_per_ha <- all_saplings_plot_v2$all_saplings_tally/0.0135
+
+#first, use the summarize_data function to do what it says: 
+
+saplings_summary2 <- data_summary(data=all_saplings_plot_v2,
+                                 varname="saplings_per_ha",
+                                 groupnames=c("species", "Treatment"))
+View(saplings_summary2)
+#colnames(saplings_summary)[3] <- "value"
+facet_labels2 <- c("all saplings", "sugar maple", "white ash", "American beech", "red maple", "yellow birch")
+facet_varnames2 <- c("all", "ACSA", "FRAM", "FAGR", "ACRU", "BEAL")
+saplings_summary2 <- saplings_summary2 %>% 
+  mutate(species = factor(saplings_summary2$species, levels=facet_varnames2,
+                         labels=facet_labels2)) %>% arrange(species)
+
+p5 <- ggplot(data=saplings_summary, 
+             aes(x=Treatment, y=value, fill=Treatment)) +
+  geom_bar(stat="identity") + theme_few() + 
+  scale_fill_manual(values=wes_palette("Chevalier1")) +
+  labs (x="Harvest treatment", y= "Saplings per plot") +
+  facet_wrap(~ species, nrow=2, ncol=3, scales="free_y") +
+  theme(axis.text.x = element_text(angle=25, vjust=.9, hjust=.8), legend.position="none")
+print(p5)
+
+#OK, now let's add some error bars!
+p6 <- p5 + geom_errorbar(aes(ymin=value-se, ymax=value+se), width=.1)
+print(p6)
+
+#and letters to show significance--first need to add a column to the DF:
+saplings_summary$letters <- c("a", "b", "a", #all species
+                              "", "", "", #ACSA
+                              "a", "b", "b", #FRAM
+                              "", "", "",  #FAGR
+                              "", "", "", #ACRU
+                              "a", "b", "ab") #BEAL
+p6 <- p6 + geom_text(aes(label = saplings_summary$letters, y=value+se), vjust=-0.5) +
+  #also adding the "padding" to the axis so letter labels show up
+  scale_y_continuous(expand=expansion(mult=c(0.05, .2)))
+print(p6)
 
 
+
+
+
+# misc/testing/not used stuff -------------------------------
 ### other shit
 
 #gonna test out using emmeans package to do pairwise comparisions between levels in the factor from GLMMs...
-install.packages("emmeans")
-library(emmeans)
+#update: NOT doing this any more; it's too complicated!!
+#install.packages("emmeans")
+#library(emmeans)
 
-anova(nbtest2_BEAL)
-test1_emmmeans <- emmeans(nbtest2_BEAL, specs="Treatment")
-pairs(test1_emmmeans)
+#anova(nbtest2_BEAL)
+#test1_emmmeans <- emmeans(nbtest2_BEAL, specs="Treatment")
+#pairs(test1_emmmeans)
 #OK, actually this does seem to help me!!! maybe??
 
 #let's try Tukey's test:
-TukeyHSD(nbtest2_BEAL)
+#TukeyHSD(nbtest2_BEAL)
 
-test2_emmeans <- emmeans(nbtest5_ACSA, specs="Treatment")
+#test2_emmeans <- emmeans(nbtest5_ACSA, specs="Treatment")
 #this seems less useful b/c of interactions...
 #HELP!!!!!!!!!
-test2_emmeans
-pairs(test2_emmeans)
+#test2_emmeans
+#pairs(test2_emmeans)
 
-test3_emmeans <- emmeans(nbtest5_ACSA, specs = ~ Treatment + forest_type)
-test3_emmeans
-pairs(test3_emmeans) #well now, this is ONLY looking at interactions!!
+#test3_emmeans <- emmeans(nbtest5_ACSA, specs = ~ Treatment + forest_type)
+#test3_emmeans
+#pairs(test3_emmeans) #well now, this is ONLY looking at interactions!!
 #Maybe I should meet with Maria??? But regardless, I think I need
 #a breather from this stuff LOL!
+
+#####
 
 #OK, Tony responded to me so gonna try this one more way!!
 #by releveling & re-running the model to just get all the dif pairwise interactions.
@@ -2274,6 +2461,11 @@ glimpse(summary(nbtest4_BEAL))
 #OK, not gonna get to this today (or at least not right now!) 
 #So gonna get back to it first thing next time!! :) 
 #see workflow doc for my to-do list!
+
+
+
+
+# re-running seedling + saplings GLM models w/ releveled "treatment" factor to get all pairwise comparisions -------------------------------
 
 # Back at this Monday morning:
 #releveling the (MAIN) dataframe to compare vs. regeneration
@@ -2382,3 +2574,257 @@ sp_models <- list(nbtest4_allspecies,
                   nbmod_BEALsaplings1, 
                   nbmod_ACRUsaplings1
 )
+
+
+## 3/8/2022:
+# first task = save figures to share Tony (p4 & p6)
+#I think these are really good to go EXCEPT for the colors, which I need to choose & stick with...
+#want to pick colors I can use consistently throughout the paper for the 3 treatments.
+#AND I might need to change/update some fonts before sharing with Tony? (LOL)
+
+#but otherwise, remaining tasks = 
+#figuring out which stats to report for GLMM results table (including influence of random factor??)
+
+#carrying out PerMANOVA for understory (specifically, for saplings I think)
+#model it on the ground cover perMANOVA; first step is figuring out 
+#which format my input dataframe needs to be (wide/long?)
+
+#and for this one, I need ALL species counts! (not just my main 5)
+#in a dataframe w/ each species as a column & each row as a plot, 
+#w/ count values making up the cells
+#as before w/ ground cover, will be using the adonis() function in vegan package
+
+# saplings PerMANOVA -------------------------------
+
+#starting with / going off of dataframe: small_sapling_data, where I already
+#calculated the total # by summing levels above (when prepping for mixed models), copied below for continuity:
+#small_sapling_data$total_sum <- small_sapling_data$over_1_ft + small_sapling_data$over_4.5_ft
+#next steps = aggregate, and also REMOVE the ones called "dead"
+smallsaplings_allsp <- aggregate(total_sum ~ plot_ID*species, data = small_sapling_data, FUN=sum)
+View(smallsaplings_allsp)
+
+#IMPORTANT QUESTION: seems like I ended up including DEAD saplings in my TOTAL saplings count;
+#should I remove those and re-do the (all sp) mixed models? (wouldn't affect sp-specific ones, just the overall)
+#COME BACK TO THIS LATER
+
+#action item = find code I wrote somewhere before re: removing species w/ "dead" in their name
+#FOUND that code in "11-19-21_LANDIS_initialcommunities_prep_myplots.R"
+### below code is copied & modified from that script: ###
+throwaway <- grep(pattern="\\w+-dead", x=smallsaplings_allsp$species, value=TRUE, fixed=FALSE, perl=TRUE)
+# I HAD TO FIDDLE WITH THIS SO MUCH BUT THIS VERSION OF IT FINALLY WORKED!!!!
+head(throwaway)
+length(unique(throwaway))
+unique(throwaway)
+#actually NOT throwaway b/c I'm actually using it now to subset...
+#and getting rid of dead sapling "species"
+smallsaplings_allsp <- smallsaplings_allsp[!(smallsaplings_allsp$species %in% throwaway),]
+#OK let's check what else is left...
+unique(smallsaplings_allsp$species)
+#weird ones to fix = ?, ACPA, "ACPE " (with a space), UNK, VIAC
+#MAYBE: check ALL sp codes to make sure I know what they all stand for??
+
+#but also, maybe do this after large saplings are incorporated?
+#OK, gonna merge them next, then deal w/ weird species names!
+
+#now to do the same thing w/ large saplings:
+#large_sapling_data$total_sum <- large_sapling_data$class_1 + large_sapling_data$class_2 + large_sapling_data$class_3
+largesaplings_allsp <- aggregate(total_sum ~ plot_ID*species, data = large_sapling_data, FUN=sum)
+View(largesaplings_allsp)
+#removing dead sp:
+throwaway2 <- grep(pattern="\\w+-dead", x=largesaplings_allsp$species, value=TRUE, fixed=FALSE, perl=TRUE)
+largesaplings_allsp <- largesaplings_allsp[!(largesaplings_allsp$species %in% throwaway2),]
+#OK let's check what else is left...
+unique(largesaplings_allsp$species)
+#weird ones to fix = "ACPE " (w/ space), "UNK"
+#a few others I don't know but I think they are just herbaceous ones I forgot about TBH!
+
+#OK, next step is to rename sapling tally columns, then merge small + large:
+names(smallsaplings_allsp)[3] <- "small_saplings_tally"
+names(largesaplings_allsp)[3] <- "large_saplings_tally"
+
+saplings_allsp <- merge(x=smallsaplings_allsp, y=largesaplings_allsp, by=c("plot_ID", "species"), all=TRUE)
+#merging based on a VECTOR of shared column names...should also result in 977 entries:
+#and it did!
+saplings_allsp$total_saplings <- saplings_allsp$small_saplings_tally + saplings_allsp$large_saplings_tally
+saplings_allsp <- saplings_allsp[,c("plot_ID", "species", "total_saplings")]
+
+unique(saplings_allsp$species)
+saplings_allsp$species[saplings_allsp$species=="ACPE "] <- "ACPE"
+
+#NOTE: a lot of the 'weird' species codes are defined in my OneDrive,
+#"EAB_project_2020_additional_data.csv"
+
+#so, my sapling sp that AREN'T in that list (that I need to look up further) include:
+
+#SOLVED ones include:
+#LITU (tulip tree?!?!) --> yes!
+#VITUS (assuming this is a genus) -->grapevines genus
+#LOMA (lonicera mackii, I assume?) --> yes (aka bush honeysuckle)
+#CEOR --> oriental bittersweet
+#PRVI (prunus virginiana??) --> AKA choke cherry
+#AMAR --> serviceberry
+#SAMB (sambucus sp.?), --> elderberry
+#CAOV = carya ovata (shagbarck hickory), CACO = bitternut hickory
+#VIAL --> hobblebush, aka viburnum lantanoides, FKA v. alnifolium hence the code!
+
+#NEXT STEP = clarifying questions for Tony? (see workflow doc)
+#then, remove UNK/? species, correct "ACPE ", and prep for PERMANOVA
+
+
+##### 3/11/2022 OKAY, UPDATE (after talking w/ Tony): 
+## I basically just want to use the same input matrix (saplings) I used for PC-ORD!
+## so, make that @ the stand level, and remove species present in fewer than 3 stands.
+## and also then combine ones that are just "x species" (but actually, maybe do that first???)
+
+#so, FIRST step = input [saplings per plot] per stand, per species matrix:
+saplings_stand <- read.csv("PCORD_inputs/PCORD_saplingsperplot_primarymatrix_17Jan2022.csv")
+View(saplings_stand)
+
+#okay, now let's find out WHICH species are present in 3 or fewer stands:
+#repurposing code for this from LANDIS_specieslist_using_plotoccurrences_3Dec2021.R
+sums <- colSums(saplings_stand != 0)
+sums
+#applying the same criteria as PC-ORD to create lists of which species are included and excluded
+sp_included <- names(sums[sums>2])
+#sp_included
+sp_excluded <- names(sums[sums<3])
+#sp_excluded
+length(sp_excluded)
+length(sp_included)
+ncol(saplings_stand) # things ARE adding up
+
+#ok, now to look at SP_EXCLUDED, and see if there are any species ~combos~ that WOULD be included
+#if we combined them to the genus level.
+#look into: LONI/LOMA, ULAM/ULSP/ULRU, PISP/PIRU
+#ok, the latter two (ulmus sp. and picea sp.) SHOULD be combined. LONI and LOMA each only present in 1 stand so can safely ignore those.
+#and similarly, look at SP_INCLUDED to make sure there aren't any others that 
+#need to be combined to the genus level. #OK this looks fine...
+
+#now reassigning all elms & spruces to their genus level categorization.
+#since we are in wide mode, need to change columns...
+#gonna do this manually b/c it's only two, but another way would be to pivot longer, change, and then pivot back wider again...
+#to test this: for row/stand OMSFCR, ULAM = 0.1667, other elms = 0, after this values should be reflected in ULSP
+saplings_stand$ULSP <- saplings_stand$ULSP + saplings_stand$ULAM + saplings_stand$ULRU
+#seems to have worked?? so doing the same for pice, then need to DELETE indiv. species columns.
+saplings_stand$PISP <- saplings_stand$PISP + saplings_stand$PIRU
+saplings_stand <- subset(saplings_stand, select= -c(ULAM, ULRU, PIRU))
+#OK this seemed to work! now let's try re-calculating sp_included and sp_excluded
+#looks good to me! Now, need to subset by sp_included:
+
+saplings_stand2 <- subset(saplings_stand, select=sp_included)
+View(saplings_stand2) #OK, looks like this worked??
+#OK WAIT IMPORTANT QUESTION: did any of the rows/stands have BOTH an unknown & a known version of the same sp. for ulmus and picea?
+#and if so, does it really make sense to just add them together? OK, I think mathematically it is!
+
+#alright, now we have all of species we want to use for sapling permanova as saplings_stand2
+#for the 'traits' matrix...can probably just use the same one from ground cover and/or from PCORD??
+#update: that one just used plot_info_plus, so should we just use stand_info?
+View(stand_info)
+#just need to re-sort it alphabetically...
+stand_info2 <- stand_info
+stand_info2 <- stand_info2[order(stand_info2$Stand_code),]
+#and pretty sure the saplings df is already in this order, but just to be safe:
+saplings_stand2 <- saplings_stand2[order(saplings_stand2$Stand_code),]
+#and finally, subset to remove stand_code column (which is the first one):
+saplings_stand2 <- saplings_stand2[,2:ncol(saplings_stand2)]
+
+#so, now we are working w/ 23 "species" (or genera) for the sapling permanova.
+#as above, using adonis function from the vegan package:
+#first, trying w/ both independent variables:
+sapper1 <- adonis(formula = saplings_stand2 ~ Treatment*forest_type, data=stand_info2)
+sapper1 #looks like both are signif! well that makes sense honestly
+
+#BELOW COPIED FROM GROUND COVER PERMANOVA CODE ABOVE; NEED TO MODIFY FOR MY PURPOSES
+#OK, definitely don't need to worry about site OR gap status for this, since we're analyzing at the STAND level.
+
+#stats to report = F & p
+
+### AND NOW NEED TO DO POST HOC ANALYSIS...
+
+#gonna try the answer from this link using package pairwiseAdonis: https://www-researchgate-net.ezproxy.uvm.edu/post/Posthoc_test_for_permanova_adonis
+#install.packages('devtools')
+#library(devtools)
+#install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis") 
+library(pairwiseAdonis)
+
+#remember, can only look @ one factor at a time for this, so look at Tx/forest type separately
+#and then can make a weirdo variable to look @ their interaction (altho interaction is NOT signif.)
+sapper2_pair<-pairwise.adonis(saplings_stand2,factors=stand_info2$Treatment)
+sapper2_pair
+
+#so, PAIRWISE result is that unharvested is signif dif from each removal and regen,
+#but they are NOT signif dif from EACH OTHER.
+
+sapper3_pair <- pairwise.adonis(saplings_stand2,factors=stand_info2$forest_type)
+sapper3_pair #they are signif dif from each other (DUH!!! LOL)
+
+#next steps = graph this somehow??
+#should I graph interactions (I feel like not necessary b/c they are not signif?)
+#or otherwise just graph species comp. by forest type, and separately by treatment?
+#the question is, how to represent each species--by % of total? 
+#also, will need to pivot_longer to use ggplot for this!
+#also, should I plot this w/ ALL species, or just the ones I analyzed?
+#(guessing probably the latter since I will be putting signif indicators on them!)
+#also, maybe just use the true tally?? (vs. tally per plot, and have ggplot sum them up)
+#OK, my first step will be adding back in stand_name column, then pivot_longer, then associate num_plot to get total tallies (vs avg tallies per plot)
+#and can try graphing it both ways (total tally/total per plot) TBH!
+saplings_stand3 <- saplings_stand2
+saplings_stand3$Stand_code <- stand_info2$Stand_code
+saplings_stand3 <- merge(saplings_stand3, stand_info2[,c("Stand_code", "num_plots", "Treatment", "forest_type")])
+saplings_stand3 <- pivot_longer(saplings_stand3, 
+                                cols=RUBUS:PISP, #cols to pivot
+                                names_to="species",
+                                values_to="saplings_per_plot")
+#basically, reverse engineering the total # per stand by multiplying per-plot value by # of plots
+saplings_stand3$total_saplings <- saplings_stand3$saplings_per_plot*saplings_stand3$num_plots
+
+sapplot1 <- ggplot(data=saplings_stand3,
+                   aes(x=Treatment, y=saplings_per_plot, fill=species)) +
+  geom_bar(stat="identity", position="stack")
+print(sapplot1)
+#OK, this is off to a good start, but I think the issue is uneven #s of plots/stands
+#between groups, so regen looks much shorter.
+#so I might need to do what I did before, for my last plot, AKA get average values per stand.
+#let's try using that summarize_data function that I found online:
+
+sapper_summary <- data_summary(data=saplings_stand3,
+                                  varname="saplings_per_plot",
+                                  groupnames=c("species", "Treatment"))
+
+View(sapper_summary) #don't think I actually needed standard error for this one, but sure!
+#let's try again:
+sapplot2 <- ggplot(data=sapper_summary,
+                   aes(x=Treatment, y=saplings_per_plot, fill=species)) +
+  geom_bar(stat="identity", position="stack") + the
+print(sapplot2)
+#OK, this worked (yay!), but it's definitely hard to read/not as well-organized as it could be.
+#so, should figure out best way to re-organize it, maybe w/ an individual bar for each of the top 5 or 10 prevalent species,
+#then 
+sums[order(sums)]
+#based on this ranking, the top 10 species present in the most STANDS 
+#are: ACSA, FAGR, ACPE, BEAL, FRAM, RUBUS, PRSE, OSVI, ACRU, VIAL
+#So, maybe use those as the individual species & lump the rest of them together??
+
+#quickly, let's just look at the forest_type graph for now:
+#need to re-summarize the data based on forest type!
+sapper_summary2 <- data_summary(data=saplings_stand3,
+                               varname="saplings_per_plot",
+                               groupnames=c("species", "forest_type"))
+View(sapper_summary2)
+sapplot3 <- ggplot(data=sapper_summary2,
+                   aes(x=forest_type, y=saplings_per_plot, fill=species)) +
+  geom_bar(stat="identity", position="stack") + theme_few()
+print(sapplot3)
+
+#OK, I have some plans, so I think now I just need to
+#1) ORGANIZE the data/results I have worked on so far today, and record my process in workflow doc
+#2) PREPARE for meeting w/ Tony & figure out what I want to ask/share to determine next steps.
+
+
+## update 3/14/2022: saving the saplings_stand2 dataframe to use in PC-ORD!
+#(for updated run)
+#but want to add the row labels/stand code column back in first:
+saplings_stand4 <- cbind(saplings_stand$Stand_code, saplings_stand2)
+names(saplings_stand4)[1] <- "Stand_code"
+write.csv(x=saplings_stand4, file="PCORD_inputs/PCORD_saplingsperplot_primarymatrix_14March2022.csv",
+          row.names=FALSE)

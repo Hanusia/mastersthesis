@@ -257,6 +257,14 @@ for(i in 1:nrow (overstory_plus)){
 #convert back to metric!
 overstory_plus$stump_DBH_cm <- overstory_plus$stump_DBH_in*2.54
 
+## interlude on 4/4/2022: downloading this dataset w/ diameters (incl those for stumps) to use in another script!
+#write.csv(overstory_plus, "tree_stump_diams_fromAugscript_04Apri2022.csv")
+##interlude over :) 
+
+### NEW interlude on 4/6, downloading the dataset w/ CORRECTED errors re: live/stump/snags
+#and their associated decay classes!!
+write.csv(overstory_plus, "tree_stump_diams_CORRECTED_fromAugscript_06Apri2022.csv")
+
 #convert diam to basal area
 overstory_plus$BA_sqm[overstory_plus$status=="stump"] <- 
   overstory_plus$stump_DBH_cm[overstory_plus$status=="stump"]*overstory_plus$stump_DBH_cm[overstory_plus$status=="stump"]*pi/40000 

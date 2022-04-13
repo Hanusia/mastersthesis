@@ -402,6 +402,8 @@ write.csv(dsi_data, file="biomass_seedlings_DSI_7Apr2022.csv")
 
 #ORRRR I could just go ahead and model/plot out the seedling relationships first...
 #TBH I'm gonna start with that, because they saplings data is gonna be a bitch to re-wrangle...
+# (and for next time/future:
+#dsi_data <- read.csv("biomass_seedlings_DSI_7Apr2022.csv")
 
 dsi_data_cut <- dsi_data[dsi_data$harvest_status=="YES",]
 View(dsi_data_cut)
@@ -470,7 +472,7 @@ plot(x=dsi_data_cut$years_since_harvest, y=res4) #also looks fine/no correlation
 summary(testmod4)
 #tl;dr = nothing signif happening here?? (is that the takeaway?)
 
-#follow-up question: HOW TO CALCULATE R-SQUARED FOR THE REGRESSION FROM THESE MODELS???
+
 
 #OK I should really move on to saplings...I just don't want to lol
 
@@ -481,6 +483,92 @@ unique(seedling_summary$species)
 #ok so we DID have this happening..............
 #need to figure out what to do about this LATER.............
 
+#alright, I'm back (as of 4/13/22)!
+#I think the first step to figure out if the species/genus thing is an issue, 
+#is to see if they existed within the same PLOT...because that's the only thing 
+#that would throw off the calculations...
+
+#testing maples 1st--up to 3 problem plots:
+nrow(seedling_summary_wide[(seedling_summary_wide$ACPE>0 & seedling_summary_wide$ACER>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$ACRU>0 & seedling_summary_wide$ACER>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$ACSA>0 & seedling_summary_wide$ACER>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$ACSP2>0 & seedling_summary_wide$ACER>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$ACPE>0 & seedling_summary_wide$ACSP>0),]) #1
+nrow(seedling_summary_wide[(seedling_summary_wide$ACRU>0 & seedling_summary_wide$ACSP>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$ACSA>0 & seedling_summary_wide$ACSP>0),]) #2
+nrow(seedling_summary_wide[(seedling_summary_wide$ACSP2>0 & seedling_summary_wide$ACSP>0),])
+
+sum(seedling_summary_wide$ACSP) #only in 2 plots total....so I'm thinking we should just delete those??
+seedling_summary_wide[seedling_summary_wide$ACSP>0,]
+#plots are CH145unh4 and TNCLPunh3    
+#UPDATE: THOSE TWO AREN'T CUT PLOTS ANYWAY SO NO ISSUES THERE
+#OR just subtract 1 from the richness value of each of those plots...
+#JK can't do that w/ Shannon index calculation...
+#ALRIGHT let's see if this is a problem with other species FIRST then decide
+#on a course of action!
+nrow(seedling_summary_wide[(seedling_summary_wide$BEAL>0 & seedling_summary_wide$BESP>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$BEFA>0 & seedling_summary_wide$BESP>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$BEPA>0 & seedling_summary_wide$BESP>0),])
+#birches all good!
+nrow(seedling_summary_wide[(seedling_summary_wide$PRPE>0 & seedling_summary_wide$PRSP>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$PRSE>0 & seedling_summary_wide$PRSP>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$PRVI>0 & seedling_summary_wide$PRSP>0),])
+#ditto cherries!
+nrow(seedling_summary_wide[(seedling_summary_wide$ULAM>0 & seedling_summary_wide$ULSP>0),]) #1
+nrow(seedling_summary_wide[(seedling_summary_wide$VIAC>0 & seedling_summary_wide$VISP>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$VIAL>0 & seedling_summary_wide$VISP>0),])
+nrow(seedling_summary_wide[(seedling_summary_wide$UNK>0 & seedling_summary_wide$UNKHW>0),])
+#alright so we just have one problem elm...
+seedling_summary_wide[seedling_summary_wide$ULSP>0,]
+#it's in plot OMSFCRmat3, which IS in the cut plots dataset...so let's just deal with that individually
+
+#QUESTION (maybe for Tony): should we just deal with this the same way we did for the NMS
+#to stay consistent in how we are treating the data??????
+#I mean, it's already a different data set anyway since we're only looking at cut plots...
+
+problem_elm <- seedling_summary_wide[seedling_summary_wide$ULSP>0,]
+problem_elm$ULSP <- problem_elm$ULSP + problem_elm$ULAM
+problem_elm$ULAM <- 0
+problem_elm
+problem_elm_shannon <- diversity(x=problem_elm[,2:37],  index="shannon") #new Shannon val = 1.051136
+
+#now to reassign those values (Shannon + richness):
+dsi_data_cut[dsi_data_cut$plot_ID=="OMSFCRmat3",]
+dsi_data_cut[dsi_data_cut$plot_ID=="OMSFCRmat3", "seedling_shannon"] <- problem_elm_shannon
+dsi_data_cut[dsi_data_cut$plot_ID=="OMSFCRmat3", "seedling_richness"] <- 3 #existing richness of 4 -1
+
+#NOW just need to re-run the models for seedling Shannon and richness!!!!
+testmod5 <- lmer(formula= seedling_richness ~ propbiocut + (1 | Stand_name),
+                 data= dsi_data_cut)
+res5 <- resid(testmod5)
+plot(res5) #alright, these are looking properly scattered!
+plot(fitted(testmod5), res5) #this looks a lil funky..... but just b/c of stand maybe?
+plot(x=dsi_data_cut$years_since_harvest, y=res5) #also looks fine/no correlation!
+summary(testmod5)
+
+testmod6 <- lmer(formula= seedling_shannon ~ propbiocut + (1 | Stand_name),
+                 data= dsi_data_cut)
+res6 <- resid(testmod6)
+plot(res6) #alright, these are looking properly scattered!
+plot(fitted(testmod6), res6) #this looks a lil funky..... but just b/c of stand/site effect? maybe?
+plot(x=dsi_data_cut$years_since_harvest, y=res6) #also looks fine/no correlation!
+summary(testmod6)
+
+
+#follow-up question: HOW TO CALCULATE R-SQUARED FOR THE REGRESSION FROM THESE MODELS???
+#this webpage: https://ecologyforacrowdedplanet.wordpress.com/2013/08/27/r-squared-in-mixed-models-the-easy-way/
+#uses the function r.squaredGLMM from the package MuMIn, which works w/ lme4
+install.packages("MuMIn")
+library(MuMIn)
+r.squaredGLMM(testmod4) #for density...result is a lil wonky b/c of the neg binomial distrib.
+r.squaredGLMM(testmod5)
+r.squaredGLMM(testmod6)
+#LOL ok all r-squared values are extreeeemely low...as I suspected!!!
+
+#that wraps up this bit I think; now it is REALLY time to move onto saplings...
+
+#WAIT--SHOULD I ALSO REMOVE SPECIES OF UNKNOWN PROVENANCE?!
+#honestly, I'm keeping it in! can contribute to richness + density
 
 #WAIT I ALREADY HAVE THESE FROM PC-ORD INPUTS...DUH!!!
 #*except* those are aggregated at the stand level...womp womp womp
@@ -491,84 +579,208 @@ unique(seedling_summary$species)
 ### IMPORTANT CAVEAT: ALSO NEED TO COMBINE SPECIES W/ 'UNK' SPECIES THE WAY I DID FOR PCORD/
 #PERMANOVA ANALYSIS
 #WAIT SHOULD I HAVE DONE THAT FOR SAPLINGS TOO??????
-View(small_sapling_data)
+#View(small_sapling_data)
 small_sapling_data$tally <- small_sapling_data$shrub + small_sapling_data$over_1_ft + small_sapling_data$over_4.5_ft
-small_saplings_sp <- merge (x=small_sapling_data, y=plot_info[,c("plot_ID", "Stand_name")])
-small_saplings_sp <- merge (x=small_saplings_sp, y=stand_info[,c("Stand_name", "Stand_code")])
-View(small_saplings_sp)
-small_saplings_sp <- aggregate(tally ~ Stand_code + species, data = small_saplings_sp, FUN=sum)
-
+small_saplings_sp <- aggregate(tally ~ plot_ID + species, data = small_sapling_data, FUN=sum)
 #IMPORTANT: need to figure out how to remove any that are DEAD....but prob do this after rbind so I only do it once!
-
 #anyway, first, do this w/ large saplings too:
-View(large_sapling_data)
+#View(large_sapling_data)
 large_sapling_data$tally <- large_sapling_data$class_1 + large_sapling_data$class_2 + large_sapling_data$class_3
-large_saplings_sp <- merge (x=large_sapling_data, y=plot_info[,c("plot_ID", "Stand_name")])
-large_saplings_sp <- merge (x=large_saplings_sp, y=stand_info[,c("Stand_name", "Stand_code")])
-View(large_saplings_sp)
-large_saplings_sp <- aggregate(tally ~ Stand_code + species, data = large_saplings_sp, FUN=sum)
-
+large_saplings_sp <- aggregate(tally ~ plot_ID + species, data = large_sapling_data, FUN=sum)
 #now to rbind (at least the saplings) together: 
-
-saplings_stand <- rbind(large_saplings_sp, small_saplings_sp)
-View(saplings_stand)
-
+saplings_plot <- rbind(large_saplings_sp, small_saplings_sp)
+View(saplings_plot)
 ######
 #AT THIS STAGE need to RENAME "ACPE " species:
-saplings_stand[saplings_stand=="ACPE "] <- "ACPE"
-
-#now to aggregate again by stand & species:
-saplings_stand <- aggregate(tally ~ Stand_code + species, data = saplings_stand, FUN=sum)
-#this has all stands represented (checked via > length(unique(saplings_stand$Stand_code)))
-
+saplings_plot[saplings_plot=="ACPE "] <- "ACPE"
+#now to aggregate again by plot & species:
+saplings_plot <- aggregate(tally ~ plot_ID + species, data = saplings_plot, FUN=sum)
+#this has ALMOST all plots represented (228) (checked via > length(unique(saplings_stand$Stand_code)) )
 #now to remove DEAD species: 
 #follow THIS code from Landis prep script for guidance: 
 #ok, executive decision: filtering out any dead saplings!
-throwaway <- grep(pattern="\\w+-dead", x=saplings_stand$species, value=TRUE, fixed=FALSE, perl=TRUE)
+throwaway <- grep(pattern="\\w+-dead", x=saplings_plot$species, value=TRUE, fixed=FALSE, perl=TRUE)
 # I HAD TO FIDDLE WITH THIS SO MUCH BUT THIS VERSION OF IT FINALLY WORKED!!!!
 head(throwaway)
 length(throwaway)
 #actually NOT throwaway b/c I'm actually using it now to subset...
 #and getting rid of dead sapling "species"
-saplings_stand <- saplings_stand[!(saplings_stand$species %in% throwaway),]
+saplings_plot <- saplings_plot[!(saplings_plot$species %in% throwaway),]
 #nice!
 
 #also want to get rid of "UNK" and "?" species:
-saplings_stand <- saplings_stand[!(saplings_stand$species=="UNK" | saplings_stand$species=="?"),]
+#OR DO I???? #Update: it's only 5 plots total that have those, so it's no great loss!
+saplings_plot <- saplings_plot[!(saplings_plot$species=="UNK" | saplings_plot$species=="?"),]
 
 #Okie dokie! Now at THIS point, want to keep this DF as-is so I can add the seedling data to it, and also make a version of it w/ just saplings.
-
-#first, just replicating the process I did above w/ looping in the seedlings:
-understory_stand <- rbind(saplings_stand, seedlings_sp)
-understory_stand <- aggregate(tally ~ Stand_code + species, data = understory_stand, FUN=sum)
-#and then removing the "UNK" "species" from this combined dataset:
-understory_stand <- understory_stand[!(understory_stand$species=="UNK" | understory_stand$species=="UNKHW"),]
-
 
 #then, for each of the dataframes I have at this point (saplings_stand and understory_stand), need to bind numplots so I can calculate #/ha
 #WAIT, I forgot this is going to be hard b/c they were sampled in different areas..... -_-
 #could just divide by numplot and have "tally per plot" as the metric??? I Think that will work just fine...
-saplings_stand <- merge(saplings_stand, stand_info[,c("Stand_code", "num_plots")])
-understory_stand <- merge(understory_stand, stand_info[,c("Stand_code", "num_plots")])
-
-saplings_stand$tally_per_plot <- saplings_stand$tally/saplings_stand$num_plots
-understory_stand$tally_per_plot <- understory_stand$tally/understory_stand$num_plots
-
+#saplings_stand <- merge(saplings_stand, stand_info[,c("Stand_code", "num_plots")])
+#saplings_stand$tally_per_plot <- saplings_stand$tally/saplings_stand$num_plots
 
 #I think final step is just to pivot_wider?!
-saplings_stand_wide <- pivot_wider(data=saplings_stand, 
-                                   id_cols="Stand_code",
+saplings_summary_wide <- pivot_wider(data=saplings_plot, 
+                                   id_cols="plot_ID",
                                    names_from="species",
-                                   values_from="tally_per_plot")
-View(saplings_stand_wide)
+                                   values_from="tally")
+View(saplings_summary_wide)
 
-understory_stand_wide <- pivot_wider(data=understory_stand, 
-                                     id_cols="Stand_code",
-                                     names_from="species",
-                                     values_from="tally_per_plot")
-View(understory_stand_wide)
+#next we are replicating steps from what we did w/ SAPLINGS above!
+#looks good!, just gotta replace NAs with 0s:
+saplings_summary_wide[is.na(saplings_summary_wide)] <- 0
+saplings_richness <- saplings_summary_wide
+saplings_richness$richness <- rep(0)
+for(i in 1:nrow(saplings_richness)){
+  saplings_richness$richness[i] <-
+    sum(saplings_summary_wide[i,2:ncol(saplings_summary_wide)]>0)
+}
+#looks right!! now add this to the same 'master' dataframe
+View(dsi_data)
+dsi_data <- merge(dsi_data, saplings_richness[,c("plot_ID", "richness")],
+                  by="plot_ID", all=TRUE)
+#rename col to specify saplings richness: rename(x, newname=oldname)
+dsi_data <- rename(dsi_data, saplings_richness=richness)
+
+#NOW, to calculate Shannon diversity per plot...
+#first need to make sure ALL plots are accounted for:
+#this ALSO arranged them alphabetically by plot, so great!
+saplings_summary_wide <- merge(x=saplings_summary_wide, y=plot_info[,c("plot_ID","Stand_name")],
+                               by="plot_ID", all=TRUE)
+#and replace NAs w/ 0s:
+saplings_summary_wide[is.na(saplings_summary_wide)] <- 0
+#first column and last column are NOT part of what should be calculated for Shannon diversity
+saplings_summary_wide$saplings_shannon <- diversity(x=saplings_summary_wide[,2:50],
+                                           index="shannon")
+
+dsi_data <- merge(dsi_data, saplings_summary_wide[,c("plot_ID", "saplings_shannon")])
+#OK we basically now have everything for saplings (except for total tally)!
+#let's just quickly do that...
+saplings_tally <- saplings_summary_wide
+saplings_tally$saplings_tally <- rep(0)
+for(i in 1:nrow(saplings_tally)){
+  for(j in 2:50){
+    saplings_tally$saplings_tally[i] <- 
+      saplings_tally$saplings_tally[i] + saplings_summary_wide[i,j]
+  }
+}
+View(saplings_tally)
+#don't think we actually want the line below because we have to use whole #s for neg binomial dist of total sapling density:
+#saplings_tally$saplings_density <- saplings_tally$tally/3 #calculate plot-level saplings density per m^2
+dsi_data <- merge(dsi_data, saplings_tally[,c("plot_ID", "saplings_tally")],
+                  all=TRUE)
+#ok, NOW we have all the sapling indicators!
+#but FIRST, gonna save this dataframe....
+write.csv(dsi_data, file="biomass_saplings_seedlings_DSI_7Apr2022.csv")
+
+#BUT FIRST, NEED TO ALSO CHECK IF WE HAVE PROBLEM SPECIES/VAGUE CLASSIFICATIONS THAT ARE OCCURRING
+unique(saplings_plot$species) #all the dif 'species' names
+
+#the first step to figure out if the species/genus thing is an issue, 
+#is to see if they existed within the same PLOT...because that's the only thing 
+#that would throw off the calculations...
+#testing maples 1st:
+nrow(saplings_summary_wide[(saplings_summary_wide$ACPE>0 & saplings_summary_wide$ACER>0),])
+nrow(saplings_summary_wide[(saplings_summary_wide$ACRU>0 & saplings_summary_wide$ACER>0),])
+nrow(saplings_summary_wide[(saplings_summary_wide$ACSA>0 & saplings_summary_wide$ACER>0),])
+nrow(saplings_summary_wide[(saplings_summary_wide$ACSP2>0 & saplings_summary_wide$ACER>0),])
+nrow(saplings_summary_wide[(saplings_summary_wide$ACPE>0 & saplings_summary_wide$ACSP>0),]) #1 
+nrow(saplings_summary_wide[(saplings_summary_wide$ACRU>0 & saplings_summary_wide$ACSP>0),])
+nrow(saplings_summary_wide[(saplings_summary_wide$ACSA>0 & saplings_summary_wide$ACSP>0),]) #1
+nrow(saplings_summary_wide[(saplings_summary_wide$ACSP2>0 & saplings_summary_wide$ACSP>0),])
+#which ones?
+saplings_summary_wide[saplings_summary_wide$ACSP>0,]
+#only one plot, MP1314gap1, which has 'acsp' AND 'acsa' AND 'acpe'
+#will deal with this LATER after done checking other species!
+nrow(saplings_summary_wide[(saplings_summary_wide$PIRU>0 & saplings_summary_wide$PISP>0),])
+nrow(saplings_summary_wide[(saplings_summary_wide$ULRU>0 & saplings_summary_wide$ULSP>0),]) #1
+saplings_summary_wide[saplings_summary_wide$ULSP>0,]
+#only one plot, HSF161mat3, has ULRU *and* ULSP
+#for the elm one, I think we can safely do what we did for the seedling case and just
+#combine them...
+#but for the maple case, since it would be decreasing richness with 2 of the most (only?)
+#influential/prevalent species in the plot, maybe just take out the "ACSP" ones??
+#and then will need to recalculate richness as well...
+#then just continue on and follow the same pattern as what I did for seedling models!
+#and then record the results in my results master doc!
+
+problem_elm2 <- saplings_summary_wide[saplings_summary_wide$ULSP>0,]
+problem_elm2$ULSP <- problem_elm2$ULSP + problem_elm2$ULRU
+problem_elm2$ULRU <- 0
+problem_elm2
+problem_elm2_shannon <- diversity(x=problem_elm2[,2:50],  index="shannon") #new Shannon val = 1.69202
+
+#now to reassign those values (Shannon + richness):
+#by FIRST creating the 'cut' subset of the dataset:
+dsi_data_cut2 <- dsi_data[dsi_data$harvest_status=="YES",]
+View(dsi_data_cut2)
+dsi_data_cut2 <- merge(dsi_data_cut2, plot_info[,c("plot_ID", "Stand_name")],
+                      by="plot_ID", all.x=TRUE)
+#now to calculate mean years since harvest...
+#stand_info$harvest_mean_year <- ((as.numeric(stand_info$harvest_start_year) + 
+#                                    as.numeric(stand_info$harvest_end_year)) / 2)
+dsi_data_cut2 <- merge(dsi_data_cut2, stand_info[,c("Stand_name", "harvest_mean_year")],
+                      by="Stand_name", all.x=TRUE)
+dsi_data_cut2$years_since_harvest <- 2020-dsi_data_cut2$harvest_mean_year
+sum(is.na(dsi_data_cut2$years_since_harvest))
+#Groton is still the problem stand here...
+
+#and NOW to reassign Shannon + richness values for this problem plot:
+dsi_data_cut2[dsi_data_cut2$plot_ID=="HSF161mat3",]
+dsi_data_cut2[dsi_data_cut2$plot_ID=="HSF161mat3", "saplings_shannon"] <- problem_elm2_shannon
+#I MESSED UP HERE, SO IF THIS PLOT IS AN ISSUE IN THE FUTURE, COME BACK TO THIS!!
+dsi_data_cut2[dsi_data_cut2$plot_ID=="HSF161mat3", "saplings_richness"] <- 6 #existing richness of 7 -1
+
+#NEXT, let's address the ACSP mess.
+problem_maple <- saplings_summary_wide[saplings_summary_wide$ACSP>0,]
+problem_maple
+problem_maple$ACSP <- 0 #let's just remove that one...
+problem_maple_shannon <- diversity(x=problem_maple[,2:50],  index="shannon") #new Shannon val = 1.289591
+#and NOW to reassign Shannon + richness values for this problem plot:
+dsi_data_cut2[dsi_data_cut2$plot_ID=="MP1314gap1",]
+dsi_data_cut2[dsi_data_cut2$plot_ID=="MP1314gap1", "saplings_shannon"] <- problem_maple_shannon
+dsi_data_cut2[dsi_data_cut2$plot_ID=="MP1314gap1", "saplings_richness"] <- 5 #existing richness of 6 -1
+#alright, we are looking good!!
+
+#now, just need to run the models like I did with seedlings for dsi_data_cut2...
+#and also just check if there's a correlation with years since harvest??
+
+#first, look at sapling density:
+testmod7 <- glmer.nb(formula= saplings_tally ~ propbiocut + (1 | Stand_name),
+                     data= dsi_data_cut2)
+res7 <- resid(testmod7)
+plot(res7) #alright, NOW these are looking properly scattered!
+plot(fitted(testmod7), res7) #much better than before, at least?!
+plot(x=dsi_data_cut$years_since_harvest, y=res7) #also looks fine/no correlation!
+summary(testmod7) #proportion of biomass cut is *almost* significant here??
+
+#next = sapling richness
+testmod8 <- lmer(formula= saplings_richness ~ propbiocut + (1 | Stand_name),
+                 data= dsi_data_cut2)
+res8 <- resid(testmod8)
+plot(res8) #alright, these are looking properly scattered!
+plot(fitted(testmod8), res8) #this looks a lil funky..... but just b/c of stand maybe?
+plot(x=dsi_data_cut$years_since_harvest, y=res8) #also looks fine/no correlation!
+summary(testmod8)
+
+#and finally = sapling Shannon diversity
+testmod9 <- lmer(formula= saplings_shannon ~ propbiocut + (1 | Stand_name),
+                 data= dsi_data_cut2)
+res9 <- resid(testmod9)
+plot(res9) #alright, these are looking properly scattered!
+plot(fitted(testmod9), res9) #this looks a lil funky..... but just b/c of stand/site effect? maybe?
+plot(x=dsi_data_cut$years_since_harvest, y=res9) #also looks fine/no correlation!
+summary(testmod9)
+
+#now let's plot the 3 variables:
+plot(dsi_data_cut2$propbiocut, dsi_data_cut2$saplings_tally) #maybe a sliiiight positive relationship here?
+plot(dsi_data_cut2$propbiocut, dsi_data_cut2$saplings_richness) #wonky b/c of discrete vals for richness...
+plot(dsi_data_cut2$propbiocut, dsi_data_cut2$saplings_shannon) #seems like no relaysh here either...
 
 
-#annnd NOW to remove NAs: 
-saplings_stand_wide[is.na(saplings_stand_wide)] <- 0
-understory_stand_wide[is.na(understory_stand_wide)] <- 0
+#and FINALLY, let's get some more R-squared values:
+r.squaredGLMM(testmod7) #for density...result is a lil wonky b/c of the neg binomial distrib.
+r.squaredGLMM(testmod8)
+r.squaredGLMM(testmod9)
+#once again, all R-squared vals are quite small...

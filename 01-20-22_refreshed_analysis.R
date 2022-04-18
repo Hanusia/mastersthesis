@@ -2870,3 +2870,136 @@ write.csv(x=live_trees, file="live_stand_TPH_QMD_UPDATED_18Apr2022.csv",
 #for all the BA-related ones: rerunning all the code in the section 
 # "Basal area calculations & analysis (stand-level) (total & ash BA)"
 
+# next up = ASH HEALTH ANALYSIS -------------------------------
+#first: ash health vs. treatment group/harvest type, and forest type...
+#and also--maybe compare ash health vs. DBH??
+##FIRST ORDER OF BUSINESS = go back to previous code to go off of what I did there!
+
+### BELOW CODE IS COPIED/MODIFIED FROM 06-08-21_univariate_analysis_master.R:
+
+#NOW, adding ash health indices!
+View(ash_damage_data)
+
+#need to sum up indices per TREE
+#then need to sum up indices per PLOT
+#then need to average for ash heath # / tree / plot
+#THEN need to summarize to the STAND level??
+#calculate by adding canopy condition # + number of 'yes'es  for other binary categories
+
+# final number = average ash health index per tree in the stand
+
+#figure out how to use this to_logical function, OR ELSE just do a loop??
+#to_logical(ash_health_index$DH,custom_false=c("","NO"))
+#I thiiiink this is gonna be too complicated, so I'm just gonna do a loop instead...
+
+#adding an incremental operator (I found it online)
+`%+=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 + e2))
+
+ash_health_index <- ash_damage_data
+#starting off the health total with the canopy condition, THEN
+# the loop below will tally up the other binary categories and add them to this column
+#BUT will also need to "zero out" for the NAs from a few rogue values in canopy_condition
+ash_health_index$tree_health_total <- as.numeric(ash_health_index$canopy_condition)
+
+for(i in 1:nrow(ash_health_index)){
+  if(is.na(ash_health_index$tree_health_total[i])==TRUE){
+    ash_health_index$tree_health_total[i] <- 0 #'zeroing out' a few coerced NAs
+  }
+  for(j in 4:9){
+    if(ash_health_index[i,j]=="YES") { #adding on a count of 1 for any additional 'yes'es re: ash condition
+      ash_health_index$tree_health_total[i] %+=% 1
+    }
+  }
+}
+
+View(ash_health_index)
+#this part is working now!
+
+#Now, I need to attach the plot/stand-level data & try to aggregate everything to the stand level!
+#Will do this by merging w/ plot_info_plus
+#then tabulate average ash health per stand by(total ash health numbers all added together) / (total number of ash trees in all the plots in this stand)
+nrow(ash_health_index)
+length(unique(ash_health_index$plot_ID)) #175 plots with some ash.
+
+ash_health_plus <- merge(x=ash_health_index, 
+                         y=plot_info_plus,
+                         by="plot_ID",
+                         all=TRUE 
+)
+View(ash_health_plus)
+#length(unique(ash_health_plus$Stand_name))
+
+#let's replace NAs again...
+ash_health_plus[is.na(ash_health_plus)] <- 0
+
+#OK, now to write a for loop to aggregate this all by stand!
+#but first, set up an empty dataframe to contain it!
+
+ash_health_stand <- stand_info #adding all the basic info from stand_info & the right # of columns!
+ash_health_stand$health_index_total <- rep(0) #this will contain sum of ash health indices for each tree in the stand
+ash_health_stand$ash_trees_total <- rep(0) #and this will contain total # of ash trees in the stand (as determined by the # of entries in that stand from the ash health dataset)
+#ash_health_stand$avg_ash_health <- rep(0) #annnd this will be averaged out after we have the other numbers!
+
+for(i in 1:nrow(ash_health_plus)){
+  for(j in 1:nrow(ash_health_stand)){
+    if(ash_health_plus$Stand_name[i]==ash_health_stand$Stand_name[j]){
+      ash_health_stand$health_index_total[j] %+=% ash_health_plus$tree_health_total[i] #adding that individ tree's ash health index
+      ash_health_stand$ash_trees_total[j] %+=% 1 #adding 1 for each ash tree is iterated thru in the stand!
+    }
+  }
+}
+
+ash_health_stand$avg_ash_health <- ash_health_stand$health_index_total/ash_health_stand$ash_trees_total #annnd this will be averaged out after we have the other numbers!
+View(ash_health_stand)
+
+#OK, now let's do some analysis...
+#and remember, as of now, HIGHER NUMBER ASH HEALTH = WORSE!!!!
+
+ashhealthmod1 <- glm(data=ash_health_stand, 
+                         formula = avg_ash_health ~ Treatment*forest_type)
+summary(ashhealthmod1) #AIC: 138.63
+
+#let's try with JUST looking @ treatment:
+ashhealthmod2 <- glm(data=ash_health_stand, 
+                     formula = avg_ash_health ~ Treatment)
+summary(ashhealthmod2) #AIC: 136.91
+
+#need to relevel to better compare this.
+ash_health_stand$Treatment <- factor(ash_health_stand$Treatment)
+ash_health_stand$Treatment <- relevel(ash_health_stand$Treatment, ref="unharvested")
+#and then try again: 
+ashhealthmod3 <- glm(data=ash_health_stand, 
+                     formula = avg_ash_health ~ Treatment)
+summary(ashhealthmod3) #AIC: 136.91
+#still nothing is significant; OK!
+
+#let's look at EAB presence as a factor:
+ashhealthmod4 <- glm(data=ash_health_stand,
+                     formula=avg_ash_health ~ as.factor(EAB_present))
+summary(ashhealthmod4) #not signif! #AIC: 133.25
+
+ashhealthmod5 <- glm(data=ash_health_stand,
+                     formula=avg_ash_health ~ Treatment*as.factor(EAB_present))
+summary(ashhealthmod5) #nothing is signif (main factors or interactions)! #AIC: 138.23
+
+#ok so that answers that question...
+
+#and as for comparing with DIAMETER, I did end up addressing that pretty thoroughly 
+#in the past script 06-08-21_univariate_analysis_master! 
+#section was called: "looking @ ash health parameters as Tony recommended re: Robinett & McCullough..."
+#METHODS FROM THAT PAPER: 
+#"We conducted model selection to evaluate several stand-level variables 
+#as predictors of the percentage of white ash stems and white ash basal area 
+#alive in 2015.
+#Potential predictor variables considered were basal area and
+#stem density (stems per hectare) of white ash, green ash, and all 
+#overstory species combined (live and dead), and the distance from each site to 
+#the EAB origin near Westland, Michigan."
+#SO, for me, I guess I should look at TPH (of all species & of just ash), 
+#plus BA of all (live) species & of just ash...I should have those all in a table 
+#somewhere, yes??
+#HOWEVER, THEIR predictor variable of 'percentage of white ash stems and white ash
+#basal area alive in 2015' does NOT line up w/ what I did, which was an 'ash health index'
+#although I guess I could also do that comparison...but maybe I'll just wait 
+#and see if Tony wants me to do that before I go into it...
+#but EITHER WAY, if I do, DRAW FROM WHAT I ALREADY DID IN PREVIOUS SCRIP FOR REF!!!

@@ -1105,10 +1105,10 @@ summary(snag_biomass_anova2) #again... forest type is still only signif var!
 #OK, I think I'm done with this, but regardless data tables are saved
 #in case I need to revisit & tinker with my ANOVAs!
 
-##############################################
+####
 
-#what's next: returning to sapling/understory analysis?
-#or calculating other stand-level attributes?
+# TPH and QMD calculations -------------------------------
+
 
 #back at it on Monday, Feb. 7th: going to start with other (easy) stand-level
 #attributes!
@@ -1308,7 +1308,10 @@ TukeyHSD(anova_liveBAstand) #removal vs regen not dif, but both dif from unharv.
 #these values (total BA mean / SE) for the table, I think:
 #OR, maybe read in the table & just append a few rows to it??
 
-stand_att_table <- read.csv("stand_attributes_7Feb2022.csv")
+#stand_att_table <- read.csv("stand_attributes_7Feb2022.csv")
+
+#4/18/22 MODIFICATION FOR RE-RUNNING CODE W/ CORRECTED DATASET:
+stand_att_table <- read.csv("stand_attributes_UPDATED_18Apr2022.csv")
 
 #GOING TO THE BATHROOM, BUT WHEN I GET BACK, RENAME X COLUMN
 #AND THEN USE RBIND TO ADD TO THIS!
@@ -1543,7 +1546,9 @@ stand_att_table <- rbind(stand_att_table, BA_attributes)
 #wheee it's all there!!
 #now to re-save this table:
 
-write.csv(x=stand_att_table, file="stand_attributes_15Feb2022.csv", row.names=FALSE)
+#write.csv(x=stand_att_table, file="stand_attributes_15Feb2022.csv", row.names=FALSE)
+#another UPDATE on Apr. 18th: 
+write.csv(x=stand_att_table, file="stand_attributes_UPDATED2_18Apr2022.csv", row.names=FALSE)
 
 
 #OK, now MAYBE re-do those 2 t-tests as ANOVAs instead??
@@ -2835,3 +2840,33 @@ saplings_stand4 <- cbind(saplings_stand$Stand_code, saplings_stand2)
 names(saplings_stand4)[1] <- "Stand_code"
 write.csv(x=saplings_stand4, file="PCORD_inputs/PCORD_saplingsperplot_primarymatrix_14March2022.csv",
           row.names=FALSE)
+
+
+####
+
+# re-running overstory characteristics w/ CORRECTED dataset -------------------------------
+#basically, see notes from 4/6 and 4/7/22 to see WHY there were issues/what I corrected...
+#which amounts to several plots' worth of data w/ live trees & cut stumps.
+#SO, need to re-calculate means, SEs, and ANOVAs comparing them,
+#for the following stand level characteristics: 
+#TPH
+#QMD
+#Total live BA 
+#Ash live BA
+#Ash cut BA
+#Prop ash BA cut
+
+#RETURN TO line 1214
+#For TPH and QMD: just reran all code in the section "TPH and QMD calculations"
+#and re-saving tables for posterity:
+write.csv(x=stand_attributes2, file="stand_attributes_UPDATED_18Apr2022.csv",
+          row.names=TRUE)
+#alright, looks good!!
+#that's all for this bit I think!
+#just in case:
+write.csv(x=live_trees, file="live_stand_TPH_QMD_UPDATED_18Apr2022.csv",
+          row.names=FALSE)
+
+#for all the BA-related ones: rerunning all the code in the section 
+# "Basal area calculations & analysis (stand-level) (total & ash BA)"
+

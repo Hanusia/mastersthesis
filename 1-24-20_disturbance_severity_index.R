@@ -16,6 +16,10 @@ library(ggplot2)
 library(vegan)
 library(tidyverse)
 library(lme4)
+#for graphing...
+library(ggthemes)
+library(wesanderson)
+
 
 #From Peterson & Leach:
 #Severity indicators = # trees down, BA trees down, % trees down, & % BA down
@@ -784,3 +788,158 @@ r.squaredGLMM(testmod7) #for density...result is a lil wonky b/c of the neg bino
 r.squaredGLMM(testmod8)
 r.squaredGLMM(testmod9)
 #once again, all R-squared vals are quite small...
+
+
+######
+
+#updates on May 4th 2022... Tony's feedback on my thesis draft
+#comparing DSI between treatment groups (removal vs regen)
+
+# comparing DSI between treatment groups -------------------------------
+
+#first step is to add treatment variable to the table:
+View(dsi_data_cut2)
+dsi_data_cut3 <- dsi_data_cut2
+dsi_data_cut3 <- merge(x=dsi_data_cut3, 
+                       y=plot_info_plus[,c("plot_ID", "Treatment", "forest_type")],
+                       by="plot_ID", all.x=TRUE, all.y=FALSE)
+View(dsi_data_cut3)
+
+#now to graph...trying a boxplot first:
+dsi_tx_plot <- ggplot(data=dsi_data_cut3, aes(x=Treatment, y=propbiocut)) +
+                geom_boxplot()
+dsi_tx_plot
+
+#let's test a distribution/density plot instead:
+dsi_tx_plot2 <- ggplot(data=dsi_data_cut3, aes(x=propbiocut, color=Treatment)) +
+  geom_density()
+dsi_tx_plot2
+
+#OK, what about different plot types?
+#OR maybe just send these very rough ones to Tony to see what he thinks would be best?
+#(AFTER doing the analysis)
+
+dsi_tx_model <- lme4::lmer(propbiocut ~ Treatment*forest_type+(1 | Stand_name),
+                      data=dsi_data_cut3)
+plot(resid(dsi_tx_model)) #these residuals do look adequately scattered...
+plot(fitted(dsi_tx_model), resid(dsi_tx_model)) #also seems...fine??
+summary(dsi_tx_model)
+#OKay, so...what to REPORT from these results??
+#if no p-val from regular lmer function 
+
+#from this datacamp course: https://campus.datacamp.com/courses/hierarchical-and-mixed-effects-models-in-r/linear-mixed-effect-models?ex=11
+#use lmerTest package, although it is controversial to do this and there's a reason there is no p-val in lme4 in the first place!!
+
+install.packages("lmerTest")
+library(lmerTest)
+
+#and now do the same model using the lmerTest function:
+
+dsi_tx_model_test <- lmerTest::lmer(propbiocut ~ Treatment*forest_type+(1 | Stand_name),
+                                    data=dsi_data_cut3)
+summary(dsi_tx_model_test)
+#based on THIS, looks like there IS a signif dif between removal & regen groups' DSI values.
+
+#and I think that ALSO means I should re-run the models for Shannon diversity + richness w/ lmertest...
+#which include: testmod5 (seedlings-richness), testmod6 (seedlings-Shannon), testmod8(saplings-richness), and testmod9(saplings-Shannon)
+
+#and rerunning the OG models for the heck of it...
+testmod5_reg <- lme4::lmer(formula= seedling_richness ~ propbiocut + (1 | Stand_name),
+                   data= dsi_data_cut2)
+testmod5_new <- lmerTest::lmer(formula= seedling_richness ~ propbiocut + (1 | Stand_name),
+                           data= dsi_data_cut2)
+summary(testmod5)
+summary(testmod5_reg) #should be exactly the same as above...but it's not?? is this just bc of dif data source??
+summary(testmod5_new) #alright, just looking @ the last 2 models, not signif (as before)
+
+#now do this with remaining models once I come back:
+
+testmod6_reg <- lme4::lmer(formula= seedling_shannon ~ propbiocut + (1 | Stand_name),
+                           data= dsi_data_cut2)
+testmod6_new <- lmerTest::lmer(formula= seedling_shannon ~ propbiocut + (1 | Stand_name),
+                               data= dsi_data_cut2)
+summary(testmod6)
+summary(testmod6_reg)
+summary(testmod6_new) #also not signif, as before!
+
+#now onto saplings:
+testmod8_reg <- lme4::lmer(formula= saplings_richness ~ propbiocut + (1 | Stand_name),
+                           data= dsi_data_cut2)
+testmod8_new <- lmerTest::lmer(formula= saplings_richness ~ propbiocut + (1 | Stand_name),
+                               data= dsi_data_cut2)
+summary(testmod8)
+summary(testmod8_reg)
+summary(testmod8_new) #also not signif, as before!
+
+testmod9_reg <- lme4::lmer(formula= saplings_shannon ~ propbiocut + (1 | Stand_name),
+                           data= dsi_data_cut2)
+testmod9_new <- lmerTest::lmer(formula= saplings_shannon ~ propbiocut + (1 | Stand_name),
+                               data= dsi_data_cut2)
+summary(testmod9)
+summary(testmod9_reg)
+summary(testmod9_new) #also not signif, as before! so qualitatively, all our results are the same.
+
+mean(dsi_data_cut3$propbiocut[dsi_data_cut3$Treatment=="removal"])
+mean(dsi_data_cut3$propbiocut[dsi_data_cut3$Treatment=="regeneration"])
+
+
+#switching gears BACK to the graph, let's look at a few other types:
+
+#histogram?
+dsi_tx_plot3 <- ggplot(data=dsi_data_cut3, aes(propbiocut)) +
+  geom_histogram(aes(fill=Treatment))
+dsi_tx_plot3
+#actually, I really don't like this one lol
+
+#let's try box PLUS dot-plot:
+dsi_tx_plot4 <- ggplot(data=dsi_data_cut3, aes(x=Treatment, y=propbiocut)) +
+  geom_boxplot() + theme_classic() +
+  geom_dotplot(binaxis='y', stackdir='center',  dotsize = .5, fill="red")
+dsi_tx_plot4
+
+#OK, not sure which is best here, but it does feel like 
+#the density plot doesn't really show how many fewer plots there are in regen vs removal group.
+#but, the boxplots are kinda ugly......
+#maybe just send a few to Tony & see what he thinks??
+
+#one more first; density plot w/ fill:
+dsi_tx_plot5 <- ggplot(data=dsi_data_cut3, aes(x=propbiocut)) +
+  geom_density(aes(fill=Treatment), alpha=0.6) + theme_classic()
+dsi_tx_plot5
+
+#update: Tony said he prefers the boxplot! So let's go with that one.
+dsi_boxplot <- ggplot(data=dsi_data_cut3, 
+                      aes(x=Treatment, y=propbiocut)) +
+  geom_boxplot() + theme_few() +
+  #scale_fill_manual(values=wes_palette("Cavalcanti1", n=2)) + #removing colors for now.....
+  labs (x="Harvest treatment", y="Proportion of biomass harvested")
+dsi_boxplot
+
+#different methods for dots...
+dsi_boxplot + geom_dotplot(binaxis='y', stackdir='center',  dotsize = .5, color="black", fill="blue")
+#dsi_boxplot + geom_dotplot(binaxis='y', method="dotdensity", binwidth=0.01,
+#                           stackdir='center',  dotsize = .5, color="black", fill="blue")
+#?geom_dotplot()
+#LOL this second one is a MESS, so I'm just gonna go with the first one instead!!
+
+
+#also need to add labels for significance...
+letters <- rep(NA, times=nrow(dsi_data_cut3))
+for(i in 1:nrow(dsi_data_cut3)){
+  ifelse(dsi_data_cut3$Treatment[i]=="regeneration",
+         letters[i] <- "a",
+         letters[i] <- "b")
+}
+dsi_boxplot + geom_text(aes(label=letters, y=1.02))
+
+#alright, now let's put it all together!!
+dsi_boxplot2 <- ggplot(data=dsi_data_cut3, 
+                      aes(x=Treatment, y=propbiocut)) +
+  geom_boxplot() + theme_few() +
+  #scale_fill_manual(values=wes_palette("Cavalcanti1", n=2)) + #removing colors for now.....
+  labs (x="Harvest treatment", y="Disturbance severity index") +
+  #IF I WANTED TO, could split the y-axis label into two lines with the \n in the string, as below...
+  #labs (x="Harvest treatment", y="Proportion of aboveground \n live biomass harvested") +
+geom_dotplot(binaxis='y', stackdir='center',  dotsize = .5, color="black", fill="blue") + 
+  geom_text(aes(label=letters, y=1.05))
+dsi_boxplot2

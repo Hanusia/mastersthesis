@@ -1843,6 +1843,7 @@ summary(nbtest4_FAGR)
 #but result was not signif, OK good to know!
 
 
+
 #nbtest1_BEAL <- glmer.nb(formula=BEAL ~ Treatment*forest_type + 
 #                           (1 | Stand_name), data= seedlings_plus
 #)
@@ -3003,3 +3004,21 @@ summary(ashhealthmod5) #nothing is signif (main factors or interactions)! #AIC: 
 #although I guess I could also do that comparison...but maybe I'll just wait 
 #and see if Tony wants me to do that before I go into it...
 #but EITHER WAY, if I do, DRAW FROM WHAT I ALREADY DID IN PREVIOUS SCRIP FOR REF!!!
+
+
+
+#coming back on 5/4/2022 to find F value from beech seedlings model!
+
+#for reference, the OG model is (using glm.nb function from the MASS package):
+#nbtest4_FAGR <- glm.nb(FAGR ~ Treatment*forest_type, data=seedlings_plus)
+#summary(nbtest4_FAGR)
+
+#one online source says use anova.glm ?
+?anova.glm()
+anova(nbtest4_FAGR)
+anova(nbtest4_FAGR, test="F") #OK, at least this gave me an F statistic??
+#and it WAS signif by forest type!! (w/o random variable..)
+#UPDATE, not really signif by forest type, only says that when the ANOVA is applied
+
+
+TukeyHSD(anova_proportionashcut_harveststands)

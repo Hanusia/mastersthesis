@@ -3020,5 +3020,105 @@ anova(nbtest4_FAGR, test="F") #OK, at least this gave me an F statistic??
 #and it WAS signif by forest type!! (w/o random variable..)
 #UPDATE, not really signif by forest type, only says that when the ANOVA is applied
 
-
 TukeyHSD(anova_proportionashcut_harveststands)
+
+#back on 5/22/2022 to look at something......
+
+#basically trying to see if significance of MAIN effects
+#for seedling/sapling GLMMs is different than signif of individual factors pairwise comparisons?
+
+#UPDATE: never mind; I already did this (also included in model output!)
+anova(nbtest4_allspecies)
+library(lmerTest)
+
+anova(nbtest4_allspecies, test="F")
+
+seedlings_plus$Treatment <- relevel(seedlings_plus$Treatment, ref="unharvested")
+#nbtest4_FAGR <- glm.nb(FAGR ~ Treatment*forest_type, data=seedlings_plus)
+#summary(nbtest4_FAGR)
+#still no internal pairwise interactions are signif, but overall fixed effect IS (allegedly)
+
+
+### 5/23/22 quick update:
+# looking @ CWD volume by SPECIES!
+# to compare results w/ Perry et al. paper looking @ EAB mortality-induced increases in ash CWD
+
+#using the handily saved dataframe from my previous calculations called: 
+View(cwd_data_calc)
+
+#also viewing this one to compare:
+View(cwd_data_stand)
+
+#annnd using a new dataframe so as not to mess up the previous one:
+cwd_data_species <- cwd_data_calc
+#aggregating by stand PLUS species:
+cwd_data_species <- aggregate(formula=vol_m3_ha ~ Stand_name*species, FUN=sum, data=cwd_data_species)
+View(cwd_data_species)
+
+#CWD vol of just ash, per stand:
+cwd_data_ash <- cwd_data_species[cwd_data_species$species=="FRAM",]
+names(cwd_data_ash)[3] <- "ash_cwd_vol"
+
+cwd_data_comp <- merge(x=cwd_data_stand, y=cwd_data_ash[,c(1,3)], 
+                       all=TRUE, by="Stand_name")
+View(cwd_data_comp)
+
+#now to calc mean & SE of ash vs. non-ash volume...
+#and then also do an ANOVA??
+cwd_data_comp[is.na(cwd_data_comp)] <- 0
+cwd_data_comp$non_ash_vol <- cwd_data_comp$vol_m3_ha - cwd_data_comp$ash_cwd_vol
+
+mean(cwd_data_comp$ash_cwd_vol[cwd_data_comp$Treatment=="unharvested"])
+mean(cwd_data_comp$ash_cwd_vol[cwd_data_comp$Treatment=="regeneration"])
+mean(cwd_data_comp$ash_cwd_vol[cwd_data_comp$Treatment=="removal"])
+
+std.error(cwd_data_comp$ash_cwd_vol[cwd_data_comp$Treatment=="unharvested"])
+std.error(cwd_data_comp$ash_cwd_vol[cwd_data_comp$Treatment=="regeneration"])
+std.error(cwd_data_comp$ash_cwd_vol[cwd_data_comp$Treatment=="removal"])
+
+#and now for forest type:
+mean(cwd_data_comp$ash_cwd_vol[cwd_data_comp$forest_type=="NH"])
+mean(cwd_data_comp$ash_cwd_vol[cwd_data_comp$forest_type=="RNH"])
+
+std.error(cwd_data_comp$ash_cwd_vol[cwd_data_comp$forest_type=="NH"])
+std.error(cwd_data_comp$ash_cwd_vol[cwd_data_comp$forest_type=="RNH"])
+
+
+#and same deal for NON-ash volume:
+mean(cwd_data_comp$non_ash_vol[cwd_data_comp$Treatment=="unharvested"])
+mean(cwd_data_comp$non_ash_vol[cwd_data_comp$Treatment=="regeneration"])
+mean(cwd_data_comp$non_ash_vol[cwd_data_comp$Treatment=="removal"])
+
+std.error(cwd_data_comp$non_ash_vol[cwd_data_comp$Treatment=="unharvested"])
+std.error(cwd_data_comp$non_ash_vol[cwd_data_comp$Treatment=="regeneration"])
+std.error(cwd_data_comp$non_ash_vol[cwd_data_comp$Treatment=="removal"])
+
+#and now for forest type:
+mean(cwd_data_comp$non_ash_vol[cwd_data_comp$forest_type=="NH"])
+mean(cwd_data_comp$non_ash_vol[cwd_data_comp$forest_type=="RNH"])
+
+std.error(cwd_data_comp$non_ash_vol[cwd_data_comp$forest_type=="NH"])
+std.error(cwd_data_comp$non_ash_vol[cwd_data_comp$forest_type=="RNH"])
+
+#now for ANOVAs:
+cwd_vol_anova2 <- aov(ash_cwd_vol ~ Treatment*forest_type, data=cwd_data_comp)
+#remember, this is testing normality of the RESIDUALS:
+shapiro.test(cwd_vol_anova2$residuals) #hmmm looks non-normal...
+summary(cwd_vol_anova2) #same story- just treatment is signif!
+TukeyHSD(cwd_vol_anova2)
+
+#let's try again w/ a log transformation:
+cwd_vol_anova3 <- aov(log(ash_cwd_vol+1) ~ Treatment*forest_type, data=cwd_data_comp)
+#adding one bc we can't log zero values...
+#remember, this is testing normality of the RESIDUALS:
+shapiro.test(cwd_vol_anova3$residuals) #alright now this looks okay!
+summary(cwd_vol_anova3) #same as before, main treatment effect is the only one that's signif
+TukeyHSD(cwd_vol_anova3) #as before, only pairwise unharv v. removal is signif
+
+#now let's try with non-ash species:
+cwd_vol_anova4 <- aov(non_ash_vol ~ Treatment*forest_type, data=cwd_data_comp)
+#remember, this is testing normality of the RESIDUALS:
+shapiro.test(cwd_vol_anova4$residuals) #looks totes fine!
+summary(cwd_vol_anova4) #same story- just treatment is signif!
+TukeyHSD(cwd_vol_anova4) #annnd again it's just unharv vs removal!
+

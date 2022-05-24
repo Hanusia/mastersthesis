@@ -19,6 +19,7 @@ library(lme4)
 #for graphing...
 library(ggthemes)
 library(wesanderson)
+library(lmerTest)
 
 
 #From Peterson & Leach:
@@ -943,3 +944,170 @@ dsi_boxplot2 <- ggplot(data=dsi_data_cut3,
 geom_dotplot(binaxis='y', stackdir='center',  dotsize = .5, color="black", fill="blue") + 
   geom_text(aes(label=letters, y=1.05))
 dsi_boxplot2
+
+
+#more updates on 5/5/2022:
+# LOOKING INTO % BA REMOVED TO COMPARE W/ CANHAM ET AL. PAPER / FIGS IN APPENDIX A:
+treedata$ba_sqm_ha <- (pi*(treedata$functionaldbh/200)^2)/0.04 
+
+treedata_BAtest <- aggregate(ba_sqm_ha ~ plot_ID + status, data=treedata, FUN=sum)
+View(treedata_BAtest)
+treedata_BAtest <- pivot_wider(treedata_BAtest, 
+                               id_cols="plot_ID",
+                               names_from="status",
+                               values_from="ba_sqm_ha")
+
+treedata_BAtest <- merge(treedata_BAtest, plot_info_plus[,c("plot_ID", "Treatment")])
+#let's look ONLY at HARVESTED plots:
+treedata_BAtest <- treedata_BAtest[treedata_BAtest$Treatment!="unharvested",]
+#replace 0s with NAs:
+treedata_BAtest[is.na(treedata_BAtest)] <- 0
+treedata_BAtest$prop_BA_cut <- treedata_BAtest$stump/(treedata_BAtest$live + treedata_BAtest$stump)
+mean(treedata_BAtest$prop_BA_cut)
+sd(treedata_BAtest$prop_BA_cut)
+#also look @ the avg LIVE (aboveground) biomass in Mt/ha:
+mean(dsi_data_cut3$live_biomass)*0.001 #first multiplying to convert to Mt/Mg (from kg)
+mean(dsi_data_cut3$live_biomass)*0.001/0.04 #now mean is 128
+#THEN dividing by plot area to get 'in ha' val
+sd(dsi_data_cut3$live_biomass)*0.001/0.04
+
+mean(dsi_data_cut3$propbiocut)
+mean(dsi_data_cut3$propbiocut[dsi_data_cut3$Treatment=="removal"])
+mean(dsi_data_cut3$propbiocut[dsi_data_cut3$Treatment=="regeneration"])
+
+
+#STILL 5/5/22
+#QUICK AND DIRTY ANALYSIS based on a thought I just had: looking JUST at the "to be cut" stands!
+#just basal area for now; might conver to biomass later on if I continue this...
+
+precutstands <- unique(stand_info$Stand_name[stand_info$Harvest_status=="to be cut"])
+precutstands <- precutstands[precutstands!="Hill Roberts property"] 
+#REMOVING Hill Roberts property since we didn't record individual trees y/n "to be harvested"!
+precutplots <- unique(plot_info_plus$plot_ID[plot_info_plus$Stand_name %in% precutstands])
+#now to look at ALL the trees in those plots/stands:
+guineapigs <- overstory_data[overstory_data$plot_ID %in% precutplots,]
+View(guineapigs)
+#filter to live trees ONLY:
+guineapigs <- guineapigs[guineapigs$status=="live",] #now down to 420 indiv. trees.
+guineapigs$BA_sqm_ha <- (pi*(guineapigs$DBH_cm/200)^2)/0.04 
+
+#now to aggregate per plot, per harvest status:
+guineapigs_plot <- aggregate (BA_sqm_ha ~ plot_ID + to.be.cut, data=guineapigs, FUN=sum)
+View(guineapigs_plot)
+guineapigs_plot$cutstatus[guineapigs_plot$to.be.cut=="YES"] <- "to_cut_BAha"
+guineapigs_plot$cutstatus[guineapigs_plot$to.be.cut=="NO"] <- "to_keep_BAha"
+#above lines just making naming of columns in THIS dataframe more clear;
+#below is separating into dif columns for live and cut BA
+guineapigs_plot <- pivot_wider(guineapigs_plot,
+                               id_cols="plot_ID",
+                               names_from="cutstatus",
+                               values_from="BA_sqm_ha"
+                               )
+guineapigs_plot$propcutBA <- guineapigs_plot$to_cut_BAha/(guineapigs_plot$to_cut_BAha + guineapigs_plot$to_keep_BAha)
+guineapigs_plot$totalBA <- guineapigs_plot$to_cut_BAha + guineapigs_plot$to_keep_BAha
+summary(guineapigs_plot$propcutBA)
+hist(guineapigs_plot$propcutBA)
+
+ggplot(data=guineapigs, aes(x=to.be.cut, y=BA_sqm_ha, fill=species)) +
+  geom_bar(stat="identity")
+#ooh interesting...so basically, the VAST majority of cut BA will be ash!
+
+#HOWEVER, is this also true for the actually harvested plots???
+View(treedata3)
+ggplot(data=treedata3, aes(x=status, y=biomass, fill=species)) +
+  geom_bar(stat="identity")
+#let's just look at some species percentages...
+
+cut_ash_biomass <- sum(treedata3$biomass[treedata3$species=="FRAM" & treedata3$status=="stump"])
+live_ash_biomass <- sum(treedata3$biomass[treedata3$species=="FRAM" & treedata3$status=="live"])
+cut_acsa_biomass <- sum(treedata3$biomass[treedata3$species=="ACSA" & treedata3$status=="stump"])
+live_acsa_biomass <- sum(treedata3$biomass[treedata3$species=="ACSA" & treedata3$status=="live"])
+total_live_biomass <- sum(treedata3$biomass[treedata3$status=="live"])
+total_cut_biomass <- sum(treedata3$biomass[treedata3$status=="stump"])
+total_ash_biomass <- sum(treedata3$biomass[treedata3$species=="FRAM"])
+total_acsa_biomass <- sum(treedata3$biomass[treedata3$species=="ACSA"])
+total_biomass <- sum(treedata3$biomass)
+
+total_ash_biomass/total_biomass
+live_ash_biomass/total_live_biomass
+cut_ash_biomass/total_cut_biomass
+cut_ash_biomass/total_ash_biomass
+
+total_acsa_biomass/total_biomass
+live_acsa_biomass/total_live_biomass
+cut_acsa_biomass/total_acsa_biomass
+cut_acsa_biomass/total_cut_biomass
+
+
+## BACK ON 5/23/22 TO FINISH THIS ANALYSIS & COMPARE TO "HARVEST BYCATCH" ASSUMPTIONS 
+# of non-ash species that will be harvested
+
+#basically, I think, we want to look at DSI specifically within ash and non-ash species??
+
+live_biomass_ash <- aggregate(formula=biomass~plot_ID, FUN=sum, data=treedata3[treedata3$species=="FRAM" & treedata3$status=="live",])
+cut_biomass_ash <- aggregate(formula=biomass~plot_ID, FUN=sum, data=treedata3[treedata3$species=="FRAM" & treedata3$status=="stump",])
+names(live_biomass_ash)[2] <- "live_ash_biomass"
+names(cut_biomass_ash)[2] <- "cut_ash_biomass"
+
+#adding these vars to the master dataframe...
+dsi_data_cut4 <- merge(x=dsi_data_cut3, y=live_biomass_ash, all.x=TRUE, all.y=FALSE) 
+dsi_data_cut4 <- merge(x=dsi_data_cut4, y=cut_biomass_ash, all.x=TRUE, all.y=FALSE) 
+View(dsi_data_cut4)
+dsi_data_cut4[is.na(dsi_data_cut4)] <- 0
+
+#now to calculate some more columns for calculation needs:
+
+#first = proportion of *ash* biomass cut (out of all ash biomass)
+dsi_data_cut4$prop_ash_biocut <- dsi_data_cut4$cut_ash_biomass/(dsi_data_cut4$cut_ash_biomass + dsi_data_cut4$live_ash_biomass)
+
+#next = sums of *non-ash* species biomass live & cut
+dsi_data_cut4$nonash_live_biomass <- dsi_data_cut4$live_biomass - dsi_data_cut4$live_ash_biomass
+dsi_data_cut4$nonash_cut_biomass <- dsi_data_cut4$cut_biomass - dsi_data_cut4$cut_ash_biomass
+
+#and then, proportions of *non-ash* biomass cut
+dsi_data_cut4$prop_nonash_biocut <- dsi_data_cut4$nonash_cut_biomass/(dsi_data_cut4$nonash_cut_biomass + dsi_data_cut4$nonash_live_biomass)
+
+
+## NOW TO RUN SOME MODELS !!!! : ##
+
+#first up = prop ash biomass cut...
+dsi_tx_model_ash <- lme4::lmer(prop_ash_biocut ~ Treatment*forest_type+(1 | Stand_name),
+                           data=dsi_data_cut4)
+plot(resid(dsi_tx_model_ash)) #these residuals do look adequately scattered...
+plot(fitted(dsi_tx_model_ash), resid(dsi_tx_model_ash)) #also seems...fine??
+summary(dsi_tx_model_ash)
+#OKay, so...what to REPORT from these results??
+#if no p-val from regular lmer function 
+
+#from this datacamp course: https://campus.datacamp.com/courses/hierarchical-and-mixed-effects-models-in-r/linear-mixed-effect-models?ex=11
+#use lmerTest package, although it is controversial to do this and there's a reason there is no p-val in lme4 in the first place!!
+
+#and now do the same model using the lmerTest function:
+
+dsi_tx_model_ash_test <- lmerTest::lmer(prop_ash_biocut ~ Treatment*forest_type+(1 | Stand_name),
+                                    data=dsi_data_cut4)
+summary(dsi_tx_model_ash_test)
+#this says treatment group IS signif.
+
+#how about non-ash biomass cut???
+dsi_tx_model_nonash <- lme4::lmer(prop_nonash_biocut ~ Treatment*forest_type+(1 | Stand_name),
+                               data=dsi_data_cut4)
+plot(resid(dsi_tx_model_nonash)) #these residuals do look adequately scattered...
+plot(fitted(dsi_tx_model_nonash), resid(dsi_tx_model_nonash)) #ok these residuals look a lil weird...
+summary(dsi_tx_model_nonash)
+#and now do the same model using the lmerTest function:
+dsi_tx_model_nonash_test <- lmerTest::lmer(prop_nonash_biocut ~ Treatment*forest_type+(1 | Stand_name),
+                                        data=dsi_data_cut4)
+summary(dsi_tx_model_nonash_test)
+#annnnd no signif dif here. makes sense!!
+
+#let's look at "proportion of biomass removed that is ash vs. non-ash" (to compare w/ MacLean's 81% of biomass removed will be non-ash)
+#from quick and dirty values calculated above: 
+cut_ash_biomass/total_cut_biomass
+(total_cut_biomass-cut_ash_biomass)/total_cut_biomass
+
+#also wanna look a little at actual mean values:
+mean(dsi_data_cut4$prop_nonash_biocut[dsi_data_cut4$Treatment=="removal"])
+mean(dsi_data_cut4$prop_nonash_biocut[dsi_data_cut4$Treatment=="regeneration"])
+#around 30% 
+mean(dsi_data_cut4$prop_nonash_biocut)

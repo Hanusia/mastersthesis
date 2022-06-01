@@ -1,0 +1,24 @@
+LandisData  Species
+
+>>                      Sexual    Shade  Fire  Seed Disperal Dist  Vegetative   Sprout Age  Post-Fire
+>> Name      Longevity  Maturity  Tol.   Tol.  Effective  Maximum  Reprod Prob  Min   Max   Regen
+>> ----      ---------  --------  -----  ----  ---------  -------  -----------  ----------  --------
+   abiebals     200       25        5      1        30       160       0          0     0   none
+   acerpens	100	  15	    5	   1	    30	     100       0.1	  0    60   resprout
+   acerrubr     150       10        4      1       100       200       0.5        0   100   resprout
+   acersacc     300       40        5      1       100       200       0.1        0    60   none
+   betualle     300       40        4      2       100       400       0.1        0   180   none
+   betulent	250	  40	    4	   2	   100	     400       0.1	  0   200   resprout
+   betupapy     100       30        2      2       200     5,000       0.5        0    70   resprout
+   fagugran	300	  10	    5	   1	    30	     300       0.7	 10   200   resprout
+   fraxamer     300       30        4      1        70       140       0.1        0    70   none
+   fraxnigr	150	  30	    4	   2	   200	    2000       0.8	 10   140   resprout
+   picerube     350	  15	    5	   2	    80	     125       0	  0	0   none	
+   pinustro     400       40        3      3        60       210       0          0     0   none
+   poputrem     100       20        1      1     1,000     5,000       0.9        0   100   resprout
+   prunpens     35	  10	    1	   1	 1,000	   5,000       0.5	  0    35   resprout
+   prunsero	200	  10	    2	   3	   100	     200       0.5	 20    90   resprout
+   querrubr     250       25        3      2        30     3,000       0.5       20   200   resprout
+   thujocci     400       30        2      1        45        60       0.5       50   400   none
+   tiliamer     250       30        4      2        30       120       0.1        0   200   none
+   tsugcana     500       30        5      2        30       100       0          0     0   none

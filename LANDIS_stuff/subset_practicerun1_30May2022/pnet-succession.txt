@@ -1,0 +1,15 @@
+LandisData			"PnET-Succession"
+
+PnET-Succession		Value
+>> ------------------------------
+Timestep			10
+StartYear			2010
+SeedingAlgorithm		WardSeedDispersal
+
+InitialCommunities	./Initial_communities_VT-NH-MA_2022-05-27.txt
+InitialCommunitiesMap	./S4subset_initcomm.tif
+
+PnETGenericParameters	GenericPnETSpeciesParameters.txt
+PnETSpeciesParameters	PnETSpeciesParameters.txt
+
+EcoregionParameters 	EcoregionParameters_subsetS4.txt

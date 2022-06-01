@@ -1,0 +1,9 @@
+LandisData  "Output-PnET"
+
+Timestep  10
+
+Species fraxamer
+
+Biomass			output/{species}/biomass-{timestep}.img
+AbovegroundBiomass 	output/AGbiomass/{species}AG/biomass-{timestep}.img
+BelowgroundBiomass 	output/BelowGroundBiom/BGB-{timestep}.img

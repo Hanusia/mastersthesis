@@ -1,0 +1,43 @@
+LandisData PnETGenericParameters
+PnETGenericParameters Value
+>>DVPD1				0.02
+>>DVPD2				1
+BFolResp			0.1 << 0.1 prior to 4/14/2015 (lower values=higher biomass, hi values=lower biomass).  Aber et al. 1996 says 0.1
+TOroot				0.016  << GUSTAFSTON uses .02 ? (0.008  my value pre 7/30/2015) (0.008,  my value pre 11/4/2015) 
+TOwood				0.008 <<GUSTAFSTON uses .01 ?  (0.016 my value pre 7/30/2015) (0.008,  my value pre 11/4/2015) 
+>>Q10					2
+>>FolLignin			0.2
+>>KWdLit				0.01
+>>InitialNSC 			7
+>>DNSC				0.15 <<target NSCfraction (0.18 seemed to work good for New England sites). (0.1, my value pre 11/4/2015)
+DNSC				0.09  <<target NSCfraction (GUSTAFSTON=0.05) has little effect on cohort competition unless so low that cohort has minimal reserves to survive stress, or so high that species can rarely be stressed enough to die.
+MaintResp			0.001 <<(GUSTAFSTON=0.002)value for 10/14 installer= 0.0001  <<effects total biomass in single cell.  lower values increase biomass. 0.0025=gustafson value at one point. (0.000001, my value pre 11/4/2015)
+PsnAgeRed			5
+>>EstMoist			2.6
+>>EstRad				2.6
+>>WUEcnst				10.9
+>>CFracBiomass			0.5 << C content of biomass
+PreventEstablishment	false
+>>FrActWd				0.00008 << lower value results in a higher fraction of active wood
+>>FracFol				0.05 <<fraction of wood biomass representing max foliage that can be allocated
+>>FolAddResp			1
+>>H1				0	>> generic: waterlogging threshold. pressure head below which Psn stops because of waterlogging.  Ommitted from model now
+>>H2				0 >> generic: waterlogging stress threshold. pressure head below which Psn begins to slow because of waterlogging
+>>H3				100 >> species specific water stress threshold (m of pressure head); pressure head above which Psn begins to slow because of water stress. 0.0- < Wiltg point (higher values=more drought tolerant)
+>>H4				150  >> species specific wilting point (m of pressure head); pressure head above which Psn stops because of water stress. (higher values=more drought tolerant)
+>>PressureHeadCalculationMethod	SaxtonAndRawls
+MaxCanopyLayers			2
+IMAX 5
+MaxDevLyrAv  6000
+wythers true
+PrecipEvents	11
+>>maxfolo3red 0
+>>o3_halfsat 1
+>>PrecIntConst 0.1 >> defines how much precipitation is intercepted with each increment of LAI.  Default value=0.1 according to B. Miranda.  
+Dtemp true  >> True=eric's "new" way of doing it like pnet-II.  False="Arjan's" old way of doing it using ftemp. 
+
+>> Updates 5/29/2022
+EstMoist	1.0
+EstRad	0.8	<< based on initial calibration tips from PnET-Succession v4.0 user guide
+>> however, EstRad and EstMoist may need to be tuned for each species individually...
+MaxPest	0.4	<< based on initial calibration tips from PnET-Succession v4.0 user guide

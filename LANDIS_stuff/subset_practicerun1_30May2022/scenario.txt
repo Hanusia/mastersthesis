@@ -1,0 +1,18 @@
+LandisData		Scenario
+
+Duration		50
+
+Species		./species.txt
+
+Ecoregions		./Ecoregions_subsetS4.txt
+EcoregionsMap	./S4subset_ecoregions.tif
+
+CellLength	30	<< meters
+
+>> Succession Extension		Initialization File
+"PnET-Succession"			pnet-succession.txt
+
+>> Output Extension
+"Output-PnET"			outputPnET.txt
+
+RandomNumberSeed	514

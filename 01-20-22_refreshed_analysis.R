@@ -3122,3 +3122,44 @@ shapiro.test(cwd_vol_anova4$residuals) #looks totes fine!
 summary(cwd_vol_anova4) #same story- just treatment is signif!
 TukeyHSD(cwd_vol_anova4) #annnd again it's just unharv vs removal!
 
+
+### returning on June 2nd, 2022... ###
+# need to test some of these understory models for significance?!
+#applying TukeyHSD function which SHOULD use the Tukey-Kramer method w/ unequal sample sizes/groups, like I have.
+
+#starting w/ sugar maple saplings since it SHOULD be straightforward:
+View(all_saplings_plot)
+nbmod_ACSAsaplings1 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[all_saplings_plot$species=="ACSA",])
+summary(nbmod_ACSAsaplings1)
+TukeyHSD(nbmod_ACSAsaplings1)
+?glmer.nb
+nbmod_ACSAsaplings1
+?lsmeans
+lsmeans(nbmod_ACSAsaplings1, pairwise~Treatment*forest_type, adjust="tukey")
+#this is still just going pairwise so not sure how helpful it is??
+lsmeans(nbmod_ACSAsaplings1, ~ Treatment | forest_type, adjust="tukey")
+#IDk if this did anything useful....let's try it another way
+lsmeans(nbmod_ACSAsaplings1, specs=~Treatment, by="forest_type", adjust="tukey")
+lsmeans(nbmod_ACSAsaplings1, specs=~Treatment, contr="forest_type", adjust="tukey")
+
+
+#looking @ another aspect of this, which is "slicing" the interaction factor (e.g. for all species/total saplings)
+#COPIED FROM ABOVE: 
+nbmod_allsaplings_2 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[all_saplings_plot$species=="all",])
+summary(nbmod_allsaplings_2)
+
+#let's try to "slice" the interaction by looking firs @ treatment main effect w/in NH forest type:
+nbmod_allsaplings_3 <- glmer.nb(formula=all_saplings_tally ~ Treatment + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[(all_saplings_plot$species=="all" & all_saplings_plot$forest_type=="NH"),])
+summary(nbmod_allsaplings_3)
+
+nbmod_allsaplings_4 <- glmer.nb(formula=all_saplings_tally ~ Treatment + 
+                                  (1 | Stand_name), 
+                                data = all_saplings_plot[(all_saplings_plot$species=="all" & all_saplings_plot$forest_type=="RNH"),])
+summary(nbmod_allsaplings_4)
+

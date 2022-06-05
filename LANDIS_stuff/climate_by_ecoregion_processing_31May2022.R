@@ -239,7 +239,7 @@ for(y in ecoregion){ #in this case, y is the ACTUAL ECOREGION CODE/NUMBER ITSELF
 
 #NEXT TASK = update the EcoregionParameters file!
 
- #PREVIOUS CODE FROM YESTERDAY BELOW:
+ #PREVIOUS CODE COPIED FROM YESTERDAY BELOW:
  # JUST NEED TO ADD ADDITIONAL HEADER ABOVE THE COL NAMES
 
 ecoregion_params <- read.csv("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/EcoregionParameters_withroadside_17March2022.csv")
@@ -264,5 +264,116 @@ write.table(x=ecoregion_params,
             sep="   ", quote=FALSE, append=TRUE, row.names=FALSE)
 #LOOKS GOOD!! and reminder that this was a 2-step process to generate the first header, and then append the bulk of the EcoregionParameters file onto it!!!         
 
+#I think I need a quick walking-around break, then will prep to do another practice run!!
+#maybe even on Bertha?!
+ #but first just gonna back up to Github.
 
- 
+#OK, also gonna look @ historical par values again to answer Jane's question about what to use for the future ones...
+
+#plot(output$Year[output$Month==1], output$PAR[output$Month==1]) #looking @ Jan par values over time for this ecoregion
+#View(input)
+y #alright so this is currently for ecoregion 123. Just wanna use input instead to discount future vals.
+plot(input$Year[input$Month==1], input$PAR[input$Month==1]) #yeah again, no clear patterns here
+plot(input$Year[input$Month==7], input$PAR[input$Month==7])
+
+# Saturday, June 4th -------------------------------
+## back on 6/4/2022 to redo the ecoregion parameters file! ##
+
+#basically gonna do the same thing, but need to change the file path name.
+ecoregion_params2 <- ecoregion_params
+View(ecoregion_params2)
+#appending a different path name:
+ecoregion_params2$ClimateFileName <- 
+  paste0("../../", ecoregion_params2$ClimateFileName)
+
+write.table(x="LandisData     EcoregionParameters", file="LANDIS_stuff/histclim_eco/EcoregionParameters2.txt",
+            quote=FALSE, append=FALSE, row.names=FALSE, col.names = FALSE)
+write.table(x=ecoregion_params2, 
+            file="LANDIS_stuff/histclim_eco/EcoregionParameters2.txt", 
+            sep="   ", quote=FALSE, append=TRUE, row.names=FALSE)
+#LOOKS GOOD!! and reminder that this was a 2-step process to generate the first header, and then append the bulk of the EcoregionParameters file onto it!!!         
+
+
+#also gonna produce new (historic pathway) climate files w/ PAR values from Hubbard Brook!!
+#will first read in the tables I already collated from Jane
+#then will replace their PAR with the Hubbard Brook one
+#and re-save them to a new folder!
+
+HBclim <- read.table("C:/Users/theha/Documents/layers_for_LANDIS/HB_Climate_1794.txt",
+                     header=TRUE)
+View(HBclim)
+#adding month val...
+HBclim$Month <- rep(1:12)
+
+#now THIS is the df I will be altering for my own purposes...
+HBclimmod <- HBclim[,c("Year", "Month", "PAR")]
+View(HBclimmod)
+#adding aggregate of the yrs 1800-1958:
+pastparavg <- data.frame("Year"=rep("1800-1958"), 
+                         "Month"=1:12,
+                         "PAR"=rep(0))
+for(i in 1:12){
+  pastparavg$PAR[i] <- mean(HBclimmod$PAR[(HBclimmod$Year>=1800 & HBclimmod$Year<=1958
+                                           & HBclimmod$Month==i)])
+}
+futureparavg <- data.frame("Year"=rep(2101:2120, each=12),
+                           "Month"=1:12,
+                           "PAR"=rep(0))
+#averaging the "last" 30 years of the century projected PAR to extrapolate to 2200...
+for(i in 1:12){
+  futureparavg$PAR[futureparavg$Month==i] <- mean(HBclimmod$PAR[(HBclimmod$Year>=2071 & HBclimmod$Year<=2100
+                                           & HBclimmod$Month==i)])
+}
+View(futureparavg)
+
+#and finally, link them all together...
+HBclimmod <- rbind(pastparavg, 
+                   HBclimmod[(HBclimmod$Year>=1959 & HBclimmod$Year<=2100),],
+                   futureparavg)
+HBclimmod$PAR <- round(HBclimmod$PAR, digits=4)
+
+### NOTE: one weird thing to flag for Jane = the year 2100 PAR values are dramatically reduced
+#from 2099, etc....so maybe just make that one part of the average/aggregate, too???
+
+#now to read in & replace existing clim files...draw from/modify what I did above:
+#also, confirm we still have ecoregion vector var:
+ecoregion
+
+#let's just test this again first / confirm same # rows:
+input <- read.table(paste0("LANDIS_stuff/histclim_eco/TerraClimate_historical_eco_", 1, ".txt"),
+                    header=TRUE)
+nrow(input)
+nrow(HBclimmod)
+#nice!
+
+for(y in ecoregion){ #in this case, y is the ACTUAL ECOREGION CODE/NUMBER ITSELF!!
+  input <- read.table(paste0("LANDIS_stuff/histclim_eco/TerraClimate_historical_eco_", y, ".txt"),
+                      header=TRUE)
+  input$PAR <- HBclimmod$PAR
+  #and then last step = write the 'output' table to file:
+  write.table(x=input, file=paste("LANDIS_stuff/histclim_eco/HubbardBrook_PAR/TerraClimate_historical_eco_", y, "_HBPAR.txt", sep=""),
+              sep="   ", quote=FALSE, append=FALSE, row.names=FALSE)
+}
+#looks good, EXCEPT I need to truncate all the averaged PAR vals to 4 decimal places...
+#gonna just add that in above
+#update: rounded to 4 decimal places; looks good!
+
+#NOW, just need to make the EcoregionParams file that corresponds w/ these.....
+ecoregion_params3 <- ecoregion_params
+View(ecoregion_params3)
+#appending a different path name:
+#except I alsoooo need to change the end of the names w/ the HB appendage on them.
+#so gonna do a loop, as done above.
+for(i in ecoregion_params3$EcoregionParameters){
+  j <- ifelse(i<200, i, i-200) #modifying 'j' for the roadside ecoregions
+  #then using j to plug into the correct file name for each ecoregion
+  ecoregion_params3$ClimateFileName[ecoregion_params3$EcoregionParameters==i] <- 
+    paste0("../../histclim_eco/HubbardBrook_PAR/TerraClimate_historical_eco_", j, "_HBPAR.txt")
+}
+
+write.table(x="LandisData     EcoregionParameters", file="LANDIS_stuff/histclim_eco/EcoregionParameters3_HBPAR.txt",
+            quote=FALSE, append=FALSE, row.names=FALSE, col.names = FALSE)
+write.table(x=ecoregion_params3, 
+            file="LANDIS_stuff/histclim_eco/EcoregionParameters3_HBPAR.txt", 
+            sep="   ", quote=FALSE, append=TRUE, row.names=FALSE)
+#looks good; now to move these to where they belong in OneDrive & try another run!

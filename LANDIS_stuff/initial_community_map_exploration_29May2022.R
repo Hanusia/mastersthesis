@@ -1679,7 +1679,7 @@ standsperma_crop8S
 
 #next, let's look at the size (area in ha) of those stands, per ma.
 framstands2_crop8S$area_ha <- framstands2_crop8S$num_plots*0.09 #each cell=0.09 ha
-aggregate()
+#?aggregate()
 
 #using this handy tidyverse function to summarize what I want for each MA:
 #number of ash stands, total size of those stands (in ha), 
@@ -1812,3 +1812,191 @@ mean(values(crop8S_run6_spagb[[4]]))/0.791
 #in the meantime: work more on the actual HARVEST PRESCRIPTIONS (priority!!!),
 #and revise ch. 1 writing,
 #and also work on SWAPS PROJECT STUFF
+
+#JK, before bed, doing ONE MORE RUN w/ adjusting some FolN values :) 
+#basing them more on older MD vals that are tuned for NE, but an older version 
+#of LANDIS
+#ended up tuning them myself! using existing vals as a guideline
+
+# Sunday, June 5th -------------------------------
+
+#looking @ new output w/ tuned FolN values:
+bioS_run3_spagb <- readinspagb(splist, "C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/biomass_S/run3/output/AGbiomass", year=0)
+#bioS_run3_spagb
+#plot(bioS_run3_spagb[[1]])
+#next extracting cell VALUES for the selected plots/active cells corresponding w/ FIA plots
+bioS_LANDIS_run3 <- extractspagb(specieslist=splist,
+                                 sprasters=bioS_run3_spagb,
+                                 cellsin=fiaplots_sf_S$cells)
+View(bioS_LANDIS_run3)
+#next copying the parts of this that I haven't yet made into functions:
+bioS_LANDIS_run3 <- merge(bioS_LANDIS_run3, fiaplots_sf_S[,c("cells", "ID")],
+                          by.x="cell", by.y="cells")
+#gonna do this next part in a loop...
+for (i in bioS_LANDIS_run3$ID){
+  bioS_LANDIS_run3$pltID[bioS_LANDIS_run3$ID==i] <- 
+    fiaplots_sf$pltID[i]
+}
+#and then the last function to ADD a col to the mean dataframe:
+meanbio_sp_S$landis_agb_run3 <- bindmeanagb(specieslist=splist, input_agb=bioS_LANDIS_run3)
+#cool, plenty are closer, still  need at least one more round of tuning though
+
+
+
+# Monday, June 6th -------------------------------
+
+#soooo it looks like when my computer shut down yesterday it did NOT save any of the 
+#files etc. I had made!
+
+#LOL why do I have absolutely NOTHING from this day...I guess that's just what I did
+
+#now let's just look at some of the EAB inputs
+#from the run w/ a 1-year timestep.
+
+#creating a function to do this:
+readinBDAmaps <- function(years, parent, maptype=c("severity", "SRD", "NRD", "BPD")){
+  #reading in various parts of the BDA output.
+  #years = vector of timesteps/years to read in. (e.g. 1:50, or c(5, 10, 15, 20))
+  #parent = parent filepath name.
+  #maptype = either 'severity', 'SRD', 'NRD', or 'BDP' to define map type
+  #how does maptype go into the filename...
+  ifelse(maptype=="severity", filemap<-"", filemap<-paste0(maptype, "-"))
+  for(i in 1:length(years)){
+    newlayer <- rast(paste0(parent, "/EAB-", filemap, years[i], ".gis"))
+    if(i==1){eaboutput <- rast(newlayer, nlyrs=length(years))} 
+    #in the first loop iteration, creating the output raster stack.
+    eaboutput[[i]] <- newlayer
+    #then adding the newest year to that stack.
+  }
+  return(eaboutput)
+  #and returning the stack w/ each year of data.
+}
+
+run8eabsev <- readinBDAmaps(years=1:50, 
+                            parent="C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run8_EAB2/bda",
+                            maptype="severity")
+run8eabsev
+plot(run8eabsev[[1]])
+plot(run8eabsev[[50]])
+plot(run8eabsev[[25]])
+#so, seems like severity had to go down over the years...
+mean(values(run8eabsev[[1]]))
+mean(values(run8eabsev[[25]]))
+mean(values(run8eabsev[[50]]))
+#interesting...mean severity is still largely the same....
+#I guess that means most cells have NOT been infested??
+#Is this due to the neighbor dispersion thing, I wonder??
+
+run8eabbdp <- readinBDAmaps(years=1:50, 
+                            parent="C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run8_EAB2/bda",
+                            maptype="BDP")
+run8eabbdp
+plot(run8eabbdp[[1]])
+plot(run8eabbdp[[25]])
+plot(run8eabbdp[[50]])
+#so, seems like bdp had to go down over the years...
+mean(values(run8eabbdp[[1]]))
+mean(values(run8eabbdp[[25]]))
+mean(values(run8eabbdp[[50]]))
+#yes, the mean BDP DID go down over yrs....I guess as there's less ash!?
+
+#now let's look @ ash biomass...
+frambio0_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run8_EAB2/output/AGbiomass/fraxamerAG/biomass-0.img")
+frambio50_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run8_EAB2/output/AGbiomass/fraxamerAG/biomass-50.img")
+plot(frambio0_EAB)
+plot(frambio50_EAB)
+mean(values(frambio0_EAB))
+mean(values(frambio50_EAB))
+#soooo biomass has decreased overall & looks like it's in fewer places now,
+#but still plenty of ash by year 50...will be curious how the 100 yr pattern turns out?
+
+frnibio0_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run8_EAB2/output/AGbiomass/fraxnigrAG/biomass-0.img")
+frnibio50_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run8_EAB2/output/AGbiomass/fraxnigrAG/biomass-50.img")
+plot(frnibio0_EAB)
+plot(frnibio50_EAB)
+mean(values(frnibio0_EAB))
+mean(values(frnibio50_EAB))
+#black ash decreased as well but only by a little bit...wonder why??
+
+sum(values(frambio0_EAB))
+sum(values(frnibio0_EAB))
+
+
+#ok switching gears BACK to species parameters....
+#I honestly feel like we are getting close?!
+
+#adding a column to compare results from the latest round of sp param values to actual ones
+#via PnETSpeciesParameters4
+
+meanbio_sp_S$close2 <- ifelse((abs(meanbio_sp_S$landis_agb_run3-meanbio_sp_S$fia_bio)/meanbio_sp_S$fia_bio)<=.2, "yes", "no")
+
+#action item: 
+#adjust parameters (basically just FolN) up or down one more time based on latest 
+#of close-ness to the empirical val;
+#for PnETOutputSites, pick JUST TEN SITES (including the six from my subset landscape)
+#and then model the biomass_S landscape for 5 years again.
+plot(mask_crop8S)
+
+#also want to look again @ my plots & how they fit in on the landscape:
+my_plots_subset <- crop(my_plots_subset, mask_crop8S)
+points(my_plots_subset)
+my_plots_subset
+mask_crop8S
+#first I guess we gotta re-read in raster as a SpatRaster??
+mask_crop8S <- rast("LANDIS_stuff/crop8S_rasters/mask_crop8S.tif")
+testext <- terra::extract(x=mask_crop8S, y=my_plots_subset, cells=TRUE)
+testext #okay this function finally worked?!?! why not before?!?!
+rowColFromCell(mask_crop8S, testext$cell)
+#View(my_plots_subset2)
+fiaplots_crop8S
+rowColFromCell(mask_crop8S, fiaplots_crop8S$cells)
+
+#OK, need to redo the cell/row/col vals for plots
+#from the SOUTHERN ENTIRE extent vs just the subset extent!
+#got the FIA ones from fiaplots_sf_S
+mask_S <- rast("LANDIS_stuff/region_rasters/mask_S.tif")
+plot(mask_S)
+testext2 <- terra::extract(x=mask_S, y=my_plots_subset, cells=TRUE)
+testext2 #okay this function finally worked?!?! why not before?!?!
+rowColFromCell(mask_S, testext2$cell)
+
+
+## now switching gears BACK to analyzing EAB output....
+
+#first, find out how many subset cells/sites had white ash cohorts in them initially. 
+
+
+initcomm_crop8S <- rast("LANDIS_stuff/crop8S_rasters/initcomm_crop8S.tif")
+sum(values(initcomm_crop8S, mat=FALSE) %in% whiteash_codes)
+ncell(initcomm_crop8S)
+sum(values(initcomm_crop8S, mat=FALSE)>0)
+#so, in summary: 
+#out of 250,000 total cells, 197,765 are ACTIVE.
+#and out of those, 32,248 cells contain white ash cohorts.
+#now for black ash:
+sum(values(initcomm_crop8S, mat=FALSE) %in% blackash_codes)
+#ok, only 667 plots initially have black ash...interesting, it feels like more?
+
+#now to compare w/ # of cohorts killed by EAB.
+#in run 8/EAB2, over 50 yrs,& neighbor rule 24N, # cohorts killed = 2413
+#in run 9/EAB2, over 100 yrs, & neighbor rule MaxRadius, # cohorts killed= 25097
+#in run 10/EAB4, over 100 yrs, & neighbor rule 8N, # cohorts killed = 160
+#ok, so the last one is WAY too low! That is for sure
+#seems like the decision is pretty much between neighbor rule of 24N or MaxRadius,
+#whether EAB spreads/kills slowly or more quickly.
+#difference in white ash biomass by the end, between those two options, 
+#is basically a factor of 100?? (ALTHO taking total time into account, it's more like
+#a factor of 10 comparing @ year 50.)
+#I feel like it could be worth trying to run w/ 24N neighbor rule to 100 years to see
+#how it truly compares??
+#however, probably should just go ahead and email Nate at this point...
+#and I have a feeling the more drastic one is gonna be the way to go. (e.g. MaxRadius)
+
+#to send to Nate, let's just compare results across the three runs (8, 9, 10) @ 50 years.
+#first = initial total ash biomass
+#second = initial mean ash biomass
+#third = final total ash biomass
+#fourth = final mean ash biomass
+#also, # cohorts killed by EAB 
+#and maybe something w/ BDP??
+

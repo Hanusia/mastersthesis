@@ -3163,3 +3163,107 @@ nbmod_allsaplings_4 <- glmer.nb(formula=all_saplings_tally ~ Treatment +
                                 data = all_saplings_plot[(all_saplings_plot$species=="all" & all_saplings_plot$forest_type=="RNH"),])
 summary(nbmod_allsaplings_4)
 
+## back on 6/6/2022 to continue this line of thinking...
+#aka following up more on comments from Tony in my latest round of thesis edits
+
+#for understory models with signif interactions btwn forest * tx group, 
+#we just also need to look @ red maple seedlings:
+#COPIED FROM ABOVE
+nbtest1_ACRU <- glmer.nb(formula=ACRU ~ Treatment*forest_type + 
+                           (1 | Stand_name), data= seedlings_plus
+)
+summary(nbtest1_ACRU) #ACRU was not signif on treatment itself,
+#but WAS signif w/ forest type & the interaction...interesting!!!
+
+#now to "slice" the interaction:
+#first 'slicing' by forest type:
+nbtest2_ACRU <- glmer.nb(formula=ACRU ~ Treatment + (1 | Stand_name), 
+                         data= seedlings_plus[seedlings_plus$forest_type=="NH",])
+summary(nbtest2_ACRU)
+nbtest3_ACRU <- glmer.nb(formula=ACRU ~ Treatment + (1 | Stand_name), 
+                         data= seedlings_plus[seedlings_plus$forest_type=="RNH",])
+summary(nbtest3_ACRU)
+#so basically, when FT=NH, no signif effect from treatment
+#but when FT=RNH, removal tx is signif dif from unharvested...
+#sooo, don't really need to address this, right? Just need the main effect.
+
+#next, try to "slice" by treatment group...
+nbtest4_ACRU <- glmer.nb(formula=ACRU ~ forest_type + (1 | Stand_name), 
+                         data= seedlings_plus[seedlings_plus$Treatment=="unharvested",])
+summary(nbtest4_ACRU)
+nbtest5_ACRU <- glmer.nb(formula=ACRU ~ forest_type + (1 | Stand_name), 
+                         data= seedlings_plus[seedlings_plus$Treatment=="removal",])
+summary(nbtest5_ACRU)
+nbtest6_ACRU <- glmer.nb(formula=ACRU ~ forest_type + (1 | Stand_name), 
+                         data= seedlings_plus[seedlings_plus$Treatment=="regeneration",])
+summary(nbtest6_ACRU)
+#result: within EACH treatment group, NH vs RNH forest type isn't signif dif in all of them.
+#(it is lower in unharvested & regen, but not signif in removal group)
+
+#Okay, now getting back to the main-effects-signif-but not? question...
+#looking into "type iii fixed effects" and this webpage seems useful, though a bit confusing- 
+# https://stats.oarc.ucla.edu/r/faq/how-can-i-get-type-iii-tests-of-fixed-effects-in-r/
+#seems like this thing Tony mentioned is a concept from SAS, but maybe we can apply it in R?
+
+#that webpage says to use the anova.lme function to get pvals of main effects from R
+#I also thought, maybe we can apply tukey-kramer test via TukeyHSD function to the ANOVA
+#of the model (vs to the model itself)??
+
+#first example of this = for beech seedlings,
+#but looking @ the one for sugar maple saplings first since it should be simpler.
+#(copied from above)
+#nbmod_ACSAsaplings1 <- glmer.nb(formula=all_saplings_tally ~ Treatment*forest_type + 
+#(1 | Stand_name), 
+#data = all_saplings_plot[all_saplings_plot$species=="ACSA",])
+summary(nbmod_ACSAsaplings1)
+anova(nbmod_ACSAsaplings1)
+TukeyHSD(anova(nbmod_ACSAsaplings1)) #ok this did not work
+library(nlme) #needed for the function below?
+nlme::anova.lme(nbmod_ACSAsaplings1, type = "marginal", adjustSigma = F)
+#this also didn't work.....
+#other suggestion is to use/define (?) contrasts() associated w/ a (each??) factor
+#UPDATE, this doesn't super seem like it'll work for nb model type......
+
+#sooooo let's go back to trying to parse this w/ lsmeans function instead??
+#what about suggestion from this pg: https://slcladal.github.io/regression.html
+library(car)
+car::Anova(nbmod_ACSAsaplings1, type="III")
+#OK, I guess this finally worked?!!
+#altho it now gives me p val WITHOUT an F value....
+#looks like it did a chi-square test instead
+car::Anova(nbmod_ACSAsaplings1, type="III", test.statistic="F")
+#this one is now giving an error w/ something abt the var-covar adjust not working??
+#description of this function says that here, "type II" corresponds to tests 
+#produced by SAS for aov models, and that type ii/type iii models dont directly map to SAS definitions
+#soooo, let's try it for type II instead??
+car::Anova(nbmod_ACSAsaplings1, type="II", test.statistic="F")
+#still didn't work; let's try addressing the error...
+car::Anova(nbmod_ACSAsaplings1, type="III", test.statistic="F",
+           vcov.=vcov(nbmod_ACSAsaplings1, complete=TRUE))
+car::Anova(nbmod_ACSAsaplings1, type="III", test.statistic="F",
+           vcov.=vcov(nbmod_ACSAsaplings1, complete=FALSE))
+#trying dif things...
+car::Anova(nbmod_ACSAsaplings1, type="II", test="F")
+car::Anova(summary(nbmod_ACSAsaplings1), type="II", test="F")
+car::Anova((nbmod_ACSAsaplings1), type="II", test="F", white.adjust=TRUE)
+#ok this still isn't workign and I don't understand enough to know why
+
+#SO, let's pivot back to lsmeans instead!?
+#but first, taking a break bc my brain hurts.
+
+### (back on Tuesday, June 7th)
+# ALRIGHT. revisiting the question of finding significance of my main effects.....
+#the big Q is, can we actually use lmerTest for this??
+#library(lme4)
+#library(lmerTest)
+
+#first model in question is nbtest_ACSAsaplings1
+lmerTest::anova(as_lmerModLmerTest(nbmod_ACSAsaplings1))
+help(lmerTest)
+anova(as_lmerModLmerTest(nbmod_ACSAsaplings1))
+class(nbmod_ACSAsaplings1)
+
+#okay, the lme4 package documentation does have some handy suggestions
+#like "afex::mixed is another wrapper for pbkrtest and anova providing "Type 3" tests of all effects (P,*,+)"
+??mixed
+#ok this doesn't seem to be turning up anything

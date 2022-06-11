@@ -2000,3 +2000,180 @@ sum(values(initcomm_crop8S, mat=FALSE) %in% blackash_codes)
 #also, # cohorts killed by EAB 
 #and maybe something w/ BDP??
 
+
+
+### back to species parameters reeeeal quick to compare results of latest run
+bioS_run4_spagb <- readinspagb(splist, "C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/biomass_S/run4/output/AGbiomass", year=0)
+#bioS_run4_spagb
+#plot(bioS_run4_spagb[[1]])
+#next extracting cell VALUES for the selected plots/active cells corresponding w/ FIA plots
+bioS_LANDIS_run4 <- extractspagb(specieslist=splist,
+                                 sprasters=bioS_run4_spagb,
+                                 cellsin=fiaplots_sf_S$cells)
+View(bioS_LANDIS_run4)
+#next copying the parts of this that I haven't yet made into functions:
+bioS_LANDIS_run4 <- merge(bioS_LANDIS_run4, fiaplots_sf_S[,c("cells", "ID")],
+                          by.x="cell", by.y="cells")
+#gonna do this next part in a loop...
+for (i in bioS_LANDIS_run4$ID){
+  bioS_LANDIS_run4$pltID[bioS_LANDIS_run4$ID==i] <- 
+    fiaplots_sf$pltID[i]
+}
+#and then the last function to ADD a col to the mean dataframe:
+meanbio_sp_S$landis_agb_run4 <- bindmeanagb(specieslist=splist, input_agb=bioS_LANDIS_run4)
+#alright, looks pretty close!! (with the exception of just a few species...)
+#also now going to look @ PnEToutputsites outputs for more insight.....
+
+
+#back on Wedensday, June 8th
+
+#just gonna look at / compare output of the next EAB run w/ higher EpidemicThresh...
+#looking @ run 11 / EAB5, results in terms of ash biomass...
+frambio0_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run11_EAB5/output/AGbiomass/fraxamerAG/biomass-0.img")
+frambio50_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run11_EAB5/output/AGbiomass/fraxamerAG/biomass-50.img")
+plot(frambio0_EAB)
+plot(frambio50_EAB)
+mean(values(frambio0_EAB))
+mean(values(frambio50_EAB))
+#soooo biomass has decreased overall & honenstly, pretty drastically...
+
+frnibio0_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run11_EAB5/output/AGbiomass/fraxnigrAG/biomass-0.img")
+frnibio50_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run11_EAB5/output/AGbiomass/fraxnigrAG/biomass-50.img")
+plot(frnibio0_EAB)
+plot(frnibio50_EAB)
+mean(values(frnibio0_EAB))
+mean(values(frnibio50_EAB))
+#black ash decreased as well, I guess more drastically??
+
+
+#now going back to run 9 / MaxRadius dispersal, w/ the original threshold values...
+frambio0_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run9_EAB3/output/AGbiomass/fraxamerAG/biomass-0.img")
+frambio50_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run9_EAB3/output/AGbiomass/fraxamerAG/biomass-50.img")
+plot(frambio0_EAB)
+plot(frambio50_EAB)
+mean(values(frambio0_EAB))
+mean(values(frambio50_EAB))
+#soooo biomass has decreased overall & honenstly, pretty drastically...
+
+frnibio0_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run9_EAB3/output/AGbiomass/fraxnigrAG/biomass-0.img")
+frnibio50_EAB <- rast("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run9_EAB3/output/AGbiomass/fraxnigrAG/biomass-50.img")
+plot(frnibio0_EAB)
+plot(frnibio50_EAB)
+mean(values(frnibio0_EAB))
+mean(values(frnibio50_EAB))
+#black ash decreased as well, I guess more drastically??
+
+#ALRIGHT, I'm thinking just keep it simple & stick with MaxRadius dispersal w/ no threshold
+#so basically like run 9.
+meanbio_sp_S$close3 <- ifelse((abs(meanbio_sp_S$landis_agb_run4-meanbio_sp_S$fia_bio)/meanbio_sp_S$fia_bio)<=.2, "yes", "no")
+
+
+# back on June 9th, 2022!
+
+#currently: want to try using terra::classify to get a map of "white ash stands" / sites...
+
+#I think I need to use the classify function with a 'RECLASS MATRIX' that defines what colors dif properties should be.
+#read.csv("LANDIS_stuff/initcomms_dataframe.csv")
+View(init_comm_df)
+
+initcomm_crop8S
+initcomm_crop8S <- rast("LANDIS_stuff/crop8S_rasters/initcomm_crop8S.tif")
+initcommvals <- unique(values(initcomm_crop8S, dataframe=TRUE))
+View(initcommvals)
+initcommvals$to <- initcommvals$from
+names(initcommvals)[1] <- "from"
+initcommvals$to[initcommvals$from %in% whiteash_codes] <- 20000
+
+
+
+#ifelse(initcommvals$from %in% whiteash_codes, initcommvals$to=7, initcommvals$to=i)
+
+
+View(meanbio_sp_S[,c(1, 2, 5, 6, 7, 8)])
+
+
+### back to species parameters reeeeal quick to compare results of latest run
+bioS_run5_spagb <- readinspagb(splist, "C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/biomass_S/run5/output/AGbiomass", year=0)
+#bioS_run5_spagb
+#plot(bioS_run5_spagb[[1]])
+#next extracting cell VALUES for the selected plots/active cells corresponding w/ FIA plots
+bioS_LANDIS_run5 <- extractspagb(specieslist=splist,
+                                 sprasters=bioS_run5_spagb,
+                                 cellsin=fiaplots_sf_S$cells)
+View(bioS_LANDIS_run5)
+#next copying the parts of this that I haven't yet made into functions:
+bioS_LANDIS_run5 <- merge(bioS_LANDIS_run5, fiaplots_sf_S[,c("cells", "ID")],
+                          by.x="cell", by.y="cells")
+#gonna do this next part in a loop...
+for (i in bioS_LANDIS_run5$ID){
+  bioS_LANDIS_run5$pltID[bioS_LANDIS_run5$ID==i] <- 
+    fiaplots_sf$pltID[i]
+}
+#and then the last function to ADD a col to the mean dataframe:
+meanbio_sp_S$landis_agb_run5 <- bindmeanagb(specieslist=splist, input_agb=bioS_LANDIS_run5)
+#alright, looks pretty close!! (with the exception of just a few species...)
+#also now going to look @ PnEToutputsites outputs for more insight.....
+
+meanbio_sp_S$close4 <- ifelse((abs(meanbio_sp_S$landis_agb_run5-meanbio_sp_S$fia_bio)/meanbio_sp_S$fia_bio)<=.2, "yes", "no")
+#most (maybe even more?) species are close, but still a few I really need to tweak again!!
+length(meanbio_sp_S$close4[meanbio_sp_S$close4=="yes"])
+length(meanbio_sp_S$close4[meanbio_sp_S$close3=="yes"])
+#lol they both have only 10 species as 'yes'
+
+
+### back to species parameters again to compare results of latest (maybe even LAST?!?!) run
+bioS_run6_spagb <- readinspagb(splist, "C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/biomass_S/run6/output/AGbiomass", year=0)
+#bioS_run6_spagb
+#plot(bioS_run6_spagb[[1]])
+#next extracting cell VALUES for the selected plots/active cells corresponding w/ FIA plots
+bioS_LANDIS_run6 <- extractspagb(specieslist=splist,
+                                 sprasters=bioS_run6_spagb,
+                                 cellsin=fiaplots_sf_S$cells)
+View(bioS_LANDIS_run6)
+#next copying the parts of this that I haven't yet made into functions:
+bioS_LANDIS_run6 <- merge(bioS_LANDIS_run6, fiaplots_sf_S[,c("cells", "ID")],
+                          by.x="cell", by.y="cells")
+#gonna do this next part in a loop...
+for (i in bioS_LANDIS_run6$ID){
+  bioS_LANDIS_run6$pltID[bioS_LANDIS_run6$ID==i] <- 
+    fiaplots_sf$pltID[i]
+}
+#and then the last function to ADD a col to the mean dataframe:
+meanbio_sp_S$landis_agb_run6 <- bindmeanagb(specieslist=splist, input_agb=bioS_LANDIS_run6)
+
+meanbio_sp_S$close5 <- ifelse((abs(meanbio_sp_S$landis_agb_run6-meanbio_sp_S$fia_bio)/meanbio_sp_S$fia_bio)<=.2, "yes", "no")
+
+#alright, these numbers look...OKAY i guess...
+#gotta stop somewhere (to start somewhere else?!)
+
+#sooo, gonna stop here for now...or more accurately, gonna tweak the numbers one more time 
+
+
+#first look at how they're lining up JUST WITHIN MY SUBSET FOR NOW:
+View(meanagb_crop8S)
+#can use the same raster, called bioS_run6_spagb
+#doing the subset cells
+agbcrop8S_LANDIS_run6 <- extractspagb(specieslist=splist,
+                                 sprasters=bioS_run6_spagb,
+                                 cellsin=fiaplots_crop8S$cells)
+View(agbcrop8S_LANDIS_run6)
+
+agbcrop8S_LANDIS_run6 <- merge(agbcrop8S_LANDIS_run6, fiaplots_crop8S[,c("cells", "ID")],
+                                    by.x="cell", by.y="cells")
+#gonna do this next part in a loop...
+for (i in agbcrop8S_LANDIS_run6$ID){
+  agbcrop8S_LANDIS_run6$pltID[agbcrop8S_LANDIS_run6$ID==i] <- 
+    fiaplots_sf$pltID[i]
+}
+#and then the last function to ADD a col to the mean dataframe:
+meanagb_crop8S$landis_agb_run6 <- bindmeanagb(specieslist=splist, input_agb=agbcrop8S_LANDIS_run6)
+
+#okay, something seems VERY wrong with those numbers...
+#I think maybe they are not subsetting the correct cells?!?!
+#anyway, I feel good about my calibration to the larger region
+
+#so just gonna go ahead with *one* more tweak in values, then test ESTABLISHMENT
+#in the subset area.
+
+
+

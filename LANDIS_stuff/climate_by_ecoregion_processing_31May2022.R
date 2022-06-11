@@ -377,3 +377,230 @@ write.table(x=ecoregion_params3,
             file="LANDIS_stuff/histclim_eco/EcoregionParameters3_HBPAR.txt", 
             sep="   ", quote=FALSE, append=TRUE, row.names=FALSE)
 #looks good; now to move these to where they belong in OneDrive & try another run!
+
+
+## back on June 8th 2022 ##
+
+# re-doing the Hubbard Brook PAR values (slightly) based on convo w/ Jane, just adjusting slightly :)
+# and using for PRACTICE RUNS for now, not yet for actual THESIS RUNS since I haven't structured it yet...??
+
+
+
+HBclim <- read.table("C:/Users/theha/Documents/layers_for_LANDIS/HB_Climate_1794.txt",
+                     header=TRUE)
+View(HBclim)
+#adding month val...
+HBclim$Month <- rep(1:12)
+
+#now THIS is the df I will be altering for my own purposes...
+HBclimmod <- HBclim[,c("Year", "Month", "PAR")]
+View(HBclimmod)
+#adding aggregate of the yrs ACTUALLY 1959-1978, though what we are CREATING is the 1800-1958 input line:
+pastparavg <- data.frame("Year"=rep("1800-1958"), 
+                         "Month"=1:12,
+                         "PAR"=rep(0))
+for(i in 1:12){
+  pastparavg$PAR[i] <- mean(HBclimmod$PAR[(HBclimmod$Year>=1959 & HBclimmod$Year<=1978
+                                           & HBclimmod$Month==i)])
+}
+futureparavg <- data.frame("Year"=rep(2100:2120, each=12),
+                           "Month"=1:12,
+                           "PAR"=rep(0))
+#averaging the "last" 30 years of the century projected PAR to extrapolate to 2200...
+for(i in 1:12){
+  futureparavg$PAR[futureparavg$Month==i] <- mean(HBclimmod$PAR[(HBclimmod$Year>=2070 & HBclimmod$Year<=2099
+                                                                 & HBclimmod$Month==i)])
+}
+View(futureparavg)
+
+#and finally, link them all together...
+HBclimmod <- rbind(pastparavg, 
+                   HBclimmod[(HBclimmod$Year>=1959 & HBclimmod$Year<=2099),],
+                   futureparavg)
+HBclimmod$PAR <- round(HBclimmod$PAR, digits=4)
+
+#OK, now let's SAVE this vector to append to all the others:
+write.csv(HBclimmod, "LANDIS_stuff/HBclim_PARvals.csv")
+
+
+
+#now to read in & replace existing clim files...draw from/modify what I did above:
+#also, confirm we still have ecoregion vector var:
+ecoregion
+
+#let's just test this again first / confirm same # rows:
+input <- read.table(paste0("LANDIS_stuff/histclim_eco/TerraClimate_historical_eco_", 1, ".txt"),
+                    header=TRUE)
+nrow(input)
+nrow(HBclimmod)
+#nice!
+
+for(y in ecoregion){ #in this case, y is the ACTUAL ECOREGION CODE/NUMBER ITSELF!!
+  input <- read.table(paste0("LANDIS_stuff/histclim_eco/TerraClimate_historical_eco_", y, ".txt"),
+                      header=TRUE)
+  input$PAR <- HBclimmod$PAR
+  #and then last step = write the 'output' table to file:
+  #renaming ANOTHER table w/ this name:
+  write.table(x=input, file=paste("LANDIS_stuff/histclim_eco/HBPAR2/TerraClimate_historical_eco_", y, "_HBPAR.txt", sep=""),
+              sep="   ", quote=FALSE, append=FALSE, row.names=FALSE)
+}
+
+#Okay looks good!!!
+
+#NEXT = NEED A NEW ECOREGION PARAMETERS FILE
+
+ecoregion_params4 <- ecoregion_params
+View(ecoregion_params4)
+#appending a different path name:
+#except I alsoooo need to change the end of the names w/ the HB appendage on them.
+#so gonna do a loop, as done above.
+for(i in ecoregion_params4$EcoregionParameters){
+  j <- ifelse(i<200, i, i-200) #modifying 'j' for the roadside ecoregions
+  #then using j to plug into the correct file name for each ecoregion
+  ecoregion_params4$ClimateFileName[ecoregion_params4$EcoregionParameters==i] <- 
+    paste0("../../histclim_eco/HBPAR2/TerraClimate_historical_eco_", j, "_HBPAR.txt")
+}
+
+write.table(x="LandisData     EcoregionParameters", file="LANDIS_stuff/histclim_eco/EcoregionParameters4_HBPAR2.txt",
+            quote=FALSE, append=FALSE, row.names=FALSE, col.names = FALSE)
+write.table(x=ecoregion_params4, 
+            file="LANDIS_stuff/histclim_eco/EcoregionParameters4_HBPAR2.txt", 
+            sep="   ", quote=FALSE, append=TRUE, row.names=FALSE)
+
+
+
+## Friday, June 10th ##
+
+#Goal: Read in all of the future-scenario climate files Jane made,
+#replace their PAR values with Hubbard Brook,
+#and output them to the appropriate folder structure.
+#And ALSO make the associated ecoregion parameter files!
+
+#variables: ecoregion, RCP (pathway), GCM (model)
+ecoregion #this one is still good from above
+rcp <- c("rcp45", "rcp85")
+gcm <- c("CCSM4", "CESM1-BGC", "HADGEM2-ES", "MPI-ESM-LR")
+
+#now writing a function that does three things:
+#takes in existing climate files,
+#replaces the PAR values with the Hubbard Brook ones,
+#and outputs the updated files in the thesis_runs folder
+
+#NOTE: actually, looks like these files (the future path ones from Jane)
+#have future years climate data from 2006-2020 appendeded to them,
+#so I also need to REMOVE those lines (& then verify that 
+#the # of lines is the SAME)
+
+#OK, I aded an if statement to the loop below, so that I can remove the 
+#offending rows as needed (assuming this will be for all the files)
+
+#but before I run the whole loop, want to test w/ one file to make sure it won't
+#substitute the PAR column if it's not the same number of rows:
+input <- read.table(paste0("C:/Users/theha/Documents/layers_for_LANDIS/climate_files/pathway_climatefiles_fromJane/", 
+                           gcm[1], "_", "rcp45", "_eco_", y, ".txt"),
+                    header=TRUE)
+View(input)
+nrow(input) #2136 rows
+input$PAR <- HBclimmod$PAR
+#yes, this throws up an error, as it should!
+#now let's see if we remove the offending rows...
+input <- input[-c(757:936),]
+nrow(input) #now 1956, woohoo :) 
+input$PAR <- HBclimmod$PAR
+#OK this looks all good!!
+
+for(k in rcp){
+  for(j in 1:length(gcm)){
+    
+    for(y in ecoregion){ #in this case, y is the ACTUAL ECOREGION CODE/NUMBER ITSELF!!
+      input <- read.table(paste0("C:/Users/theha/Documents/layers_for_LANDIS/climate_files/pathway_climatefiles_fromJane/", 
+                                 gcm[j], "_", k, "_eco_", y, ".txt"),
+                          header=TRUE)
+      
+      #adding an if statement to test for number of rows:
+      if(nrow(input)==2136){
+        #if it has a bunch of extra rows (which I assume all of them will?,)
+        #then I will remove the superfluous ones.
+        input <- input[-c(757:936),]
+      } else if(nrow(input)==2137){ #for the special case of weirdos.....
+        #see below with the saga of an extra line from 2005 sneaking in
+        #then I will remove the superfluous ones.
+        input <- input[-c(757:937),]
+      }
+      
+      input$PAR <- HBclimmod$PAR
+      #and then last step = write the 'output' table to file:
+      #renaming ANOTHER table w/ this name:
+      write.table(x=input, file=paste0("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/thesis_runs/", 
+                                    k, "/rep", j, "-",  gcm[j], "/climate/",
+                                    gcm[j], "_", k, "_eco_", y, "_HBPAR.txt"),
+                  sep=" ", quote=FALSE, append=FALSE, row.names=FALSE)
+    }
+    
+    
+  }
+}
+
+#hit an error, but only @ the part w/ HADGEM2-ES in RCP85 folder...?
+#looking at the first input text file of that one, it does seem to have an extra line...
+#but the question is, WHERE??
+#and is that true for all of them??
+#let's check...
+for(j in 1:length(gcm)){
+    for(y in ecoregion){ #in this case, y is the ACTUAL ECOREGION CODE/NUMBER ITSELF!!
+      input <- read.table(paste0("C:/Users/theha/Documents/layers_for_LANDIS/climate_files/pathway_climatefiles_fromJane/", 
+                                 gcm[j], "_", "rcp85", "_eco_", y, ".txt"),
+                          header=TRUE)
+      #adding an if statement to test for number of rows:
+#     if(nrow(input)==2136){
+        #if it has a bunch of extra rows (which I assume all of them will?,)
+        #then I will remove the superfluous ones.
+#       input <- input[-c(757:936),]
+#      }
+print(paste(gcm[j], nrow(input)))     
+     }
+  }
+
+#okay- so it's JUST the HADGEM2-ES files in rcp8.5 that's the issue
+#but where?? can i use compare function to find it?
+#ahhh, I think I see an issue....an extra line of the future input from 2005 (!) 
+#snuck in there, at line 758 of the text files/ line 757 of the dataframe...
+#SO, solution is to add to the loop above, removing an EXTRA line if the 
+#initial nrow = 2137
+
+#update: after implementing that additional if statement in the loop above, seems to be 
+#working smoothly!!
+#now, all I need to do is to output the correct ecoregion parameter files.
+#in retrospect, I guess I could have named all the climate files the same and then
+#had just one ecoregion parameters file....but this is fine, I'm already here lol
+
+View(ecoregion_params)
+
+#creating a for loop to add to the climate file names:
+for(g in rcp){
+  for(h in 1:length(gcm)){
+    ecoparamsmod <- ecoregion_params
+    for(i in ecoparamsmod$EcoregionParameters){
+      j <- ifelse(i<200, i, i-200) #modifying 'j' for the roadside ecoregions
+      #then using j to plug into the correct file name for each ecoregion
+      ecoparamsmod$ClimateFileName[ecoparamsmod$EcoregionParameters==i] <- 
+        paste0("../climate/", gcm[h], "_", g, "_eco_", j, "_HBPAR.txt")
+    }
+    #NOTE: to get that additional LANDIS header, create a text doc with just the header, then append the ecoparamsmod file to it
+    write.table(x="LandisData     EcoregionParameters", 
+                file=paste0("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/thesis_runs/", 
+                            k, "/rep", h, "-",  gcm[h], "/climate/EcoregionParameters.txt"),
+                quote=FALSE, append=FALSE, row.names=FALSE, col.names = FALSE)
+    write.table(x=ecoparamsmod, 
+                file=paste0("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/thesis_runs/", 
+                            k, "/rep", h, "-",  gcm[h], "/climate/EcoregionParameters.txt"), 
+                sep=" ", quote=FALSE, append=TRUE, row.names=FALSE)
+  }
+}
+#yayyy, it worked! :)
+
+#next step is just to repeat in the histclim folder...
+
+#BUT I can do that tomorrow...
+
+

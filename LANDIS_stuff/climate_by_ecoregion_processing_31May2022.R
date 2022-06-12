@@ -576,7 +576,8 @@ print(paste(gcm[j], nrow(input)))
 
 View(ecoregion_params)
 
-#creating a for loop to add to the climate file names:
+#creating a for loop to add to the climate file names AND 
+#write ecoregion parameter files to their correct folders:
 for(g in rcp){
   for(h in 1:length(gcm)){
     ecoparamsmod <- ecoregion_params
@@ -589,11 +590,11 @@ for(g in rcp){
     #NOTE: to get that additional LANDIS header, create a text doc with just the header, then append the ecoparamsmod file to it
     write.table(x="LandisData     EcoregionParameters", 
                 file=paste0("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/thesis_runs/", 
-                            k, "/rep", h, "-",  gcm[h], "/climate/EcoregionParameters.txt"),
+                            g, "/rep", h, "-",  gcm[h], "/climate/EcoregionParameters.txt"),
                 quote=FALSE, append=FALSE, row.names=FALSE, col.names = FALSE)
     write.table(x=ecoparamsmod, 
                 file=paste0("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/thesis_runs/", 
-                            k, "/rep", h, "-",  gcm[h], "/climate/EcoregionParameters.txt"), 
+                            g, "/rep", h, "-",  gcm[h], "/climate/EcoregionParameters.txt"), 
                 sep=" ", quote=FALSE, append=TRUE, row.names=FALSE)
   }
 }
@@ -602,5 +603,6 @@ for(g in rcp){
 #next step is just to repeat in the histclim folder...
 
 #BUT I can do that tomorrow...
-
+#update: did that "manually" since it was the same set of files as in practice_run folder,
+#and changed the filepath names using find --> replace in the text file.
 

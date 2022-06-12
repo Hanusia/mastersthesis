@@ -2176,4 +2176,28 @@ meanagb_crop8S$landis_agb_run6 <- bindmeanagb(specieslist=splist, input_agb=agbc
 #in the subset area.
 
 
+# this run was testing establishment, but also checking (initial) biomass since I varied the SLWmax param
+#to see how that changed things.
+View(meanagb_crop8S)
+
+crop8S_run14_spagb <- readinspagb(splist, "C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/practice_runs/crop8S_test/run14/output/AGbiomass", year=0)
+
+#doing the subset cells
+agbcrop8S_LANDIS_run14 <- extractspagb(specieslist=splist,
+                                      sprasters=crop8S_run14_spagb,
+                                      cellsin=fiaplots_crop8S$cells)
+View(agbcrop8S_LANDIS_run14)
+
+agbcrop8S_LANDIS_run14 <- merge(agbcrop8S_LANDIS_run14, fiaplots_crop8S[,c("cells", "ID")],
+                               by.x="cell", by.y="cells")
+#gonna do this next part in a loop...
+for (i in agbcrop8S_LANDIS_run14$ID){
+  agbcrop8S_LANDIS_run14$pltID[agbcrop8S_LANDIS_run14$ID==i] <- 
+    fiaplots_sf$pltID[i]
+}
+#and then the last function to ADD a col to the mean dataframe:
+meanagb_crop8S$landis_agb_run14 <- bindmeanagb(specieslist=splist, input_agb=agbcrop8S_LANDIS_run14)
+ #man, ash is still quite low... but at least higher than it was??
+#honestly I think I've done what I can for now?
+#need to focus on establishment
 

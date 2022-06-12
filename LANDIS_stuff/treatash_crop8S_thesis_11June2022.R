@@ -630,27 +630,84 @@ initcomm_cells_select_fram <- na.omit(initcomm_cells_select_fram)
 write.csv(as.data.frame(initcomm_cells_select_fram), file="LANDIS_stuff/whiteash_cells_treated_crop8S.csv")
 #okay awesome!! now we can use this vector to replace those cells with corresponding
 #mapcodes of treated ash. :) 
+#OK, one potential hiccup = how many of those are also including black ash....
+#buuut honestly, I might just...not worry about that???
+#or I guess let's see:
+blackashinwhiteashtx <- (crop8s_vals$initcomm[initcomm_cells_select_fram] %in% blackash_codes)
+head(blackashinwhiteashtx)
+#only 16 of these cells also contain black ash...so yknow what, let's not worry about that!!
+#or I guess could just...remove those ones?
+#yeah I guess let's do that!
+length(blackashinwhiteashtx)
+length(initcomm_cells_select_fram)
+blackashinwhiteashtx_cellvals <- NA
+for(i in 1:length(initcomm_cells_select_fram)){
+  if(blackashinwhiteashtx[i]==TRUE){
+    blackashinwhiteashtx_cellvals <- c(blackashinwhiteashtx_cellvals, initcomm_cells_select_fram[i])
+  }
+}
+blackashinwhiteashtx_cellvals
+length(blackashinwhiteashtx_cellvals)
+blackashinwhiteashtx_cellvals <- na.omit(blackashinwhiteashtx_cellvals)
 
-#first trying it with JUST the initial raster as input:
+initcomm_cells_select_fram_minusfrni <- initcomm_cells_select_fram[!(initcomm_cells_select_fram %in% blackashinwhiteashtx_cellvals)]
+head(initcomm_cells_select_fram_minusfrni)
+length(initcomm_cells_select_fram_minusfrni)
+length(initcomm_cells_select_fram) - length(blackashinwhiteashtx_cellvals)
+#OK, I think this did work!!
+#save vector to file again:
+write.csv(as.data.frame(initcomm_cells_select_fram_minusfrni), file="LANDIS_stuff/whiteash_cells_treated_crop8S_minusblackashcells.csv")
+
+
+#first trying replacement with JUST the initial raster as input:
 initcommraster_whiteashtx <- crop8s[[3]]
 #cycling thru only the values of this raster that are in our chosen subset...
-for(i in initcomm_cells_select_frni){
+for(i in initcomm_cells_select_fram_minusfrni){
   #identify the starting value...
-  initval <- as.numeric(initcommraster_blackashtx[i])
+  initval <- as.numeric(initcommraster_whiteashtx[i])
   #match up w/ the corresponding replacement value...
   replaceval <- ashcodes_key$treated_mapcode[ashcodes_key$orig_mapcode==initval]
-  initcommraster_blackashtx[i] <- replaceval
+  initcommraster_whiteashtx[i] <- replaceval
 }
 
 #let's test this out...
-initcommraster_blackashtx[initcomm_cells_select_frni[100]]
+initcommraster_whiteashtx[initcomm_cells_select_fram_minusfrni[100]]
 # twas replaced! yay :)
-initcommraster_blackashtx
+initcommraster_whiteashtx
+sum(values(initcommraster_whiteashtx)>11000)
+#the right amount of cells were replaced--whoo!
 
-#also want to SAVE the vector for posterity:
-write.csv(as.data.frame(initcomm_cells_select_frni), file="LANDIS_stuff/blackash_cells_treated_crop8S.csv")
-#and also SAVE where JUST black ash were treated: 
-writeRaster(initcommraster_blackashtx, filename="LANDIS_stuff/initcomm_crop8S_blackashtx.tif",
+#now SAVE where JUST white ash were treated: 
+writeRaster(initcommraster_whiteashtx, filename="LANDIS_stuff/initcomm_crop8S_whiteashtx.tif",
             datatype='INT4S')
 
+#now, repeat the process so we have BOTH in ONE raster:
+initcommraster_ashtx <- initcommraster_blackashtx
+#cycling thru only the values of this raster that are in our chosen subset...
+for(i in initcomm_cells_select_fram_minusfrni){
+  #identify the starting value...
+  initval <- as.numeric(initcommraster_ashtx[i])
+  #match up w/ the corresponding replacement value...
+  replaceval <- ashcodes_key$treated_mapcode[ashcodes_key$orig_mapcode==initval]
+  initcommraster_ashtx[i] <- replaceval
+}
 
+initcommraster_ashtx
+sum(values(initcommraster_ashtx)>11000)
+length(initcomm_cells_select_fram_minusfrni) + length(initcomm_cells_select_frni)
+#whoo, looks good!!!
+plot(initcommraster_ashtx)
+plot(crop8s[[5]])
+#save raster to file:
+writeRaster(initcommraster_ashtx, filename="LANDIS_stuff/initcomm_crop8S_ashtx.tif",
+            datatype='INT4S')
+
+plot(ifel(initcommraster_ashtx>11000, 8, crop8s[[5]]))
+#looks good!! :)
+
+compareGeom(initcommraster_ashtx, crop8s[[3]])
+sum(values(initcommraster_ashtx)>0)
+sum(values(crop8s[[3]])>0)
+#amazing! we did it Joe!!!
+plot(rast("LANDIS_stuff/initcomm_crop8S_ashtx.tif"))
+#looks just about right!!! :)

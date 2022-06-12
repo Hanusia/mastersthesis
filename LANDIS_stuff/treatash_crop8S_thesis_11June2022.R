@@ -377,7 +377,14 @@ for(i in initcomm_cells_select_frni){
 
 #let's test this out...
 initcommraster_blackashtx[initcomm_cells_select_frni[100]]
-#'twas replaced! yay :)
+# twas replaced! yay :)
+initcommraster_blackashtx
+
+#also want to SAVE the vector for posterity:
+write.csv(as.data.frame(initcomm_cells_select_frni), file="LANDIS_stuff/blackash_cells_treated_crop8S.csv")
+#and also SAVE where JUST black ash were treated: 
+writeRaster(initcommraster_blackashtx, filename="LANDIS_stuff/initcomm_crop8S_blackashtx.tif",
+            datatype='INT4S')
 
 #now just time to 'place' treated WHITE ash!
 #and although I was *momentarily* concerned about this,
@@ -405,3 +412,245 @@ initcommraster_blackashtx[initcomm_cells_select_frni[100]]
 #SO, next step is maybe to look @ ash SIZE/age for prioritizing treatment??
 
 # STARTING WITH THIS TOMORROW (SUNDAY) AND JUST GETTING IT DONE!!!
+
+#I am thinking that due to time constraints, I may not be able to add the 
+#spatial element of functional vs genetic conservation approaches to ash treatment,
+#and just apply different *frequencies*/levels/amounts of treatment to ash in stand.
+#BUT, I COULD look into the function terra::patches.... although that's just IDing cell vals between NAs...
+#as briefly described here: https://rspatial.org/spatial-terra/8-rastermanip.html
+#soooo with that in mind, maybe NO spatial element.
+#BUT, can explore that for later / full run,
+#and at least for now it's easy to do similar to what I did for black ash, shouldn't be too hard!!
+# ALSO think about SIZE OF TREES!!! (e.g. age of ash within those chosen mapcodes....)
+#FOR TOMORROW!
+
+
+#it's now tomorrow (sunday 6/12), and I am here to work on this...
+#buuuut gonna do it at Starbucks instead!
+
+#so my harvest prescriptions assumed that white ash @ age 65 ~ 15" DBH.
+#and that white ash @ age 40 ~ 10" DBH.
+
+#FUNCTIONAL preservation = saving LARGE-DIAMETER ash throughout, so let's say age 65 and up
+  #and this one is lowest frequency/rate of treatment-- 10-15 trees (cohorts) per stand.
+#GENETIC preservation = saving MEDIUM-SIZED (?) dominant/codominant ash,
+#so let's say those in age classes 40-65...
+#let's first see what we have for both of those...
+#"old" white ash over age 65
+whiteash_codes_large <- init_comm_df$mapcode[init_comm_df$species=="fraxamer" & init_comm_df$age>65]
+length(whiteash_codes_large) #alright, we've got 227 of those. (unique mapcodes)
+whiteash_codes_medium <- init_comm_df$mapcode[init_comm_df$species=="fraxamer" & 
+                                                init_comm_df$age<65 & init_comm_df$age>=40]
+length(whiteash_codes_medium) #and we have 56 of these...
+head(whiteash_codes_medium)
+
+#now to explore which STANDS have those sizes of ash...
+View(framstands2_crop8S)
+#first subset to JUST those in NGO-private & federally-owned stands.
+framstandslarge_crop8S <- framstands2_crop8S[(framstands2_crop8S$mgmtarea %in% c(3,4)),]
+nrow(framstandslarge_crop8S) #SHOULD be 77+71: and yes it's 148.
+#now need to go thru and see how many of those are LARGE ash plots....
+View(framstandslarge_crop8S)
+framstandslarge_crop8S$num_large_ash_plots <- rep(0)
+#and also see how many are medium in the same loop!!
+framstandslarge_crop8S$num_med_ash_plots <- rep(0)
+
+for(i in 1:nrow(crop8s_vals_nozero)){
+  j <- crop8s_vals_nozero$stand[i]
+  #if it's already an "ash stand" we're intersted in...
+  if(j %in% framstandslarge_crop8S$stand){
+    #and if THAT is true, ALSO tally how many of those plots have LARGE ash...
+    if(crop8s_vals_nozero$initcomm[i] %in% whiteash_codes_large){
+      framstandslarge_crop8S$num_large_ash_plots[framstandslarge_crop8S$stand==j] %+=% 1
+    }
+    #may as well check for MEDIUM ash in the same loop, why not?!
+    if(crop8s_vals_nozero$initcomm[i] %in% whiteash_codes_medium){
+      framstandslarge_crop8S$num_med_ash_plots[framstandslarge_crop8S$stand==j] %+=% 1
+    }
+  }
+}
+#OK I think this worked!
+#GENERALLY, looks like we have more "large ash" plots than "medium ash" plots...
+#Just need to decide between which STANDS are getting "large ash"/functional treatment,
+#which are getting "medium ash"/genetic treatment,
+#and which (a smaller number) are getting "treat all ash"
+#since they can't overlap.
+#thinking 20 functional, 20 genetic, and 10 complete stands per mgmt area (3-private/NGO and 4-public/fed)?
+#first, look for how many have MORE medium-sized than large-sized ash sites:
+nrow(framstandslarge_crop8S[framstandslarge_crop8S$num_large_ash_plots<framstandslarge_crop8S$num_med_ash_plots,])
+#only eleven!
+framstandslarge_crop8S[framstandslarge_crop8S$num_large_ash_plots<framstandslarge_crop8S$num_med_ash_plots,]
+
+#now let's also see how many of them have AT LEAST 10 large ash sites/cohorts:
+nrow(framstandslarge_crop8S[framstandslarge_crop8S$num_large_ash_plots>10,]) #118, so most of them
+nrow(framstandslarge_crop8S[framstandslarge_crop8S$num_large_ash_plots>=15,]) #101, so *still* most of them
+
+
+#for GENETIC, look for smaller (?) stands w/ @ least 10 med ash plots...
+nrow(framstandslarge_crop8S[
+  framstandslarge_crop8S$num_med_ash_plots>10,]) #was gonna include & ...$area_ha<4
+    #LOL never mind, I ALREADY filtered out the ones smaller than 4 ha...
+    #maybe go back to framstands_crop8S for that?!?
+
+#so, my preliminary thought is (assuming there are enough qualifying plots in the latter),
+#draw from stands >4 ha in size w/ @ least 10-15 LARGE ash for the functional conservation tx,
+#and then draw from stands <4 ha in size w/ @ least 10-15 MEDIUM ash for the genetic conservation tx.
+View(framstands_crop8S)
+framstandsmed_crop8S <- framstands_crop8S
+framstandsmed_crop8S$mgmtarea <- trunc(framstandsmed_crop8S$stand/10000000)
+#limiting to those in MA 3 & 4:
+framstandsmed_crop8S <- framstandsmed_crop8S[(framstandsmed_crop8S$mgmtarea %in% c(3,4)),]
+View(framstandsmed_crop8S)
+framstandsmed_crop8S$area_ha <- framstandsmed_crop8S$num_plots*0.09 #each plot = 0.09 ha
+hist(framstandsmed_crop8S$area_ha) #most of these are quite small; good!
+#now to find out how many MEDIUM-SIZED ash we've got:
+framstandsmed_crop8S$num_med_ash_plots <- rep(0)
+for(i in 1:nrow(crop8s_vals_nozero)){
+  j <- crop8s_vals_nozero$stand[i]
+  #if it's already an "ash stand" we're intersted in...
+  if(j %in% framstandsmed_crop8S$stand){
+    #then check how many of those plots contain MEDIUM-SIZED ash...
+    if(crop8s_vals_nozero$initcomm[i] %in% whiteash_codes_medium){
+      framstandsmed_crop8S$num_med_ash_plots[framstandsmed_crop8S$stand==j] %+=% 1
+    }
+  }
+}
+#now let's see how many fit our criteria...
+nrow(framstandsmed_crop8S[framstandsmed_crop8S$area_ha<4 & #less than 4 ha in size
+                            framstandsmed_crop8S$num_med_ash_plots>=10,]) #and at least 10 medium sized ash plots
+#hmm okay; what about just:
+max(framstandsmed_crop8S$num_med_ash_plots[framstandsmed_crop8S$area_ha<4])
+#so the most # ash plots in a small stand is 7.
+#OK, so this didn't work, so let's go back to framstandslarge_crop8S 
+#and do everything there instead, to better control overlap:
+nrow(framstandslarge_crop8S[framstandslarge_crop8S$num_med_ash_plots>=15,]) #32
+nrow(framstandslarge_crop8S[framstandslarge_crop8S$num_med_ash_plots>=10,]) #48
+#SO, those are less numerous than the big ash ones...let's see what sizes those stands are:
+hist(framstandslarge_crop8S$area_ha[framstandslarge_crop8S$num_med_ash_plots>=10]) #48
+#ok, *some* are on the smaller side; good!
+hist(framstandslarge_crop8S$num_med_ash_plots[framstandslarge_crop8S$num_med_ash_plots>=10]) #48
+View(framstandslarge_crop8S[framstandslarge_crop8S$num_med_ash_plots>=10,]) #48
+framstandsmed <- framstandslarge_crop8S[framstandslarge_crop8S$num_med_ash_plots>=10,]
+table(framstandsmed$mgmtarea[framstandsmed$area_ha<20])
+table(framstandsmed$mgmtarea) #let's just pick 10 from each of these, 
+table(framstandsmed$num_med_ash_plots)
+table(framstandsmed$mgmtarea[framstandsmed$num_med_ash_plots<40])
+#OKAY, that's what we've got, so maybe just go for it!!
+#these 40 stands (30 in NGO ma and 20 in federal ma), each with between 10-40
+#ash plots/cohorts, could be the ones I select for "medium" ash/genetic cons tx.
+framstandsmed <- framstandsmed[framstandsmed$num_med_ash_plots<40,]
+View(framstandsmed)
+#soo, then I can just REPLACE all the MEDIUM-SIZED ash in those stands...
+# variable framstandsmed is my OFFICIAL list of stansd to "treat" w/ genetic approach!!
+
+#now to eliminate those ones from the running for framstandslarge:
+framstandslarge <- framstandslarge_crop8S[!(framstandslarge_crop8S$stand %in% framstandsmed$stand),]
+View(framstandslarge)
+framstandslarge <- framstandslarge[framstandslarge$num_large_ash_plots>=10,]
+hist(framstandslarge$area_ha)
+nrow(framstandslarge[framstandslarge$area_ha>10,]) #51 stands greater than 10 ha in size...
+nrow(framstandslarge[framstandslarge$num_large_ash_plots<25,]) #51 stands w/ <25 large ash plots...
+table(framstandslarge$mgmtarea[framstandslarge$num_large_ash_plots<25]) #of those, 20 in MA 3 and 31 in MA 4 :)
+hist(framstandslarge$area_ha[framstandslarge$num_large_ash_plots<25]) #annnnd size-wise, not that big...
+table(framstandslarge$mgmtarea[framstandslarge$num_large_ash_plots<25
+                               & framstandslarge$area_ha>6]) 
+#but for those GREATER THAN 6 ha in size, and containing LESS THAN 25 large ash plots,
+#we have exactly 40 (14 in MA 3 and 26 in MA 4)....that's actually perfect!!
+hist(framstandslarge$prop_ash[framstandslarge$num_large_ash_plots<25
+                              & framstandslarge$area_ha>6])
+hist(framstandslarge$num_ash_plots[framstandslarge$num_large_ash_plots<25
+                              & framstandslarge$area_ha>6])
+#and they have a *decent* spread of TOTAL (all sizes) ash proportion/number...
+#ok let's do it:
+framstandslarge <- framstandslarge[framstandslarge$num_large_ash_plots<25
+                                   & framstandslarge$area_ha>6,]
+nrow(framstandslarge)
+#okay- PERFECTO!!!!!
+
+#now, we just need ANOTHER 10-20 stands to treat ALL ash; 
+#preferably those with less overall/smaller...
+View(framstands2_crop8S)
+View(framstands2_crop8S[!(framstands2_crop8S$stand %in% framstandslarge$stand) &
+                          !(framstands2_crop8S$stand %in% framstandsmed$stand),])
+#subsetting to ash stands that will NOT be treated w/ 'large ash' or 'med ash' approach...
+framstandscomplete <- framstands2_crop8S[!(framstands2_crop8S$stand %in% framstandslarge$stand) &
+                                           !(framstands2_crop8S$stand %in% framstandsmed$stand),]
+View(framstandscomplete)
+#and also subsetting to only MA 3 & 4; leaves us with 68 stands.
+framstandscomplete <- framstandscomplete[(framstandscomplete$mgmtarea %in% c(3,4)),]
+hist(framstandscomplete$prop_ash)
+hist(framstandscomplete$num_ash_plots[framstandscomplete$prop_ash>=0.25])
+nrow(framstandscomplete[framstandscomplete$prop_ash>=0.25 &
+                        framstandscomplete$num_ash_plots<100,])
+hist(framstandscomplete$area_ha[framstandscomplete$prop_ash>=0.25 &
+                                  framstandscomplete$num_ash_plots<100])
+#none that are too huge... @ least 25% ash plots and <100 ash plots total
+table(framstandscomplete$mgmtarea[framstandscomplete$prop_ash>=0.25 &
+                                    framstandscomplete$num_ash_plots<100])
+#we've got 11 in MA 3 and 10 in MA 4; perfect!
+max(framstandscomplete$num_ash_plots[framstandscomplete$prop_ash>=0.25 &
+                                       framstandscomplete$num_ash_plots<100])
+table(framstandscomplete$mgmtarea[framstandscomplete$prop_ash>=0.25 &
+                                    framstandscomplete$num_ash_plots<=60])
+#muahaha perfect!! applying this filter now:
+framstandscomplete <- framstandscomplete[framstandscomplete$prop_ash>=0.25 &
+                                           framstandscomplete$num_ash_plots<=60,]
+#okay SO. we have all of our collections of which stands to treat partially,
+#using each conservation approach, and then the fewer amount to treat COMPLETELY!!
+
+#next just need to set up a for loop, like I did for black ash, to change these in the init comm map.
+#but first gonna save them as csvs for posterity:
+#remember these are all ONLY LOOKING AT WHITE ASH, NOT LOOKING AT BLACK ASH!!!!
+write.csv(framstandslarge, file="LANDIS_stuff/framstands_treatlargeash_functional.csv")
+write.csv(framstandsmed, file="LANDIS_stuff/framstands_treatmedash_genetic.csv")
+write.csv(framstandscomplete, file="LANDIS_stuff/framstands_treatallash_complete.csv")
+
+#ok, need to start by MAKING A VECTOR OF CELLS TO BE REPLACED.
+#similar to what I did with black ash, with a few differences/additions...
+initcomm_cells_select_fram <- NA
+for(i in 1:nrow(crop8s_vals)){
+  #check for each situation individually....
+  #first, check for large ash (check stand AND mapcode value:)
+  if(crop8s_vals$stands[i] %in% framstandslarge$stand  & crop8s_vals$initcomm[i] %in% whiteash_codes_large){
+      #if both those conditions are met, ADD this cell to the list of ones to be replaced.
+    initcomm_cells_select_fram <- c(initcomm_cells_select_fram, i)
+    #next check for membership in MEDIUM ash treatment stands / correct cells:
+  } else if(crop8s_vals$stands[i] %in% framstandsmed$stand  & crop8s_vals$initcomm[i] %in% whiteash_codes_medium){
+    initcomm_cells_select_fram <- c(initcomm_cells_select_fram, i)
+    #and finally check for membership in the COMPLETE stand:
+  } else if(crop8s_vals$stands[i] %in% framstandscomplete$stand  & crop8s_vals$initcomm[i] %in% whiteash_codes){
+    initcomm_cells_select_fram <- c(initcomm_cells_select_fram, i)
+    }
+  }
+
+head(initcomm_cells_select_fram)
+length(initcomm_cells_select_fram)
+#cool!! let's save this one too:
+initcomm_cells_select_fram <- na.omit(initcomm_cells_select_fram)
+write.csv(as.data.frame(initcomm_cells_select_fram), file="LANDIS_stuff/whiteash_cells_treated_crop8S.csv")
+#okay awesome!! now we can use this vector to replace those cells with corresponding
+#mapcodes of treated ash. :) 
+
+#first trying it with JUST the initial raster as input:
+initcommraster_whiteashtx <- crop8s[[3]]
+#cycling thru only the values of this raster that are in our chosen subset...
+for(i in initcomm_cells_select_frni){
+  #identify the starting value...
+  initval <- as.numeric(initcommraster_blackashtx[i])
+  #match up w/ the corresponding replacement value...
+  replaceval <- ashcodes_key$treated_mapcode[ashcodes_key$orig_mapcode==initval]
+  initcommraster_blackashtx[i] <- replaceval
+}
+
+#let's test this out...
+initcommraster_blackashtx[initcomm_cells_select_frni[100]]
+# twas replaced! yay :)
+initcommraster_blackashtx
+
+#also want to SAVE the vector for posterity:
+write.csv(as.data.frame(initcomm_cells_select_frni), file="LANDIS_stuff/blackash_cells_treated_crop8S.csv")
+#and also SAVE where JUST black ash were treated: 
+writeRaster(initcommraster_blackashtx, filename="LANDIS_stuff/initcomm_crop8S_blackashtx.tif",
+            datatype='INT4S')
+
+

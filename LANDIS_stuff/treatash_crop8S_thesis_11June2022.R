@@ -292,7 +292,6 @@ for(i in 1:nrow(ashcodes_key)){
   
   test_txtfile <- rbind(test_txtfile, "   ", mapcode)
   
-  #NEED TO FIGURE OUT THIS LOOP BETTER-- NOT READY!!!!
   for(j in 1:length(init_comm_df_treatedash$mapcode[init_comm_df_treatedash$mapcode==
                                                     ashcodes_key$treated_mapcode[i]])){
     subset <- init_comm_df_treatedash[init_comm_df_treatedash$mapcode==

@@ -606,3 +606,48 @@ for(g in rcp){
 #update: did that "manually" since it was the same set of files as in practice_run folder,
 #and changed the filepath names using find --> replace in the text file.
 
+### back on Friday, June 17th ###
+
+# need to replace climate files for RCP 4.5 / GCM HADGEM2-ES
+#since they are randomly missing a month (month 12/December of 2099)
+#action item = select a random year from past few decades to replace 2099 completely...??
+
+#OR just replace December...let's actually do that instead
+sample(2070:2098)
+#first selection was 2089 so let's go with that one!
+#and also want to remove duplicated year 2020/month 12...
+
+#remember, we are ONLY doing this for RCP 4.5 / HADGEM2-ES GCM files!!
+
+#testing out planned changes....
+tester <- read.table(paste0("C:/Users/theha/Documents/layers_for_LANDIS/climate_files/pathway_climatefiles_fromJane/HADGEM2-ES_rcp45_eco_", y, ".txt"),
+header=TRUE)
+View(tester)
+Dec2099_via_Dec2089 <- tester[(tester$Year==2089 & tester$Month==12),]
+Dec2099_via_Dec2089$Year <- 2089
+tester <- tester[-c(757:937),]
+tester[1703,]
+tester <- rbind(tester[1:1703,], Dec2099_via_Dec2089, tester[1704:1955,])
+
+
+#MODIFIED loop from above is below, to do this with ONLY the select RCP + GCM combo
+
+    for(y in ecoregion){ #in this case, y is the ACTUAL ECOREGION CODE/NUMBER ITSELF!!
+      input <- read.table(paste0("C:/Users/theha/Documents/layers_for_LANDIS/climate_files/pathway_climatefiles_fromJane/HADGEM2-ES_rcp45_eco_", y, ".txt"),
+                          header=TRUE)
+      #remove superfluous rows...
+        input <- input[-c(757:937),]
+      #then add in Dec. 2089 row...
+        Dec2099_via_Dec2089 <- input[(input$Year==2089 & input$Month==12),]
+        Dec2099_via_Dec2089$Year <- 2099
+      #and inserting the correct row...
+        input <- rbind(input[1:1703,], Dec2099_via_Dec2089, input[1704:1955,])
+        
+        #then updating w/ HB par values...
+      input$PAR <- HBclimmod$PAR
+      #and then last step = write the 'output' table to file:
+      #renaming ANOTHER table w/ this name:
+      write.table(x=input, file=paste0("C:/Users/theha/OneDrive - University of Vermont/Ash project/LANDIS_files/thesis_runs/rcp45/rep3-HADGEM2-ES/climate/HADGEM2-ES_rcp45_eco_", y, "_HBPAR.txt"),
+                  sep=" ", quote=FALSE, append=FALSE, row.names=FALSE)
+    }
+

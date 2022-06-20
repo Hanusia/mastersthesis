@@ -2201,3 +2201,11 @@ meanagb_crop8S$landis_agb_run14 <- bindmeanagb(specieslist=splist, input_agb=agb
 #honestly I think I've done what I can for now?
 #need to focus on establishment
 
+
+#read in subset region (crop8S) rasters in a stack:
+layernames2 <- c("mask", "initclass", "initcomm", "ecoregions", "mgmtareas", "stands")
+for(l in 1:length(layernames2)){
+  newlayer <- rast(paste0("LANDIS_stuff/crop8S_rasters/", layernames2[l], "_crop8S", ".tif"))
+  if(l==1){crop8s <- rast(newlayer, nlyrs=6)}
+  crop8s <- c(crop8s, newlayer)
+}
